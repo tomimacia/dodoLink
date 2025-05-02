@@ -16,6 +16,7 @@ import {
   Select,
   Switch,
   Text,
+  useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
@@ -113,6 +114,8 @@ const ProductoForm = ({
         prev.cantidad + (isSum ? prev.cantidadPorPack : -prev.cantidadPorPack),
     }));
   };
+  const buttonBG = useColorModeValue('gray.700', 'white');
+  const buttonColor = useColorModeValue('white', 'gray.900');
   return (
     <Flex flexDir='column' gap={4}>
       <Heading textAlign='center' size='md'>
@@ -170,9 +173,27 @@ const ProductoForm = ({
         >
           <FormLabel>Total en Packs</FormLabel>
           <HStack gap={5} maxW='320px'>
-            <Button onClick={() => handlePacks(true)}>+</Button>
+            <Button
+              size='sm'
+              bg={buttonBG}
+              color={buttonColor}
+              _hover={{ opacity: 0.7 }}
+              fontSize='lg'
+              onClick={() => handlePacks(true)}
+            >
+              +
+            </Button>
             <Text fontWeight='bold'>{cantidadEnPacks.toFixed(2)}</Text>
-            <Button onClick={() => handlePacks(false)}>-</Button>
+            <Button
+              size='sm'
+              fontSize='lg'
+              bg={buttonBG}
+              color={buttonColor}
+              _hover={{ opacity: 0.7 }}
+              onClick={() => handlePacks(false)}
+            >
+              -
+            </Button>
           </HStack>
         </FormControl>
         <Divider borderColor='gray' />

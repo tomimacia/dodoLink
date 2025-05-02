@@ -2,7 +2,6 @@ import { useResetPassword } from '@/hooks/useResetPassword';
 import {
   Button,
   Flex,
-  Heading,
   Input,
   Modal,
   ModalBody,
@@ -11,7 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/react';
 
 const ForgotPasswordModal = () => {

@@ -1,11 +1,11 @@
-import { ClientType, EstadoType } from '@/types/types';
+import { EstadoType } from '@/types/types';
 import { getEstado } from './getEstado';
-
+// A arreglar
 export const clientesFilteredByEstado = (
   estado: EstadoType,
-  clientes: ClientType[]
+  pedidos: any[]
 ) => {
-  return clientes.filter((c) => {
+  return pedidos.filter((c) => {
     const thisEstado = getEstado(c);
     return thisEstado === estado;
   });

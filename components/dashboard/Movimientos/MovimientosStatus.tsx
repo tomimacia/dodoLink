@@ -1,11 +1,11 @@
 import { useMovimientosGraph } from '@/context/useMovGraphContext';
+import { TimeData } from '@/data/data';
 import { addDots } from '@/helpers/addDots';
+import dateTexto from '@/helpers/dateTexto';
 import { Divider, Flex, Heading, Text } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import DateSelector from './DateSelector';
-import { TimeData } from '@/data/data';
-import dateTexto from '@/helpers/dateTexto';
 import MotionContainer from '../MotionContainer';
+import DateSelector from './DateSelector';
 
 const MovimientosStatus = () => {
   const { data, date, month, lapso, loading } = useMovimientosGraph();

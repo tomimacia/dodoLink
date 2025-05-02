@@ -7,7 +7,6 @@ import {
 import dateTexto from '@/helpers/dateTexto';
 import useGetDayData from '@/hooks/data/useGetDayData';
 import useGetIngresosData from '@/hooks/data/useGetIngresosData';
-import { ClientType } from '@/types/types';
 import {
   createContext,
   Dispatch,
@@ -80,7 +79,7 @@ export const ClientsGraphProvider = ({
         const keys = Object.keys(ingresos);
         if (keys.some((k) => k === name)) {
           const reduced = ingresos[name].reduce(
-            (acc: any, obj: ClientType) => {
+            (acc: any, obj: any) => {
               const estado = getEstado(obj);
               acc[estado] = acc[estado] + 1;
               return acc;

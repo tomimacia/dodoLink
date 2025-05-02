@@ -1,12 +1,11 @@
 import { useUser } from '@/context/userContext';
 import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
-import { addDots } from '@/helpers/addDots';
 import capitalizeFirst from '@/helpers/capitalizeFirst';
-import { CargarIngreso } from '@/helpers/cobros/ConfirmFunctions';
+import { CargarReserva } from '@/helpers/cobros/ConfirmFunctions';
 import useGetProductos from '@/hooks/data/useGetProductos';
 import useGetClientes from '@/hooks/useGetClientes';
-import { ClientType, ProductoType } from '@/types/types';
+import { ProductoType } from '@/types/types';
 import {
   Button,
   Flex,
@@ -61,7 +60,7 @@ const AltaCliente = () => {
     }
     setLoading(true);
     try {
-      const checkClient = (await getSingleDoc('clientes', DNI)) as ClientType;
+      const checkClient = (await getSingleDoc('clientes', DNI)) as any;
       if (checkClient) {
         return toast({
           title: 'Ya registrado',
@@ -118,7 +117,7 @@ const AltaCliente = () => {
         items: [{ ...cuota, nombre: `${cuota?.nombre}-ALTA`, unidades: 1 }],
         fecha: new Date(),
       };
-      await CargarIngreso(newMovimiento);
+      await CargarReserva(newMovimiento);
 
       toast({
         status: 'success',

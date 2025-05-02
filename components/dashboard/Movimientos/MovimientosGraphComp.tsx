@@ -2,8 +2,7 @@ import { useMovimientosGraph } from '@/context/useMovGraphContext';
 import { TimeData } from '@/data/data';
 import { addDots } from '@/helpers/addDots';
 import dateTexto from '@/helpers/dateTexto';
-import { Flex, Heading, Text, useToast } from '@chakra-ui/react';
-import { addDays, isToday, subDays } from 'date-fns';
+import { Flex, Heading, Text } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Bar,

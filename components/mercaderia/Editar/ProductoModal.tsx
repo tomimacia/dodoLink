@@ -3,14 +3,13 @@ import { EditIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
-  Heading,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
   Text,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/react';
 import ProductoForm from './ProductoForm';
 

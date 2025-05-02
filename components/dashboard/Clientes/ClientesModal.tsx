@@ -1,6 +1,5 @@
 import PaginationControl from '@/components/clientes/PaginationControl';
 import usePagination from '@/hooks/data/usePagination';
-import { ClientType } from '@/types/types';
 import {
   Divider,
   Flex,
@@ -23,11 +22,11 @@ const ClientesModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  modalData: { title: string; list: ClientType[] };
+  modalData: { title: string; list: any[] };
 }) => {
   const [conDeuda, setConDeuda] = useState(false);
   const itemsPerPage = 10;
-  const filterClientes = (clientes: ClientType[]) => {
+  const filterClientes = (clientes: any[]) => {
     if (conDeuda) return clientes.filter((c) => c.saldo !== 0);
     return clientes;
   };
@@ -87,7 +86,7 @@ const ClientesModal = ({
               initial={{ x: goingUp ? 15 : -15, opacity: 0 }}
               exit={{ x: goingUp ? -15 : 15, opacity: 0 }}
             >
-              {paginatedClients.map((c: ClientType) => {
+              {paginatedClients.map((c: any) => {
                 return (
                   <ClientesModalListItem
                     key={`clientes-modal-key-${c.id}${c?.vencimiento?.seconds}`}

@@ -92,7 +92,7 @@ const LoginFormAndScreens = ({
         maxWidth='85%'
         borderRadius='10px'
         bg='whiteAlpha.200'
-        style={{       
+        style={{
           backdropFilter: 'blur(10px)',
         }}
       />
@@ -202,8 +202,6 @@ const LoginFormAndScreens = ({
           </Text>
         </form>
       </Flex>
-
-      {/* <HandleLoginAuthAdmin isMatched={isMatched} setIsMatched={setIsMatched} /> */}
     </Flex>
   );
 };

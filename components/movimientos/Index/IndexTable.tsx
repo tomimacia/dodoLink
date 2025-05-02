@@ -3,7 +3,6 @@ import dateTexto from '@/helpers/dateTexto';
 import { IngresoType } from '@/types/types';
 import {
   Flex,
-  Heading,
   Table,
   TableContainer,
   Tbody,
@@ -11,7 +10,7 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr,
+  Tr
 } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import TableItem from './TableItem';

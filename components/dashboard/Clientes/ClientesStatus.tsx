@@ -49,12 +49,9 @@ const ClientesStatus = () => {
     title: '',
     list: [],
   });
-  const clientesHabilitados = clientesFilteredByEstado('Habilitado', clientes);
-  const clientesVencidos = clientesFilteredByEstado('Vencido', clientes);
-  const clientesInhabilitados = clientesFilteredByEstado(
-    'Inhabilitado',
-    clientes
-  );
+  const clientesHabilitados = clientesFilteredByEstado('Pendiente', clientes);
+  const clientesVencidos = clientesFilteredByEstado('Pendiente', clientes);
+  const clientesInhabilitados = clientesFilteredByEstado('Pendiente', clientes);
   const customHeigth = ['100px', '110px', '120px', '130px'];
   const data = [
     { name: 'Habilitado', value: clientesHabilitados?.length },

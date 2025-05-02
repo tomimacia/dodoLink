@@ -2,7 +2,6 @@ import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { toFirestoreTimestamp } from '@/helpers/cobros/toFirestoreTimestamp';
 import useGetClientes from '@/hooks/useGetClientes';
-import { ClientType } from '@/types/types';
 import {
   Button,
   Divider,
@@ -23,9 +22,9 @@ const ClienteForm = ({
   onClose,
   setNewCliente,
 }: {
-  cliente: ClientType;
+  cliente: any;
   onClose: () => void;
-  setNewCliente?: (newCliente: ClientType) => void;
+  setNewCliente?: (newCliente: any) => void;
 }) => {
   const [formData, setFormData] = useState({
     ...cliente,
@@ -45,7 +44,7 @@ const ClienteForm = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
   const { clientes, setClientes } = useGetClientes();
   const submit = async (e: any) => {
@@ -61,12 +60,9 @@ const ClienteForm = ({
 
     setLoading(true);
     try {
-      const DNIExists = (await getSingleDoc(
-        'clientes',
-        DNI + ''
-      )) as ClientType;
+      const DNIExists = (await getSingleDoc('clientes', DNI + '')) as any;
       if (DNIExists && DNIExists.DNI !== cliente.DNI) {
-        setFormData((prev) => ({
+        setFormData((prev: any) => ({
           ...prev,
           DNI: cliente.DNI,
         }));
@@ -134,7 +130,7 @@ const ClienteForm = ({
     vencimiento,
     tipo,
   } = formData ?? {};
-  console.log(vencimiento)
+  console.log(vencimiento);
   return (
     <Flex flexDir='column' gap={4}>
       <Heading textAlign='center' size='md'>

@@ -1,10 +1,5 @@
-import { FormProvider } from '@/context/useCobrarFormContext';
 import { useUser } from '@/context/userContext';
-import { getSingleDoc } from '@/firebase/services/getSingleDoc';
-import { addDots } from '@/helpers/addDots';
 import dateTexto from '@/helpers/dateTexto';
-import useSaldoData from '@/hooks/users/useSaldoData';
-import { ClientType } from '@/types/types';
 import {
   Divider,
   Flex,
@@ -15,9 +10,8 @@ import {
 import { useState } from 'react';
 import ReactLoading from 'react-loading';
 import ClienteModal from './Editar/ClienteModal';
-import CargarModal from '../movimientos/CargarModal';
 
-const ClienteIDBody = ({ client }: { client: ClientType }) => {
+const ClienteIDBody = ({ client }: { client: any }) => {
   const [clientUpdated, setClientUpdated] = useState(client);
   const [loading, setLoading] = useState(false);
   const {
@@ -33,21 +27,6 @@ const ClienteIDBody = ({ client }: { client: ClientType }) => {
     apellido,
   } = clientUpdated;
   const { user } = useUser();
-  const { estado, color, saldoColor } = useSaldoData(clientUpdated);
-  const getNewClient = async () => {
-    setLoading(true);
-    try {
-      const updatedClient = (await getSingleDoc(
-        'clientes',
-        client.id
-      )) as ClientType;
-      if (updatedClient) setClientUpdated(updatedClient);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
-  };
   const estadoTextColor = useColorModeValue('white', 'black');
   return (
     <Flex gap={2} flexDir='column'>
@@ -83,11 +62,11 @@ const ClienteIDBody = ({ client }: { client: ClientType }) => {
                 w='fit-content'
                 p={2}
                 borderRadius={5}
-                bg={color}
+                bg={'green'}
                 flexDir='column'
               >
                 <Text color={estadoTextColor} fontSize={17} fontWeight='medium'>
-                  Estado: {estado}
+                  Estado: {'estado'}
                 </Text>
               </Flex>
               <Flex flexDir='column'>
@@ -96,15 +75,6 @@ const ClienteIDBody = ({ client }: { client: ClientType }) => {
                   <b>{dateTexto(vencimiento.seconds).textoDate}</b>
                 </Text>
               </Flex>
-            </Flex>
-            <Flex align='center' justify='space-between' gap={2}>
-              <Text>Saldo:</Text>
-              <Text color={saldoColor}>
-                <b>
-                  ${saldo < 0 ? '-' : ''}
-                  {addDots(Math.abs(saldo))}
-                </b>
-              </Text>
             </Flex>
             <Divider borderColor='gray' />
             <Flex align='center' justify='space-between' gap={2}>
@@ -119,29 +89,7 @@ const ClienteIDBody = ({ client }: { client: ClientType }) => {
               <Text>
                 <b>{email}</b>
               </Text>
-            </Flex>
-            {/* <Divider borderColor='gray' />
-            <Flex justify='space-between' gap={2} align='center'>
-              <Text>Recibir Emails:</Text>
-              <Checkbox isChecked={recibirEmail} />
-            </Flex> */}
-
-            {estado !== 'Habilitado' && (
-              <>
-                <Divider borderColor='gray' />
-                <Flex align='center' justify='space-between' gap={2}>
-                  <Text>Impacto Venc:</Text>
-                  <Text noOfLines={1}>
-                    {ingresoVencido ? (
-                      <b>{dateTexto(ingresoVencido?.seconds).numDate}</b>
-                    ) : (
-                      'No hay (actualiza al pago)'
-                    )}
-                  </Text>
-                </Flex>
-              </>
-            )}
-
+            </Flex>{' '}
             <Divider borderColor='gray' />
             <Flex align='center' justify='space-between' gap={2}>
               <Text noOfLines={1}>Alta Cliente:</Text>
@@ -151,19 +99,6 @@ const ClienteIDBody = ({ client }: { client: ClientType }) => {
             </Flex>
           </Flex>
           <Flex gap={5}>
-            <FormProvider>
-              <CargarModal
-                size='sm'
-                client={{
-                  ...clientUpdated,
-                  vencimiento: {
-                    seconds: clientUpdated?.vencimiento?.seconds,
-                    nanoseconds: 0,
-                  },
-                }}
-                getNewClient={getNewClient}
-              />
-            </FormProvider>
             {user?.rol === 'Superadmin' && (
               <Flex my={2}>
                 <ClienteModal

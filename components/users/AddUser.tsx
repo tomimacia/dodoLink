@@ -8,16 +8,11 @@ import {
   Heading,
   Input,
   Select,
-  Switch,
   Text,
   useToast,
 } from '@chakra-ui/react';
-import {
-  fetchSignInMethodsForEmail,
-  sendPasswordResetEmail,
-} from 'firebase/auth';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import { useState } from 'react';
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
@@ -42,7 +37,6 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
     }
     setLoading(true);
     try {
-      // const userDB = await createUserWithEmailAndPassword(email, password);
       const userDB = await createUserNoLogin({
         email,
         password,
@@ -61,12 +55,18 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
       await sendPasswordResetEmail(auth, email);
       getUsers();
       toast({
-        title: 'Éxito',
-        description: 'Usuario creado correctamente',
+        title: 'Usuario creado exitosamente',
+        description: `Se envió un mail a ${email} para reestablecer la contraseña`,
         status: 'success',
         duration: 9000,
         isClosable: true,
       });
+      setNombre('');
+      setApellido('');
+      setEmail('');
+      setPassword('');
+      setRol('Admin');
+      setError('');
     } catch (error: any) {
       console.error('Error al crear el usuario:', error.message);
       setError(error.message);
@@ -84,7 +84,6 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
     ).join('');
     setPassword(generatedPassword);
   }
-  console.log(error);
   return (
     <Flex gap={4} flexDir='column' maxW='320px'>
       <Heading as='h3' size='lg'>
@@ -98,7 +97,7 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
               required
               onChange={(e) => setNombre(e.target.value)}
               value={nombre}
-              placeholder='Ingresa el nombre'
+              placeholder='Ingresá el nombre'
               borderColor='gray'
               type='text'
               size='sm'

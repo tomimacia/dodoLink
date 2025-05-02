@@ -26,14 +26,16 @@ const WelcomeComp = () => {
       </Flex>
       <Flex flexDir='column' gap={3} justify='space-between'>
         <Flex flexDir='column'>
-          <Text>{user?.rol}</Text>
           <Text fontSize='xl'>
-            Bienvenido <strong>{user?.nombre}</strong>
+            Usuario{' '}
+            <strong>
+              {user?.nombre} {user?.apellido}
+            </strong>
           </Text>
+          <Text>{user?.rol}</Text>
         </Flex>
-        <Flex gap={3} justify='space-around'>
+        <Flex gap={3}>
           <CargarModal size='sm' />
-          <CargarModal size='sm' initialIsPago />
         </Flex>
       </Flex>
     </Flex>

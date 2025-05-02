@@ -31,6 +31,7 @@ const TitleSearchYItem = () => {
     unidades: 1,
     empresa: 'dodoLink',
     cantidadPorPack: 1,
+    target: 999999,
   };
   const [newItem, setNewItem] = useState<ProductoType>(initialItem);
   const toast = useToast();

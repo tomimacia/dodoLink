@@ -1,5 +1,4 @@
 import useGetClientes from '@/hooks/useGetClientes';
-import { ClientType } from '@/types/types';
 import { Button, Flex, Text, useToast } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -11,7 +10,7 @@ const ClientCard = ({
   isList,
   deleteClienteFront,
 }: {
-  c: ClientType;
+  c: any;
   isList: boolean;
   deleteClienteFront: (id: string) => void;
 }) => {

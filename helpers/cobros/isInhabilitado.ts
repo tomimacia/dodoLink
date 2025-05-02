@@ -1,7 +1,6 @@
 import { DiasParaInhabilitacion } from '@/data/data';
-import { ClientType } from '@/types/types';
 
-export const isInhabilitado = (c: ClientType | null): boolean => {
+export const isInhabilitado = (c: any | null): boolean => {
   const ahora = c?.horarioIngreso
     ? c?.horarioIngreso?.seconds
     : new Date().getTime() / 1000;

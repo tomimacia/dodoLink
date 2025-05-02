@@ -1,9 +1,7 @@
-import { ClientType } from '@/types/types';
 import { EditIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
-  Heading,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -20,10 +18,10 @@ const ClienteModal = ({
   isIcon,
   setNewCliente,
 }: {
-  cliente: ClientType;
+  cliente: any;
   size: any;
   isIcon?: boolean;
-  setNewCliente?: (newCliente: ClientType) => void;
+  setNewCliente?: (newCliente: any) => void;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (

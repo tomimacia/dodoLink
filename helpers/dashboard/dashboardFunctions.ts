@@ -10,9 +10,9 @@ export const getFichadasDia = (day: any) => {
   //   (ing: any, index, arr) =>
   //     arr.findIndex((item: any) => item?.DNI === ing?.DNI) === index
   // );
-  const Habilitado = clientesFilteredByEstado('Habilitado', values).length;
-  const Vencido = clientesFilteredByEstado('Vencido', values).length;
-  const Inhabilitado = clientesFilteredByEstado('Inhabilitado', values).length;
+  const Habilitado = clientesFilteredByEstado('Pendiente', values).length;
+  const Vencido = clientesFilteredByEstado('Pendiente', values).length;
+  const Inhabilitado = clientesFilteredByEstado('Pendiente', values).length;
   return {
     name: fecha,
     Habilitado,

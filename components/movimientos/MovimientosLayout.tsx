@@ -22,9 +22,9 @@ const MovimientosLayout = ({
   children: ReactNode;
   isCaja?: boolean;
 }) => {
-  const { loadingMovimientos, caja, getMovimientos } = useMovimientos();
-  const showStatus = caja?.isOpen || isCaja;
-  const isLoading = !caja || loadingMovimientos;
+  const { loadingMovimientos, getMovimientos } = useMovimientos();
+  const showStatus = isCaja;
+  const isLoading = loadingMovimientos;
   const customGray = useColorModeValue('gray.600', 'gray.800');
   return (
     <Flex flexDir='column' gap={5}>

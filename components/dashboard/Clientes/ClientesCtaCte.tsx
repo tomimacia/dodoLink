@@ -1,5 +1,4 @@
 import { addDots } from '@/helpers/addDots';
-import { ClientType } from '@/types/types';
 import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 
@@ -7,7 +6,7 @@ const ClientesCtaCte = ({
   clientes,
   handleOpenModal,
 }: {
-  clientes: ClientType[];
+  clientes: any[];
   handleOpenModal: (title: string, list: any) => void;
 }) => {
   const ctaCteFavor = clientes.filter((c) => c.saldo > 0);

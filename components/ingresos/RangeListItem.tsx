@@ -1,26 +1,8 @@
 import dateTexto from '@/helpers/dateTexto';
-import useSaldoData from '@/hooks/users/useSaldoData';
-import { ClientType } from '@/types/types';
 import { Flex, Icon, ListItem, Text } from '@chakra-ui/react';
 import Link from 'next/link';
-import { MdCancel, MdCheckCircle } from 'react-icons/md';
-import { TiWarning } from 'react-icons/ti';
-const RangeListItem = ({ client }: { client: ClientType }) => {
-  const {
-    nombre,
-    apellido,
-
-    DNI,
-
-    horarioIngreso,
-  } = client;
-  const { estado, color } = useSaldoData(client);
-  const estadoIcons = {
-    Habilitado: MdCheckCircle,
-    Inhabilitado: MdCancel,
-    Vencido: TiWarning,
-    Inactivo: MdCancel,
-  };
+const RangeListItem = ({ client }: { client: any }) => {
+  const { nombre, apellido, DNI, horarioIngreso } = client;
   return (
     <ListItem target='_blank' href={`/ClientesID/${DNI}`} as={Link}>
       <Flex
@@ -35,12 +17,7 @@ const RangeListItem = ({ client }: { client: ClientType }) => {
           <Text>
             {nombre} {apellido}
           </Text>
-          <Icon
-            title={estado}
-            color={color}
-            fontSize='xl'
-            as={estadoIcons[estado]}
-          />
+          <Icon color='red' fontSize='xl' />
         </Flex>
       </Flex>
     </ListItem>

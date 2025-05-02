@@ -10,7 +10,6 @@ import {
   Icon,
   Switch,
   Text,
-  useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';

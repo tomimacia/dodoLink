@@ -1,8 +1,6 @@
-import { FormProvider } from '@/context/useCobrarFormContext';
-import { getMultipleDocs } from '@/firebase/services/getMultipleDocs';
-import useSaldoData from '@/hooks/users/useSaldoData';
+import { useUser } from '@/context/userContext';
+import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { useEnter } from '@/hooks/eventHooks/useEnter';
-import { ClientType } from '@/types/types';
 import {
   Button,
   Flex,
@@ -14,18 +12,13 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import { FormEvent, useRef, useState } from 'react';
 import ReactLoading from 'react-loading';
-import IngresoBody from '../ingresos/PedidoBody';
-import CargarModal from '../movimientos/CargarModal';
 import ClienteModal from './Editar/ClienteModal';
-import { useUser } from '@/context/userContext';
-import { getSingleDoc } from '@/firebase/services/getSingleDoc';
-import ReactivarModal from './Editar/ReactivarModal';
 
 const ConsultarCliente = () => {
   const { user } = useUser();
   const [consulta, setConsulta] = useState('');
   const [loadingForm, setLoadingForm] = useState<boolean>(false);
-  const [registryUser, setRegistryUser] = useState<ClientType | null>(null);
+  const [registryUser, setRegistryUser] = useState<any | null>(null);
   const toast = useToast();
   const valueRef = useRef<HTMLInputElement | null>(null);
 
@@ -55,7 +48,7 @@ const ConsultarCliente = () => {
     }
     setLoadingForm(true);
     try {
-      const cliente = (await getSingleDoc('clientes', consulta)) as ClientType;
+      const cliente = (await getSingleDoc('clientes', consulta)) as any;
 
       if (!cliente) {
         toast({
@@ -82,7 +75,6 @@ const ConsultarCliente = () => {
       setConsulta('');
     }
   };
-  const { color, estado, saldoColor } = useSaldoData(registryUser);
   const onKeyDown = useEnter(valueRef, onSubmit);
   const borrarColor = useColorModeValue(
     { bg: 'darkGray', color: 'white' },
@@ -117,29 +109,7 @@ const ConsultarCliente = () => {
               >
                 Borrar Consulta
               </Button>
-              <IngresoBody
-                client={registryUser}
-                color={color}
-                saldoColor={saldoColor}
-                estado={estado}
-                animated
-                ingresoSeconds={new Date().getTime() / 1000}
-                size='consulta'
-              />
               <Flex gap={5}>
-                {estado === 'Inactivo' ? (
-                  <Flex my={2}>
-                    <ReactivarModal
-                      setNewCliente={setRegistryUser}
-                      size='sm'
-                      cliente={registryUser}
-                    />
-                  </Flex>
-                ) : (
-                  <FormProvider>
-                    <CargarModal size='sm' client={registryUser} />
-                  </FormProvider>
-                )}
                 {user?.rol === 'Superadmin' && (
                   <Flex my={2}>
                     <ClienteModal

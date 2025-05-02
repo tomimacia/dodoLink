@@ -1,7 +1,7 @@
-import { ClientType, EstadoType } from '@/types/types';
+import { EstadoType } from '@/types/types';
 import { isInhabilitado } from './isInhabilitado';
 
-export const getEstado = (c: ClientType | null) => {
+export const getEstado = (c: any | null) => {
   if (c?.activo === false) return 'Inactivo';
   const vencimientoSeconds = c?.vencimiento?.seconds;
   const paramSeconds = c?.horarioIngreso
@@ -10,9 +10,9 @@ export const getEstado = (c: ClientType | null) => {
   const venc = vencimientoSeconds;
   const inhabilitado = isInhabilitado(c);
   const estado: EstadoType = inhabilitado
-    ? 'Inhabilitado'
+    ? 'Pendiente'
     : venc > paramSeconds
-    ? 'Habilitado'
-    : 'Vencido';
+    ? 'Inicializado'
+    : 'En curso';
   return estado;
 };

@@ -1,6 +1,7 @@
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { RolType, UserType } from '@/types/types';
 import {
+  Button,
   Flex,
   Table,
   TableContainer,
@@ -56,9 +57,7 @@ const UserList = ({
     try {
       await deleteUser(id);
       await deleteSingleDoc('users', id);
-      const newUsers = users.filter((u) => {
-        u.id !== id;
-      });
+      const newUsers = users.filter((u) => u.id !== id);
       setUsers(newUsers);
     } catch (e: any) {
       console.error(e.message);

@@ -13,15 +13,12 @@ import {
   IconButton,
   Input,
   Select,
-  Switch,
   Text,
-  useToast,
+  useToast
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import AddCodigoForm from './AddCodigoForm';
 import PopoverInfoIcon from '../inicio/PopoverInfoIcon';
-import { getCollection } from '@/firebase/services/getCollection';
-import { setSingleDoc } from '@/firebase/services/setSingleDoc';
+import AddCodigoForm from './AddCodigoForm';
 
 const AddProducto = () => {
   const initialForm = {

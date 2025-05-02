@@ -1,10 +1,7 @@
 import { useUser } from '@/context/userContext';
-import { addDots } from '@/helpers/addDots';
 import useGetProductos from '@/hooks/data/useGetProductos';
 import { ProductoType } from '@/types/types';
 import {
-  Checkbox,
-  Divider,
   Flex,
   Heading,
   Popover,
@@ -12,10 +9,10 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
-  useColorModeValue,
+  useColorModeValue
 } from '@chakra-ui/react';
-import ProductoModal from './Editar/ProductoModal';
 import Barcode from 'react-barcode';
+import ProductoModal from './Editar/ProductoModal';
 const ProductoCard = ({
   producto,
   setNewProducto,

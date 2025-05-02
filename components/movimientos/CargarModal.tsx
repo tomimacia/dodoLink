@@ -2,6 +2,10 @@ import { useCobrarFormContext } from '@/context/useCobrarFormContext';
 import {
   Button,
   Flex,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -58,35 +62,44 @@ const CargarModal = ({
           />
         </Flex>
       )}
-
-      {!initialIsPago && (
-        <Button
-          onClick={handleOpenDev}
+      <Menu isLazy>
+        <MenuButton
+          as={Button}
           bg='green.700'
           color='white'
           _hover={{ opacity: 0.7 }}
           w='fit-content'
           alignSelf='center'
-          my={2}
           size={size}
         >
-          Nueva Reserva
-        </Button>
-      )}
-      {initialIsPago && (
-        <Button
-          onClick={handleOpenDev}
-          bg='gray.600'
-          color='white'
-          _hover={{ opacity: 0.7 }}
-          w='fit-content'
-          alignSelf='center'
-          my={2}
-          size={size}
-        >
-          Nueva Compra
-        </Button>
-      )}
+          Nuevo Pedido
+        </MenuButton>
+        <MenuList boxShadow='0 0 5px'>
+          {/* MenuItems are not rendered unless Menu is open */}
+          <MenuItem
+            _hover={{ bg: 'gray.700', color: 'white' }}
+            boxShadow='0 0 5px'
+            justifySelf='center'
+            w='95%'
+            borderRadius={5}
+            my={2}
+            onClick={handleOpenDev}
+          >
+            Reserva
+          </MenuItem>
+          <MenuItem
+            _hover={{ bg: 'gray.700', color: 'white' }}
+            boxShadow='0 0 5px'
+            justifySelf='center'
+            w='95%'
+            borderRadius={5}
+            my={2}
+            onClick={handleOpenDev}
+          >
+            Compra
+          </MenuItem>
+        </MenuList>
+      </Menu>
       <Modal
         size={['xl', '2xl', '3xl', '3xl']}
         isCentered

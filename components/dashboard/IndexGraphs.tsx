@@ -1,7 +1,6 @@
 import { getEstado } from '@/helpers/cobros/getEstado';
 import dateTexto from '@/helpers/dateTexto';
 import useGetDayData from '@/hooks/data/useGetDayData';
-import { ClientType } from '@/types/types';
 import { Button, Flex, Heading, Text, useDisclosure } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
@@ -22,15 +21,15 @@ const IndexGraphs = () => {
   };
   const { ingresos, totalIngresos, movimientos, loadingData, getData } =
     useGetDayData(day);
-
+  // Cambiamos ingresos y egresos por compras y reservas
   const cantidadIngresosHoy = totalIngresos.length;
   const totalIngresosHoy =
-    movimientos?.ingresos.reduce((acc: any, p: any) => {
+    movimientos?.compras.reduce((acc: any, p: any) => {
       const { pagoParcial, total } = p;
       return acc + (typeof pagoParcial === 'number' ? pagoParcial : total);
     }, 0) || 0;
   const totalEgresosHoy =
-    movimientos?.egresos.reduce((acc: any, p: any) => {
+    movimientos?.reservas.reduce((acc: any, p: any) => {
       const { total } = p;
       return acc + total;
     }, 0) || 0;
@@ -58,7 +57,7 @@ const IndexGraphs = () => {
         const keys = Object.keys(ingresos);
         if (keys.some((k) => k === name)) {
           const reduced = ingresos[name].reduce(
-            (acc: any, obj: ClientType) => {
+            (acc: any, obj: any) => {
               const estado = getEstado(obj);
               acc[estado] = acc[estado] + 1;
               return acc;

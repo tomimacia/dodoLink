@@ -1,8 +1,10 @@
+// Para eliminar esto
+import { useMovimientos } from '@/context/useMovimientosContext';
 import { useUser } from '@/context/userContext';
+import { MinutosPermisoDelete } from '@/data/data';
 import { addDots } from '@/helpers/addDots';
-import getCajaStatus from '@/helpers/cobros/getCajaStatus';
 import dateTexto from '@/helpers/dateTexto';
-import { ClientType, IngresoType } from '@/types/types';
+import { IngresoType } from '@/types/types';
 import { ViewIcon } from '@chakra-ui/icons';
 import {
   Divider,
@@ -17,14 +19,12 @@ import {
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
+import { Timestamp } from 'firebase/firestore';
 import Link from 'next/link';
 import { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import DeleteModal from '../../DeleteModal';
-import { useMovimientos } from '@/context/useMovimientosContext';
-import { Timestamp } from 'firebase/firestore';
-import { MinutosPermisoDelete } from '@/data/data';
 
 const TableItem = ({
   i,
@@ -32,7 +32,7 @@ const TableItem = ({
   deleteMovimiento,
 }: {
   i: IngresoType;
-  cliente: ClientType | null;
+  cliente: any | null;
   deleteMovimiento: () => Promise<void>;
 }) => {
   const [loading, setLoading] = useState(false);
@@ -41,18 +41,6 @@ const TableItem = ({
   const handleDelete = async () => {
     setLoading(true);
     try {
-      const isOpenCaja = await getCajaStatus();
-      if (!isOpenCaja) {
-        toast({
-          title: 'Caja cerrada',
-          description: 'La caja está cerrada, intenta nuevamente más tarde',
-          status: 'warning',
-          isClosable: true,
-          duration: 5000,
-        });
-        getMovimientos();
-        return;
-      }
       await deleteMovimiento();
       toast({
         status: 'success',
@@ -141,7 +129,7 @@ const TableItem = ({
                 <Text>
                   {item.nombre} x {item.unidades}
                 </Text>
-                <Text>${addDots(item.precio)}</Text>
+                <Text>${addDots(item.cantidad)}</Text>
               </Flex>
             ))}
 

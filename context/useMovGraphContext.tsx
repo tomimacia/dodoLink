@@ -70,48 +70,10 @@ export const MovimientosGraphProvider = ({
     { name: '21', Ingresos: 0, Egresos: 0 },
     { name: '22', Ingresos: 0, Egresos: 0 },
   ];
-  const arrangedMovimientos = () => {
-    const { ingresos = [], egresos = [] } = movimientos ?? {}; // Aseguramos que sean arrays
-
-    const arrangedIngresos: Record<string, number> = ingresos.reduce(
-      (acc, ing) => {
-        const { pagoParcial, total } = ing;
-        const hora = dateTexto(ing?.fecha?.seconds).hourDate.split(':')[0];
-        const pago = typeof pagoParcial === 'number' ? pagoParcial : total;
-
-        acc[hora] = (acc[hora] || 0) + pago; // Asegura que siempre sea un número
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const arrangedEgresos: Record<string, number> = egresos.reduce(
-      (acc, ing) => {
-        const { total } = ing;
-        const hora = dateTexto(ing?.fecha?.seconds).hourDate.split(':')[0];
-
-        acc[hora] = (acc[hora] || 0) + total; // Asegura que siempre sea un número
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    return { arrangedIngresos, arrangedEgresos };
-  };
-
-  // Desestructura los valores con tipos ya definidos
-  const { arrangedIngresos, arrangedEgresos } = arrangedMovimientos();
-  // Genera dailyData con los datos corregidos
-  const dailyData = startingData.map(({ name }) => ({
-    name, // Horario
-    Ingresos: arrangedIngresos[name] ?? 0, // Si no hay ingresos, poner 0
-    Egresos: arrangedEgresos[name] ?? 0, // Si no hay egresos, poner 0
-  }));
 
   const data = {
     Mensual: fullMonthData,
     Anual: '',
-    Diario: dailyData || [],
   };
   const updateFunc = {
     Mensual: getMovimientosData,

@@ -1,19 +1,19 @@
 import { deleteSingleDoc } from '@/firebase/services/deleteSingleDoc';
 import { getMultipleDocs } from '@/firebase/services/getMultipleDocs';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
-import { ClientType } from '@/types/types';
 import { addMonths, isAfter } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useSessionStorage } from './storageHooks/useSessionStorage';
 
 const useGetClientes = () => {
-  const [clientes, setClientes] = useSessionStorage<ClientType[]>(
+  const [clientes, setClientes] = useSessionStorage<any[]>(
     `CLIENTES_SESSION_STORAGE`,
     []
   );
-  const [clientesInactivos, setClientesInactivos] = useSessionStorage<
-    ClientType[]
-  >(`CLIENTES_INACTIVOS_SESSION_STORAGE`, []);
+  const [clientesInactivos, setClientesInactivos] = useSessionStorage<any[]>(
+    `CLIENTES_INACTIVOS_SESSION_STORAGE`,
+    []
+  );
   const [loadingClientes, setLoadingClientes] = useState(false);
   const getClientes = async () => {
     setLoadingClientes(true);
@@ -23,13 +23,13 @@ const useGetClientes = () => {
         'activo',
         '==',
         true
-      )) as ClientType[];
+      )) as any[];
       const clientesFetchedInactivos = (await getMultipleDocs(
         'clientes',
         'activo',
         '==',
         false
-      )) as ClientType[];
+      )) as any[];
       // Condition: actual date - vencimiento date > 30 days
 
       const clientesInactivosNew = clientesFetched.filter((c) => {

@@ -53,12 +53,7 @@ const LoadingScreen = () => {
                 background: '#495568',
               }}
             />
-            <ReactLoading
-              type='bubbles'
-              color='white'
-              height='50%'
-              width='50%'
-            />
+            <ReactLoading type='cylon' color='white' height='50%' width='50%' />
           </Flex>
         </Center>
       </motion.div>

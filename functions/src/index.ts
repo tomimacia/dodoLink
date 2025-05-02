@@ -1,9 +1,9 @@
-import * as admin from 'firebase-admin';
-import { onRequest } from 'firebase-functions/https';
+const firebaseAdmin = require('firebase-admin');
+const { onRequest } = require('firebase-functions/https');
 
-admin.initializeApp();
+firebaseAdmin.initializeApp();
 
-exports.createUser = onRequest((request, response) => {
+exports.createUser = onRequest((request: any, response: any) => {
   response.set('Access-Control-Allow-Origin', '*'); // O mejor: 'http://localhost:3000'
   response.set('Access-Control-Allow-Methods', 'POST');
   response.set('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,7 +24,7 @@ exports.createUser = onRequest((request, response) => {
     response.status(400).send('Missing required fields');
     return;
   }
-  admin
+  firebaseAdmin
     .auth()
     .createUser({
       email: email,
@@ -33,17 +33,17 @@ exports.createUser = onRequest((request, response) => {
       displayName: displayName,
       disabled: false,
     })
-    .then((userRecord) => {
+    .then((userRecord: any) => {
       return response.status(200).send({
         message: 'User created successfully',
         uid: userRecord.uid,
       });
     })
-    .catch((error) => {
+    .catch((error: any) => {
       return response.status(400).send('Failed to create user: ' + error);
     });
 });
-exports.deleteUser = onRequest((req, res) => {
+exports.deleteUser = onRequest((req: any, res: any) => {
   res.set('Access-Control-Allow-Origin', '*'); // En producción: usar tu dominio
   res.set('Access-Control-Allow-Methods', 'POST');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
@@ -66,13 +66,13 @@ exports.deleteUser = onRequest((req, res) => {
     return;
   }
 
-  admin
+  firebaseAdmin
     .auth()
     .deleteUser(uid)
     .then(() => {
       res.status(200).send({ message: `Successfully deleted user: ${uid}` });
     })
-    .catch((error) => {
+    .catch((error: any) => {
       res
         .status(400)
         .send({ message: 'Failed to delete user', error: error.message });

@@ -25,7 +25,7 @@ const LoadingScreen = () => {
           width: '100%',
           height: '100%',
           minHeight: '100vh',
-          backgroundColor: '#020d2e',
+          backgroundColor: '#092991',
           top: 0,
           zIndex: 20000,
         }}

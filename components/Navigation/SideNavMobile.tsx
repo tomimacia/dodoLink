@@ -13,6 +13,7 @@ import {
   ListItem,
   Text,
   UnorderedList,
+  useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
@@ -30,20 +31,16 @@ const SideNavMobile = ({
   const handleRoute = (thisRoute: string) => {
     push(thisRoute), onClose();
   };
+  const imageWidth = useBreakpointValue(['70%', '80%', '90%', '90%', '90%']);
   const customBG = useColorModeValue(
     'linear(to-t, gray.200, blue.500)',
     'linear(to-t, gray.700, blue.500)'
   );
   if (!isOnline) return <></>;
   return (
-    <Drawer
-      isOpen={open}
-      placement='left'
-      onClose={onClose}
-      // finalFocusRef={btnRef}
-    >
+    <Drawer isOpen={open} placement='left' onClose={onClose}>
       <DrawerOverlay />
-      <DrawerContent>
+      <DrawerContent maxW='300px'>
         <DrawerCloseButton
           boxShadow='0 0 3px'
           size='sm'
@@ -52,13 +49,13 @@ const SideNavMobile = ({
         />
         <DrawerHeader
           h={['3.6rem', '4.9rem']}
-          padding={3}
+          padding={2}
           bgGradient={customBG}
         >
           <Flex flexDir='column' w='100%'>
             <Image
               alt='dodolink-logo'
-              width={'90%'}
+              width={imageWidth}
               style={{
                 objectFit: 'contain',
                 borderRadius: '5px',
@@ -71,7 +68,7 @@ const SideNavMobile = ({
           </Flex>
         </DrawerHeader>
 
-        <DrawerBody pt={10}>
+        <DrawerBody p={[2, 3, 4, 5, 6]} mt={5}>
           <Flex
             position='sticky'
             top={0}

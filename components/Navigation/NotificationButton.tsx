@@ -11,11 +11,12 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
-const NotificationsButton = () => {
+const NotificationButton = () => {
   const { reservas, compras } = useOnCurso();
   const { user } = useUser();
   const notifications =
@@ -34,6 +35,8 @@ const NotificationsButton = () => {
     push(`/PedidosID/${id}`);
   };
   const customImageBG = useColorModeValue('gray.500', 'gray.700');
+  const customSize = useBreakpointValue(['xs', 'sm', 'sm', 'sm', 'sm']) || 'sm';
+
   return (
     <Flex pos='relative'>
       {notifications.length > 0 && (
@@ -65,13 +68,16 @@ const NotificationsButton = () => {
           borderColor='gray'
           _hover={{ opacity: 0.65 }}
           borderRadius='50%'
-          fontSize={20}
-          size='sm'
+          fontSize={[18, 20, 20, 20, 20]}
+          size={customSize}
           color={customImageBG}
           bg='white'
           // _active={{ bg: 'gray.600' }}
         />
-        <MenuList boxShadow='rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 5px 10px, rgba(0, 0, 0, 0.4) 0px 5px 40px'>
+        <MenuList
+          fontSize='sm'
+          boxShadow='rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 5px 10px, rgba(0, 0, 0, 0.4) 0px 5px 40px'
+        >
           {notifications?.map((n, ind) => {
             return (
               <MenuItem
@@ -92,4 +98,4 @@ const NotificationsButton = () => {
   );
 };
 
-export default NotificationsButton;
+export default NotificationButton;

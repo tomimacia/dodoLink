@@ -24,7 +24,7 @@ const WelcomeComp = () => {
         <span>-</span>
         <ClockComp />
       </Flex>
-      <Flex flexDir='column' gap={3} justify='space-between'>
+      <Flex p={2} flexDir='column' gap={3} justify='space-between'>
         <Flex flexDir='column'>
           <Text fontSize='xl'>
             Usuario{' '}

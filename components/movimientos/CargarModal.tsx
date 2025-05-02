@@ -13,6 +13,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Progress,
+  useColorModeValue,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
@@ -31,6 +32,10 @@ const CargarModal = ({
     useCobrarFormContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const customHover = useColorModeValue(
+    { bg: 'gray.700', color: 'white' },
+    { bg: 'white', color: 'gray.700' }
+  );
   const handleOpen = async () => {
     await checkForUpdates();
     setIsPago(initialIsPago ? true : false);
@@ -74,11 +79,11 @@ const CargarModal = ({
         >
           Nuevo Pedido
         </MenuButton>
-        <MenuList boxShadow='0 0 5px'>
+        <MenuList boxShadow='0 0 2px'>
           {/* MenuItems are not rendered unless Menu is open */}
           <MenuItem
-            _hover={{ bg: 'gray.700', color: 'white' }}
-            boxShadow='0 0 5px'
+            _hover={customHover}
+            boxShadow='0 0 3px'
             justifySelf='center'
             w='95%'
             borderRadius={5}
@@ -88,8 +93,8 @@ const CargarModal = ({
             Reserva
           </MenuItem>
           <MenuItem
-            _hover={{ bg: 'gray.700', color: 'white' }}
-            boxShadow='0 0 5px'
+            _hover={customHover}
+            boxShadow='0 0 3px'
             justifySelf='center'
             w='95%'
             borderRadius={5}

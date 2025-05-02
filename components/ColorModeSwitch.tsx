@@ -1,10 +1,10 @@
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { IconButton, useColorMode } from '@chakra-ui/react';
+import { IconButton, useBreakpointValue, useColorMode } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 const ColorModeSwitch = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-
+  const customSize = useBreakpointValue(['xs', 'sm', 'sm', 'sm', 'sm']) || 'sm';
   return (
     <motion.div
       animate={{ scale: [1, 1.1, 1.2, 1.1, 1] }}
@@ -18,9 +18,9 @@ const ColorModeSwitch = () => {
         onClick={toggleColorMode}
         outlineColor={'gray.300'}
         cursor='pointer'
-        fontSize={18}
-        mr={2}
-        size='sm'
+        fontSize={[16, 18, 18, 18, 18]}
+        ml={1}
+        size={customSize}
         color='white'
         _hover={{
           color: 'whiteAlpha.700',

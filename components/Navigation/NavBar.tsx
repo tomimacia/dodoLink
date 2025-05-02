@@ -5,7 +5,7 @@ import {
   Image,
   Link,
   useBreakpointValue,
-  useColorModeValue
+  useColorModeValue,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { Dispatch, SetStateAction } from 'react';
@@ -24,6 +24,7 @@ export default function Navbar({
   const isOnline = user !== null;
   const imageNavbarSize = useBreakpointValue([45, 70]);
   const customImageBG = useColorModeValue('gray.500', 'gray.700');
+  const customIconSize = useBreakpointValue([24, 30, 30, 30, 30]);
   return (
     <Box
       bg={customImageBG}
@@ -52,7 +53,7 @@ export default function Navbar({
             justify='space-between'
           >
             <Flex h='100%' gap={2}>
-              <HamburguerButton mx={[1, 2, 5, 5, 5]} setOpen={setOpen} />
+              <HamburguerButton mx={[2, 2, 5, 5, 5]} setOpen={setOpen} />
             </Flex>
 
             <Link href='/'>
@@ -66,10 +67,14 @@ export default function Navbar({
               />
             </Link>
 
-            <Flex align='center' gap={3}>
+            <Flex mx={2} align='center' gap={[1, 1, 2, 3, 3]}>
               <NotificationButton />
               <Link as={NextLink} _hover={{ opacity: 0.65 }} href='/Profile'>
-                <FaUserCircle color='white' cursor='pointer' fontSize={30} />
+                <FaUserCircle
+                  color='white'
+                  cursor='pointer'
+                  fontSize={customIconSize}
+                />
               </Link>
               <ColorModeSwitch />
             </Flex>

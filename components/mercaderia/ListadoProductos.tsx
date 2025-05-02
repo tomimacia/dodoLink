@@ -136,7 +136,7 @@ const ListadoProductos = () => {
             w='fit-content'
           >
             <option value='dodoLink'>dodoLink</option>
-            <option value='Solunet'>Solunet</option>
+            <option value='Grupo IN'>Grupo IN</option>
           </Select>
         )}
       </Flex>

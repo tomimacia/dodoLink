@@ -212,7 +212,7 @@ const AddProducto = () => {
           value={form.empresa}
         >
           <option value='dodoLink'>dodoLink</option>
-          <option value='Solunet'>Solunet</option>
+          <option value='Grupo IN'>Grupo IN</option>
         </Select>
 
         <Flex flexDir='column'>

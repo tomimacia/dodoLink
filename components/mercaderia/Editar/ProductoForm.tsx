@@ -232,7 +232,7 @@ const ProductoForm = ({
             onChange={handleChange}
           >
             <option value='dodoLink'>dodoLink</option>
-            <option value='Solunet'>Solunet</option>
+            <option value='Grupo IN'>Grupo IN</option>
           </Select>
         </FormControl>
 

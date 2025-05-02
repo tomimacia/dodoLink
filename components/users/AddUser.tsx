@@ -177,7 +177,7 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
         <Text fontSize='xs' color='red'>
           {FIREBASE_ERRORS[error as keyof typeof FIREBASE_ERRORS]}
         </Text>
-        <Flex justify='center' my={3}>
+        <Flex justify='center' my={5}>
           <Button
             type='submit'
             isLoading={loading}

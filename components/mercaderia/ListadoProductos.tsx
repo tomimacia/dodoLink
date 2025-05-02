@@ -110,7 +110,7 @@ const ListadoProductos = () => {
   //   }
   // };
   return (
-    <>
+    <Flex flexDir='column' gap={3} mt={3}>
       <Flex gap={2}>
         <Button
           bg='gray.600'
@@ -150,12 +150,13 @@ const ListadoProductos = () => {
           />
         </Flex>
       ) : (
-        <TableContainer p={5}>
+        <TableContainer p={[1, 2, 3, 4, 5]}>
           <Table
             fontSize='sm'
-            size='xs'
+            size={['xs', 'xs', 'xs', 'sm', 'sm']}
             variant='striped'
             colorScheme='facebook'
+            minWidth='600px'
           >
             <Thead>
               <Tr>
@@ -248,7 +249,7 @@ const ListadoProductos = () => {
           </Table>
         </TableContainer>
       )}
-    </>
+    </Flex>
   );
 };
 

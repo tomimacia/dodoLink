@@ -1,0 +1,302 @@
+import { setSingleDoc } from '@/firebase/services/setSingleDoc';
+import { ProductoType } from '@/types/types';
+import { MinusIcon } from '@chakra-ui/icons';
+import {
+  Button,
+  Divider,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  IconButton,
+  Input,
+  NumberInput,
+  NumberInputField,
+  Select,
+  Switch,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import AgregarCodigo from './AgregarCodigo';
+
+const ProductoForm = ({
+  producto,
+  onClose,
+  updateProducto,
+  setNewProducto,
+}: {
+  producto: ProductoType;
+  onClose: () => void;
+  updateProducto: (productID: string, producto: ProductoType) => Promise<void>;
+  setNewProducto?: (newProducto: ProductoType) => void;
+}) => {
+  const { codigo, ...rest } = producto;
+  console.log(rest);
+  const [formData, setFormData] = useState({ ...rest });
+  const [codigos, setCodigos] = useState(codigo);
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleNumberChange = (_: string, valueAsNumber: number) => {
+    setFormData((prev) => ({ ...prev, cantidadPorPack: valueAsNumber }));
+  };
+  const submit = async (e: any) => {
+    e.preventDefault();
+    if (
+      JSON.stringify({ ...formData, codigo: codigos.join('-') }) ===
+      JSON.stringify({ ...producto, codigo: producto.codigo.join('-') })
+    )
+      return toast({
+        title: 'No hay cambios',
+        description: 'No se realizaron cambios en el producto',
+        status: 'info',
+        duration: 4000,
+        isClosable: true,
+      });
+    setLoading(true);
+    try {
+      const newProducto = {
+        ...formData,
+        codigo: codigos,
+      };
+      await setSingleDoc('productos', producto.id, newProducto);
+      await updateProducto(producto.id, newProducto);
+      if (setNewProducto) setNewProducto(newProducto);
+      toast({
+        title: 'Actualizado',
+        description: `${producto.nombre} actualizado con éxito`,
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      });
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: 'Error',
+        description: 'Ocurrió un error al intentar editar el producto',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+      onClose();
+    }
+  };
+  const deleteCodigo = (ind: number) => {
+    const newCodigos = codigos.filter((_, i) => i !== ind);
+    setCodigos(newCodigos);
+  };
+  // const onChangeCodigo = (e: any, ind: number) => {
+  //   const newCodigos = [...codigos];
+  //   newCodigos[ind] = Number(e.target.value);
+  //   setCodigos(newCodigos);
+  // };
+  return (
+    <Flex flexDir='column' gap={4}>
+      <Heading textAlign='center' size='md'>
+        {producto.nombre}
+      </Heading>
+      <Flex p={2} mt={2} flexDir='column' gap={2}>
+        {/* Nombre */}
+        <FormControl
+          display='flex'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <FormLabel>Nombre</FormLabel>
+          <Input
+            borderColor='gray'
+            borderRadius={5}
+            size='sm'
+            autoComplete='off'
+            formNoValidate
+            required
+            name='nombre'
+            maxW='300px'
+            value={formData.nombre}
+            onChange={handleChange}
+          />
+        </FormControl>
+
+        <Divider borderColor='gray' />
+        <FormControl
+          display='flex'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <FormLabel>Cantidad</FormLabel>
+          <NumberInput
+            borderColor='gray'
+            borderRadius={5}
+            size='sm'
+            w='100%'
+            maxW='300px'
+            value={formData.cantidad || 0}
+            onChange={(valueAsString, valueAsNumber) =>
+              setFormData((prev) => ({ ...prev, cantidad: valueAsNumber }))
+            }
+            min={0}
+          >
+            <NumberInputField required />
+          </NumberInput>
+        </FormControl>
+        <Divider borderColor='gray' />
+        {/* Medida */}
+        <FormControl
+          display='flex'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <FormLabel>Medida</FormLabel>
+          <Select
+            borderColor='gray'
+            borderRadius={5}
+            size='sm'
+            w='100%'
+            cursor='pointer'
+            maxW='80px'
+            name='medida'
+            value={formData.medida}
+            onChange={handleChange}
+          >
+            <option value='Un.'>Un.</option>
+            <option value='Kg.'>Kg.</option>
+            <option value='Mt.'>Mt.</option>
+          </Select>
+        </FormControl>
+        <Divider borderColor='gray' />
+        <FormControl
+          display='flex'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <FormLabel>Cantidad por Pack</FormLabel>
+          <NumberInput
+            borderColor='gray'
+            borderRadius={5}
+            size='sm'
+            w='100%'
+            maxW='300px'
+            value={formData.cantidadPorPack || 0}
+            onChange={handleNumberChange}
+            min={0}
+          >
+            <NumberInputField required />
+          </NumberInput>
+        </FormControl>
+        <Divider borderColor='gray' />
+        <FormControl
+          display='flex'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <FormLabel>Target</FormLabel>
+          <NumberInput
+            borderColor='gray'
+            borderRadius={5}
+            size='sm'
+            w='100%'
+            maxW='300px'
+            value={formData.target || 1}
+            onChange={(valueAsString, valueAsNumber) =>
+              setFormData((prev) => ({ ...prev, target: valueAsNumber }))
+            }
+            min={0}
+          >
+            <NumberInputField required />
+          </NumberInput>
+        </FormControl>
+        <Divider borderColor='gray' />
+        <FormControl
+          display='flex'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <FormLabel>Empresa</FormLabel>
+          <Select
+            borderColor='gray'
+            borderRadius={5}
+            size='sm'
+            cursor='pointer'
+            w='fit-content'
+            name='empresa'
+            value={formData.empresa}
+            onChange={handleChange}
+          >
+            <option value='dodoLink'>dodoLink</option>
+            <option value='Solunet'>Solunet</option>
+          </Select>
+        </FormControl>
+
+        {/* Código */}
+        <Divider borderColor='gray' />
+        <FormControl
+          display='flex'
+          flexDir='column'
+          justifyContent='space-between'
+          gap={1}
+        >
+          <FormLabel>Códigos {!producto.codigo && '(No definido)'}</FormLabel>
+          <Flex maxW='400px' gap={2} flexDir='column'>
+            {codigos?.map((n, ind) => {
+              return (
+                <Flex
+                  justify='space-between'
+                  align='center'
+                  key={`key-codigo-${ind}-${n}`}
+                  gap={1}
+                >
+                  <Text>{codigos[ind]}</Text>
+                  <IconButton
+                    w='fit-content'
+                    p={0}
+                    color='white'
+                    bg='gray.700'
+                    size='xs'
+                    onClick={() => deleteCodigo(ind)}
+                    alignSelf='center'
+                    _hover={{ opacity: 0.65 }}
+                    aria-label='minus-codigo'
+                    icon={<MinusIcon />}
+                  />
+                </Flex>
+              );
+            })}
+          </Flex>
+          <AgregarCodigo setCodigos={setCodigos} />
+        </FormControl>
+      </Flex>
+      <Flex my={3} justify='space-around'>
+        <Button
+          _hover={{ opacity: 0.65 }}
+          color='white'
+          bg='green.700'
+          size='sm'
+          onClick={submit}
+          isLoading={loading}
+        >
+          Confirmar
+        </Button>
+        <Button
+          _hover={{ opacity: 0.65 }}
+          onClick={onClose}
+          color='white'
+          bg='red.700'
+          size='sm'
+        >
+          Cancelar
+        </Button>
+      </Flex>
+    </Flex>
+  );
+};
+
+export default ProductoForm;

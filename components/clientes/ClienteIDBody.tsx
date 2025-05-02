@@ -89,7 +89,7 @@ const ClienteIDBody = ({ client }: { client: any }) => {
               <Text>
                 <b>{email}</b>
               </Text>
-            </Flex>{' '}
+            </Flex>
             <Divider borderColor='gray' />
             <Flex align='center' justify='space-between' gap={2}>
               <Text noOfLines={1}>Alta Cliente:</Text>

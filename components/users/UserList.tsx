@@ -93,7 +93,6 @@ const UserList = ({
                     <Tr key={`user-${u.nombre}-${ind}`}>
                       <Td> {u.email}</Td>
                       <Td>
-                        {' '}
                         <strong>{u.nombre}</strong>
                       </Td>
                       <Td>

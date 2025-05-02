@@ -17,7 +17,6 @@ const ChildrenLayout = ({
   if (!show)
     return (
       <Flex py={1} w='100%' flexDir='column'>
-        {' '}
         {children}
       </Flex>
     );

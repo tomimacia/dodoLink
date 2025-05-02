@@ -91,7 +91,7 @@ const TitleSearchYItem = () => {
                   zIndex={1000}
                   cursor='pointer'
                   onClick={onClose}
-                />{' '}
+                />
                 <FormControl>
                   <FormLabel>Concepto</FormLabel>
                   <Input

@@ -162,10 +162,9 @@ const ListadoProductos = () => {
               <Tr>
                 <Th>Nombre</Th>
                 <Th>Cant.</Th>
-                <Th>Target</Th>
                 <Th>Packs</Th>
-                <Th>Medida</Th>
                 <Th>Stock</Th>
+                <Th>Target</Th>
                 {user?.rol === 'Superadmin' && <Th></Th>}
               </Tr>
             </Thead>
@@ -185,15 +184,13 @@ const ListadoProductos = () => {
                     <Tr key={id}>
                       <Td>{nombre}</Td>
                       <Td fontSize='md'>
-                        <b>{cantidad}</b>
+                        <b>{cantidad}</b> ({medida})
                       </Td>
-                      <Td>{target}</Td>
                       <Td>
                         {cantidadPorPack > 1
                           ? Number((cantidad / cantidadPorPack).toFixed(2)) / 1
                           : '-'}
                       </Td>
-                      <Td>{medida}</Td>
                       <Td>
                         {cantidad > 0 ? (
                           <MdCheckBox
@@ -203,7 +200,8 @@ const ListadoProductos = () => {
                         ) : (
                           <MdCancel style={{ marginLeft: '5px' }} color='red' />
                         )}
-                      </Td>{' '}
+                      </Td>
+                      <Td>{target}</Td>
                       {user?.rol === 'Superadmin' && (
                         <Td>
                           <Flex align='center' gap={1}>

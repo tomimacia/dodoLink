@@ -8,6 +8,7 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  HStack,
   IconButton,
   Input,
   NumberInput,
@@ -36,6 +37,9 @@ const ProductoForm = ({
   const [formData, setFormData] = useState({ ...rest });
   const [codigos, setCodigos] = useState(codigo);
   const [loading, setLoading] = useState(false);
+  const [cantidadEnPacks, setCantidaEnPacks] = useState(
+    formData.cantidad / formData.cantidadPorPack
+  );
   const toast = useToast();
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -99,6 +103,14 @@ const ProductoForm = ({
   //   newCodigos[ind] = Number(e.target.value);
   //   setCodigos(newCodigos);
   // };
+  const handlePacks = (isSum: boolean) => {
+    setCantidaEnPacks((prev) => prev + (isSum ? 1 : -1));
+    setFormData((prev) => ({
+      ...prev,
+      cantidad:
+        prev.cantidad + (isSum ? prev.cantidadPorPack : -prev.cantidadPorPack),
+    }));
+  };
   return (
     <Flex flexDir='column' gap={4}>
       <Heading textAlign='center' size='md'>
@@ -147,6 +159,19 @@ const ProductoForm = ({
           >
             <NumberInputField required />
           </NumberInput>
+        </FormControl>
+        <Divider borderColor='gray' />
+        <FormControl
+          display='flex'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <FormLabel>Total en Packs</FormLabel>
+          <HStack gap={5} maxW='320px'>
+            <Button onClick={() => handlePacks(true)}>+</Button>
+            <Text fontWeight='bold'>{cantidadEnPacks.toFixed(2)}</Text>
+            <Button onClick={() => handlePacks(false)}>-</Button>
+          </HStack>
         </FormControl>
         <Divider borderColor='gray' />
         {/* Medida */}

@@ -66,7 +66,7 @@ const SideNavMobile = ({
                 height: '100%',
               }}
               filter='drop-shadow(0 0 2px rgba(0, 0, 0, 0.5))'
-              src='/HLogo.png'
+              src='/Hlogo.png'
             />
           </Flex>
         </DrawerHeader>

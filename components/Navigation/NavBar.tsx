@@ -62,7 +62,7 @@ export default function Navbar({
                 borderRadius={5}
                 cursor='pointer'
                 height={imageNavbarSize}
-                src='/HLogo.png'
+                src='/Hlogo.png'
               />
             </Link>
 

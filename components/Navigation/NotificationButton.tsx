@@ -90,7 +90,9 @@ const NotificationButton = () => {
             );
           })}
           {notifications.length === 0 && (
-            <MenuItem>No tienes notificaciones</MenuItem>
+            <MenuItem bg='transparent' cursor='default'>
+              No tienes notificaciones
+            </MenuItem>
           )}
         </MenuList>
       </Menu>

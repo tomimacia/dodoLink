@@ -18,7 +18,7 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AgregarCodigo from './AgregarCodigo';
 
 const ProductoForm = ({
@@ -47,7 +47,9 @@ const ProductoForm = ({
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
+  useEffect(() => {
+    setCantidaEnPacks(formData.cantidad / formData.cantidadPorPack);
+  }, [formData.cantidad, formData.cantidadPorPack]);
   const handleNumberChange = (_: string, valueAsNumber: number) => {
     setFormData((prev) => ({ ...prev, cantidadPorPack: valueAsNumber }));
   };

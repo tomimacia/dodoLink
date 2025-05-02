@@ -36,7 +36,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Firebase Cloud Functions
-functions/lib
-functions/node_modules
-functions/*.log
-functions/.env
+# functions/lib
+# functions/node_modules
+# functions/*.log
+# functions/.env

@@ -18,7 +18,7 @@ const EntradasSection = ({
 }) => {
   const { user } = useUser();
   const filtered = grupo.filter(
-    (r) => r.estado === 'Pendiente' || CheckAdminRol(user?.rol) 
+    (r) => r.estado === 'Pendiente' || CheckAdminRol(user?.rol)
   );
   const getRoute = (route: string) => {
     if (title === 'Reservas') return `/PedidosID/${route}`;

@@ -15,6 +15,7 @@ import {
   Progress,
   useColorModeValue,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import CobrarForm from './CobrarForm';
 import { CheckAdminRol } from '@/data/data';
@@ -45,6 +46,17 @@ const CargarModal = ({
   const handleClose = () => {
     resetFilters();
     onClose();
+  };
+  const toast = useToast();
+  const Pedido = () => {
+    toast({
+      title: 'No disponbile',
+      description:
+        'Opción no disponible por el momento, estamos trabajando en las actualizaciones',
+      isClosable: true,
+      status: 'info',
+      duration: 5000,
+    });
   };
   return (
     <Flex>
@@ -91,7 +103,7 @@ const CargarModal = ({
             w='95%'
             borderRadius={5}
             my={2}
-            onClick={() => handleOpen(true)}
+            onClick={Pedido}
           >
             Compra
           </MenuItem>

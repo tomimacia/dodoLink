@@ -92,7 +92,7 @@ const PedidosRealTimeCard = ({
           onClick={() => updatePedido(id)}
           isLoading={loadingUpdate}
         >
-          Confirmar
+          Actualizar
         </Button>
         <Button
           as={Link}

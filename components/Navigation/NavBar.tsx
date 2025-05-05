@@ -53,7 +53,9 @@ export default function Navbar({
             justify='space-between'
           >
             <Flex h='100%' gap={2}>
-              <HamburguerButton mx={[2, 2, 5, 5, 5]} setOpen={setOpen} />
+              {user?.rol !== 'Cuadrilla' && (
+                <HamburguerButton mx={[2, 2, 5, 5, 5]} setOpen={setOpen} />
+              )}
             </Flex>
 
             <Link href='/'>

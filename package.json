@@ -16,6 +16,7 @@
     "@fontsource/raleway": "^5.0.16",
     "@fontsource/roboto-mono": "^5.1.1",
     "@lottiefiles/dotlottie-react": "^0.12.3",
+    "@yudiel/react-qr-scanner": "^2.3.0",
     "axios": "^1.9.0",
     "date-fns": "^3.3.1",
     "firebase": "^10.7.2",

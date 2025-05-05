@@ -15,12 +15,12 @@ import {
   Progress,
   useColorModeValue,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 import CobrarForm from './CobrarForm';
+import { CheckAdminRol } from '@/data/data';
+import { useUser } from '@/context/userContext';
 
 const CargarModal = ({
-  initialIsPago,
   size,
   getNewClient,
 }: {
@@ -28,31 +28,23 @@ const CargarModal = ({
   size: string;
   getNewClient?: () => Promise<void>;
 }) => {
-  const { resetFilters, setIsPago, checkForUpdates, loadingProductos } =
+  const { resetFilters, setIsPago, isPago, checkForUpdates, loadingProductos } =
     useCobrarFormContext();
+  const { user } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
   const customHover = useColorModeValue(
     { bg: 'gray.700', color: 'white' },
     { bg: 'white', color: 'gray.700' }
   );
-  const handleOpen = async () => {
+  if (!CheckAdminRol(user?.rol)) return <></>;
+  const handleOpen = async (initialIsCompra?: boolean) => {
     await checkForUpdates();
-    setIsPago(initialIsPago ? true : false);
+    setIsPago(initialIsCompra ? true : false);
     onOpen();
   };
   const handleClose = () => {
     resetFilters();
     onClose();
-  };
-  const handleOpenDev = () => {
-    toast({
-      title: 'Próximamente',
-      description: 'Estamos trabajando en las actualizaciones',
-      isClosable: true,
-      duration: 5000,
-      status: 'info',
-    });
   };
   return (
     <Flex>
@@ -88,7 +80,7 @@ const CargarModal = ({
             w='95%'
             borderRadius={5}
             my={2}
-            onClick={handleOpenDev}
+            onClick={() => handleOpen(false)}
           >
             Reserva
           </MenuItem>
@@ -99,7 +91,7 @@ const CargarModal = ({
             w='95%'
             borderRadius={5}
             my={2}
-            onClick={handleOpenDev}
+            onClick={() => handleOpen(true)}
           >
             Compra
           </MenuItem>
@@ -128,7 +120,7 @@ const CargarModal = ({
             bg='blackAlpha.200'
           />
           <ModalHeader p={3}>
-            Nueva {initialIsPago ? 'Orden de Compra' : 'Reserva de Pedido'}
+            Nueva {isPago ? 'Orden de Compra' : 'Reserva de Pedido'}
           </ModalHeader>
           <ModalBody>
             <CobrarForm getNewClient={getNewClient} onClose={onClose} />

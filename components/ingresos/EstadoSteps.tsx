@@ -1,4 +1,5 @@
-import { Estados, EstadoType } from '@/types/types';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { EstadoColors, Estados, EstadoType } from '@/types/types';
 import {
   Box,
   Flex,
@@ -45,24 +46,41 @@ const EstadoSteps = ({ estado }: { estado: EstadoType }) => {
     'vertical',
     'horizontal',
   ]);
-
+  const { invertedTextColor } = useThemeColors();
+  const prevColor =
+    EstadoColors[Estados[Estados.indexOf(estado) - 1]] ?? 'gray';
   return (
     <Flex flexDir='column' gap={2}>
       <Flex flexDir='column'>
-        <Flex fontSize='xl' w='fit-content' gap={2}>
-          <Text>Estado:</Text>
-          <AnimatePresence mode='wait'>
+        <motion.div
+          key={EstadoColors[estado]}
+          style={{
+            display: 'flex',
+            borderRadius: '10px',
+            gap: 8,
+            flexDirection: 'column',
+            paddingRight: 6,
+            paddingLeft: 6,
+            color: invertedTextColor,
+            width: 'fit-content',
+          }}
+          initial={{ backgroundColor: prevColor }}
+          animate={{ backgroundColor: EstadoColors[estado] }}
+          transition={{ duration: 1 }}
+        >
+          <Flex fontSize='lg' w='fit-content' gap={2}>
+            <Text>Estado:</Text>
+
             <motion.p
-              key={estado}
-              initial={{ opacity: 0, x: 5 }}
-              exit={{ opacity: 0, x: 5 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ type: 'tween', duration: 0.5 }}
+              style={{ fontWeight: 'bold' }}
+              initial={{ y: -20 }}
+              animate={{ y: 0 }}
+              transition={{ type: 'tween' }}
             >
-              <strong>{steps[activeStep]?.title || 'Finalizado'}</strong>
+              {estado}
             </motion.p>
-          </AnimatePresence>
-        </Flex>
+          </Flex>
+        </motion.div>
         <Text fontStyle='italic' fontSize='sm'>
           {steps[activeStep]?.description || 'Pedido concluido'}
         </Text>

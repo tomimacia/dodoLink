@@ -1,31 +1,46 @@
-import { Button, Center, Divider, Flex, Heading } from '@chakra-ui/react';
+import {
+  Button,
+  Center,
+  Divider,
+  Flex,
+  Heading,
+  Icon,
+  Text,
+} from '@chakra-ui/react';
+import { MdErrorOutline } from 'react-icons/md';
 import Link from 'next/link';
 
 const NotFoundPage = ({ title }: { title: string }) => {
   return (
-    <Center mx='auto'>
+    <Center minH='70vh'>
       <Flex
-        gap={4}
-        boxShadow='0 0 5px 1px gray'
-        borderRadius={10}
-        flexDir='column'
-        p={4}
+        direction='column'
         align='center'
-        mt={10}
+        gap={4}
+        p={8}
+        boxShadow='md'
+        borderRadius='2xl'
+        bg='gray.50'
+        maxW='400px'
+        textAlign='center'
       >
-        <Heading as='h2' size='lg'>
+        <Icon as={MdErrorOutline} boxSize={12} color='red.400' />
+        <Heading as='h2' size='lg' color='gray.700'>
           {title}
         </Heading>
-        <Divider borderColor='gray' w='95%' />
+        <Text fontSize='sm' color='gray.500'>
+          La página que buscás no existe o fue movida.
+        </Text>
+        <Divider borderColor='gray.300' w='80%' />
         <Button
-          _hover={{ opacity: 0.65 }}
           as={Link}
-          w='fit-content'
-          size='sm'
-          bg='gray.300'
           href='/'
+          size='sm'
+          colorScheme='gray'
+          variant='outline'
+          _hover={{ bg: 'gray.100' }}
         >
-          Volver
+          Volver al inicio
         </Button>
       </Flex>
     </Center>

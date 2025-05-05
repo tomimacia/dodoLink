@@ -1,6 +1,8 @@
 import { useUser } from '@/context/userContext';
-import { addDots } from '@/helpers/addDots';
+import { deleteSingleDoc } from '@/firebase/services/deleteSingleDoc';
 import useGetProductos from '@/hooks/data/useGetProductos';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { ProductoType } from '@/types/types';
 import {
   Button,
   Flex,
@@ -17,12 +19,8 @@ import {
 import { useEffect, useState } from 'react';
 import { MdCancel, MdCheckBox, MdDelete } from 'react-icons/md';
 import ReactLoading from 'react-loading';
-import ProductoModal from './Editar/ProductoModal';
-import { ProductoType } from '@/types/types';
 import DeleteModal from '../DeleteModal';
-import { deleteSingleDoc } from '@/firebase/services/deleteSingleDoc';
-import { sendContactForm } from '@/nodemailer/contact';
-import dateTexto from '@/helpers/dateTexto';
+import ProductoModal from './Editar/ProductoModal';
 const ListadoProductos = () => {
   const {
     productos,
@@ -34,6 +32,7 @@ const ListadoProductos = () => {
   useEffect(() => {
     if (productos?.length === 0) getProductos();
   }, []);
+  const { loadingColor } = useThemeColors();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -144,7 +143,7 @@ const ListadoProductos = () => {
         <Flex w='100%' my={10} justify='center'>
           <ReactLoading
             type='bars'
-            color='#333c87'
+            color={loadingColor}
             height='100px'
             width='50px'
           />

@@ -10,6 +10,7 @@ import {
   Th,
   Thead,
   Tr,
+  useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
 import ReactLoading from 'react-loading';
@@ -19,6 +20,7 @@ import { MdDelete } from 'react-icons/md';
 import { useState } from 'react';
 import { deleteUser } from '@/firebase/services/deleteUser';
 import { deleteSingleDoc } from '@/firebase/services/deleteSingleDoc';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 const UserList = ({
   users,
@@ -65,6 +67,7 @@ const UserList = ({
       setLoading(false);
     }
   };
+  const { loadingColor } = useThemeColors();
   return (
     <>
       {users.length > 0 && !loadingUserList && (
@@ -132,7 +135,7 @@ const UserList = ({
         <Flex maxW='700px' my={10} justify='center'>
           <ReactLoading
             type='bars'
-            color='#333c87'
+            color={loadingColor}
             height='100px'
             width='50px'
           />

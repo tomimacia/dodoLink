@@ -9,7 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
-  useColorModeValue
+  useColorModeValue,
 } from '@chakra-ui/react';
 import Barcode from 'react-barcode';
 import ProductoModal from './Editar/ProductoModal';

@@ -1,5 +1,6 @@
 import { useOnCurso } from '@/context/useOnCursoContext';
 import { useUser } from '@/context/userContext';
+import { CheckAdminRol } from '@/data/data';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { PedidoType } from '@/types/types';
 import { BellIcon } from '@chakra-ui/icons';
@@ -19,27 +20,36 @@ import { useRouter } from 'next/router';
 const NotificationButton = () => {
   const { reservas, compras } = useOnCurso();
   const { user } = useUser();
-  const notifications =
-    reservas?.filter((r) => !r.vistoPor.some((v) => v === user?.id)) || [];
+  const notificationsUnseen =
+    reservas?.filter((r) => {
+      const noVisto = !r.vistoPor.some((v) => v === user?.id);
+      const puedeVer = r.estado === 'Pendiente' || CheckAdminRol(user?.rol);
+      return noVisto && puedeVer;
+    }) || [];
+  const notificationsToShow =
+    reservas?.filter((r) => {
+      const puedeVer = r.estado === 'Pendiente' || CheckAdminRol(user?.rol);
+      return puedeVer;
+    }) || [];
   const { push } = useRouter();
-  const updatePedido = (p: PedidoType) => {
-    const { id, isPago } = p;
-    const field = isPago ? 'compras' : 'reservas';
-    const arr = isPago ? compras : reservas;
-    const newField = arr?.map((ped) =>
-      id === ped.id ? { ...ped, vistoPor: [...ped.vistoPor, user?.id] } : ped
-    );
-    setSingleDoc('movimientos', 'enCurso', {
-      [field]: newField,
-    });
-    push(`/PedidosID/${id}`);
+  const updateNotifications = () => {
+    if (notificationsUnseen.length > 0) {
+      const actualizadas = reservas?.map((r) =>
+        notificationsUnseen.some((n) => n.id === r.id)
+          ? { ...r, vistoPor: [...r.vistoPor, user?.id] }
+          : r
+      );
+      setSingleDoc('movimientos', 'enCurso', {
+        reservas: actualizadas,
+      });
+    }
   };
   const customImageBG = useColorModeValue('gray.500', 'gray.700');
   const customSize = useBreakpointValue(['xs', 'sm', 'sm', 'sm', 'sm']) || 'sm';
 
   return (
     <Flex pos='relative'>
-      {notifications.length > 0 && (
+      {notificationsUnseen.length > 0 && (
         <Box
           pos='absolute'
           top={-1}
@@ -56,10 +66,10 @@ const NotificationButton = () => {
           zIndex={1}
           pointerEvents='none'
         >
-          {notifications.length}
+          {notificationsUnseen.length}
         </Box>
       )}
-      <Menu>
+      <Menu onOpen={updateNotifications}>
         <MenuButton
           as={IconButton}
           aria-label='Options'
@@ -78,10 +88,10 @@ const NotificationButton = () => {
           fontSize='sm'
           boxShadow='rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 5px 10px, rgba(0, 0, 0, 0.4) 0px 5px 40px'
         >
-          {notifications?.map((n, ind) => {
+          {notificationsToShow?.map((n, ind) => {
             return (
               <MenuItem
-                onClick={() => updatePedido(n)}
+                onClick={() => push(`/PedidosID/${n.id}`)}
                 key={`notification-key-${n}-${ind}`}
               >
                 {`${n.isPago ? 'Compra' : 'Reserva'} - `}
@@ -89,7 +99,7 @@ const NotificationButton = () => {
               </MenuItem>
             );
           })}
-          {notifications.length === 0 && (
+          {notificationsToShow.length === 0 && (
             <MenuItem bg='transparent' cursor='default'>
               No tienes notificaciones
             </MenuItem>

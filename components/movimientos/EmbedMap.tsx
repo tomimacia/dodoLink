@@ -3,7 +3,7 @@
 import { Button, Flex } from '@chakra-ui/react';
 import React, { useState } from 'react';
 
-const MapEmbed = ({ lat, lng, src, zoom = 15 }: any) => {
+const MapEmbed = ({ hideButton = false, lat, lng, src, zoom = 15 }: any) => {
   const [showMap, setShowMap] = useState(true);
   function extractSrcFromIframe(iframe: string) {
     // Extraemos el src del iframe
@@ -21,15 +21,17 @@ const MapEmbed = ({ lat, lng, src, zoom = 15 }: any) => {
 
   return (
     <Flex flexDir='column' width='100%' height={showMap ? '400px' : undefined}>
-      <Button
-        w='fit-content'
-        size='xs'
-        bg='transparent'
-        _hover={{ opacity: 0.8, textDecor: 'underline' }}
-        onClick={() => setShowMap((prev) => !prev)}
-      >
-        {showMap ? 'Ocultar' : 'Mostrar'} Mapa
-      </Button>
+      {!hideButton && (
+        <Button
+          w='fit-content'
+          size='xs'
+          bg='transparent'
+          _hover={{ opacity: 0.8, textDecor: 'underline' }}
+          onClick={() => setShowMap((prev) => !prev)}
+        >
+          {showMap ? 'Ocultar' : 'Mostrar'} Mapa
+        </Button>
+      )}
       {showMap && (
         <iframe
           width='100%'

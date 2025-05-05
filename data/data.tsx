@@ -1,4 +1,4 @@
-import { MedidaType, TipoDePagoType } from '@/types/types';
+import { MedidaType, RolType, TipoDePagoType } from '@/types/types';
 import { CiBoxes } from 'react-icons/ci';
 import { FaBoxes, FaClipboardList, FaRegUser, FaUser } from 'react-icons/fa';
 import {
@@ -16,7 +16,7 @@ export const Routes = [
     route: 'Inicio',
     iconFilled: IoHomeSharp,
     iconEmpty: IoHomeOutline,
-    roles: ['Admin', 'Superadmin'],
+    roles: ['Admin', 'Superadmin', 'Supervisor', 'Cuadrilla'],
     subRoutes: [],
   },
   {
@@ -90,6 +90,10 @@ export const Routes = [
     ],
   },
 ];
+export const AdminRoles: RolType[] = ['Admin', 'Superadmin', 'Supervisor'];
+export const CheckAdminRol = (rol?: RolType) => {
+  return AdminRoles.some((r) => r === rol);
+};
 export const allRoutesWithRoles = Routes.flatMap((route) => [
   {
     route: route.route === 'Inicio' ? '/' : `/${route.route}`,

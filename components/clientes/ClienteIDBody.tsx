@@ -1,12 +1,7 @@
 import { useUser } from '@/context/userContext';
 import dateTexto from '@/helpers/dateTexto';
-import {
-  Divider,
-  Flex,
-  Heading,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { Divider, Flex, Heading, Text } from '@chakra-ui/react';
 import { useState } from 'react';
 import ReactLoading from 'react-loading';
 import ClienteModal from './Editar/ClienteModal';
@@ -27,7 +22,7 @@ const ClienteIDBody = ({ client }: { client: any }) => {
     apellido,
   } = clientUpdated;
   const { user } = useUser();
-  const estadoTextColor = useColorModeValue('white', 'black');
+  const { invertedTextColor } = useThemeColors();
   return (
     <Flex gap={2} flexDir='column'>
       <Flex flexDir='column'>
@@ -65,7 +60,11 @@ const ClienteIDBody = ({ client }: { client: any }) => {
                 bg={'green'}
                 flexDir='column'
               >
-                <Text color={estadoTextColor} fontSize={17} fontWeight='medium'>
+                <Text
+                  color={invertedTextColor}
+                  fontSize={17}
+                  fontWeight='medium'
+                >
                   Estado: {'estado'}
                 </Text>
               </Flex>

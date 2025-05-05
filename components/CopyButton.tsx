@@ -17,7 +17,7 @@ const CopyButton = ({
     navigator?.clipboard?.writeText(content);
     if (!isCopied) {
       toast({
-        title: 'Copiada!',
+        title: 'Copiado',
         description: description,
         status: 'success',
         duration: 5000,

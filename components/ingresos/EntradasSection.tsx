@@ -2,6 +2,11 @@ import { PedidoType } from '@/types/types';
 import { Flex, Heading } from '@chakra-ui/react';
 import { AnimatePresence } from 'framer-motion';
 import PedidosRealTimeCard from './PedidosRealTimeCard';
+import { useUser } from '@/context/userContext';
+import { CheckAdminRol } from '@/data/data';
+import NoPedidosCard from './NoPedidosCard';
+import QrScanner from '../inicio/QrScanner';
+import capitalizeFirst from '@/helpers/capitalizeFirst';
 const EntradasSection = ({
   grupo,
   loading,
@@ -11,16 +16,28 @@ const EntradasSection = ({
   loading: boolean;
   title: string;
 }) => {
-  if (grupo.length === 0) return <></>
+  const { user } = useUser();
+  const filtered = grupo.filter(
+    (r) => r.estado === 'Pendiente' || CheckAdminRol(user?.rol) 
+  );
+  const getRoute = (route: string) => {
+    if (title === 'Reservas') return `/PedidosID/${route}`;
+    return `/ComprasID/${route}`;
+  };
   return (
-    <Flex flexDir='column'>
+    <Flex gap={2} flexDir='column'>
       <Heading as='h3' size='lg'>
         {title}
       </Heading>
+      <QrScanner
+        title={`Escanear Código de ${capitalizeFirst(title.slice(0, -1))}`}
+        getRoute={getRoute}
+      />
+      {filtered.length === 0 && <NoPedidosCard title={title.toLowerCase()} />}
       <Flex w='100%' flexWrap='wrap' gap={2}>
         <AnimatePresence>
-          {grupo.length > 0 &&
-            grupo.map((r: PedidoType, index: number) => {
+          {filtered.length > 0 &&
+            filtered.map((r: PedidoType, index: number) => {
               return (
                 <PedidosRealTimeCard
                   key={r.id + 'pedidoskey'}

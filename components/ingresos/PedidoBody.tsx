@@ -1,5 +1,6 @@
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { EstadoColors, Estados, PedidoType } from '@/types/types';
-import { Flex, Heading, Text, useColorModeValue } from '@chakra-ui/react';
+import { Flex, Heading, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 const PedidoBody = ({
   pedido,
@@ -23,7 +24,7 @@ const PedidoBody = ({
     },
   };
   const thisSize = customSizes[size];
-  const estadoTextColor = useColorModeValue('white', 'black');
+  const { invertedTextColor } = useThemeColors();
   const { cliente, estado, detalle } = pedido ?? {};
   const prevColor =
     EstadoColors[Estados[Estados.indexOf(estado) - 1]] ?? 'gray';
@@ -39,7 +40,7 @@ const PedidoBody = ({
             flexDirection: 'column',
             paddingRight: 6,
             paddingLeft: 6,
-            color: estadoTextColor,
+            color: invertedTextColor,
             width: 'fit-content',
           }}
           initial={{ backgroundColor: prevColor }}

@@ -1,4 +1,5 @@
-import { Routes } from '@/data/data';
+import { useUser } from '@/context/userContext';
+import { CheckAdminRol, Routes } from '@/data/data';
 import useAdminAuth from '@/hooks/useAdminAuth';
 import { SubNavItemType } from '@/types/types';
 import { Divider, Flex } from '@chakra-ui/react';
@@ -12,13 +13,14 @@ import SideNav from '../Navigation/SideNav';
 const MainChildren = ({ children }: { children: ReactNode }) => {
   const { pathname } = useRouter();
   const customPath = pathname.split('/')[1];
-
+  const { user } = useUser();
   // Buscar la ruta en la nueva estructura de rutas
   const currentRoute = Routes.find((r) => r.route === customPath);
   const isAuthAdmin = useAdminAuth();
+
   return (
     <Flex mt={['3.6rem', '4.9rem']} w='100%'>
-      <SideNav />
+      {CheckAdminRol(user?.rol) && <SideNav />}
       <Flex w='100%' flexDir='column'>
         <Divider my={1} alignSelf='center' w='95%' />
         <motion.div

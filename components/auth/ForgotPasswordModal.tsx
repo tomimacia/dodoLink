@@ -10,7 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useDisclosure
+  useDisclosure,
 } from '@chakra-ui/react';
 
 const ForgotPasswordModal = () => {
@@ -42,7 +42,7 @@ const ForgotPasswordModal = () => {
             _hover={{ bg: 'blackAlpha.400' }}
             bg='blackAlpha.200'
           />
-          <ModalHeader fontSize={24}>Reestablecer contraseña</ModalHeader>
+          <ModalHeader>Reestablecer contraseña</ModalHeader>
           <ModalBody>
             <Flex
               mx='auto'

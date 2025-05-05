@@ -61,6 +61,7 @@ export type PedidoType = {
   creadorID: string;
   mapCoords: string;
   vistoPor: string[];
+  items: ProductoType[];
 };
 export type MedidaType = 'Un.' | 'Kg.' | 'Mt.';
 export type ProductoType = {

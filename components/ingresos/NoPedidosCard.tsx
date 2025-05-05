@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heading } from '@chakra-ui/react';
-const NoClientCard = () => {
+const NoPedidosCard = ({ title }: { title: string }) => {
   return (
     <motion.div
       key={'no-client'}
@@ -17,9 +17,9 @@ const NoClientCard = () => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: 'tween' }}
     >
-      <Heading size='sm'>No hay pedidos en curso</Heading>
+      <Heading size='sm'>No hay {title} en curso</Heading>
     </motion.div>
   );
 };
 
-export default NoClientCard;
+export default NoPedidosCard;

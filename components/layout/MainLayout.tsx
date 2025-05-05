@@ -10,7 +10,6 @@ import MainChildren from './MainChildren';
 const Layout = ({ children }: MainLayoutType) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useUser();
-
   const isOnline = user !== null;
 
   return (

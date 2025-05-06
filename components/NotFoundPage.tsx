@@ -10,7 +10,13 @@ import {
 import { MdErrorOutline } from 'react-icons/md';
 import Link from 'next/link';
 
-const NotFoundPage = ({ title }: { title: string }) => {
+const NotFoundPage = ({
+  title,
+  content,
+}: {
+  title: string;
+  content: string;
+}) => {
   return (
     <Center minH='70vh'>
       <Flex
@@ -22,14 +28,13 @@ const NotFoundPage = ({ title }: { title: string }) => {
         borderRadius='2xl'
         bg='gray.50'
         maxW='400px'
-        textAlign='center'
       >
         <Icon as={MdErrorOutline} boxSize={12} color='red.400' />
-        <Heading as='h2' size='lg' color='gray.700'>
+        <Heading textAlign='center' as='h2' size='lg' color='gray.700'>
           {title}
         </Heading>
-        <Text fontSize='sm' color='gray.500'>
-          La página que buscás no existe o fue movida.
+        <Text maxW='350px' fontSize='sm' color='gray.500'>
+          {content}
         </Text>
         <Divider borderColor='gray.300' w='80%' />
         <Button

@@ -203,7 +203,7 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
       </Flex>
       <Flex gap={1} flexDir='column'>
         <EstadoSteps estado={estado} />
-        <VerMovimientosModal pedido={currentMov} />
+        <VerMovimientosModal currentEstado={estado} pedido={currentMov} />
       </Flex>
       <Flex flexDir='column' gap={2}>
         <Heading fontWeight='normal' as='h2' size='md'>

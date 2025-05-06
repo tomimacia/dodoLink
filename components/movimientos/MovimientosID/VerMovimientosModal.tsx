@@ -24,15 +24,41 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-const ArrowIconShow = ({ estado }: { estado: EstadoType }) => {
-  if (estado === 'Finalizado') return <></>;
-  return (
-    <Flex my={1} justify='center'>
-      <ArrowDownIcon fontSize='xs' />
-    </Flex>
-  );
-};
-const VerMovimientosModal = ({ pedido }: { pedido: PedidoType }) => {
+import { motion } from 'framer-motion';
+
+const VerMovimientosModal = ({
+  currentEstado,
+  pedido,
+}: {
+  currentEstado: EstadoType;
+  pedido: PedidoType;
+}) => {
+  const ArrowIconShow = ({ estado }: { estado: EstadoType }) => {
+    if (estado === 'Finalizado') return <></>;
+    const isEstado = estado === currentEstado;
+    if (isEstado) {
+      return (
+        <motion.div
+          style={{
+            display: 'flex',
+            marginTop: '4px',
+            marginBottom: '4px',
+            justifyContent: 'center',
+            filter: 'drop-shadow(0 0 2px rgba(0, 0, 0, 0.5))',
+          }}
+          animate={{ y: [-0.5, 0.5, -0.5] }}
+          transition={{ duration: 1, repeat: Infinity }}
+        >
+          <ArrowDownIcon fontSize='xs' color='blue.500' />
+        </motion.div>
+      );
+    }
+    return (
+      <Flex my={1} justify='center'>
+        <ArrowDownIcon fontSize='xs' />
+      </Flex>
+    );
+  };
   const { users } = useGetUsers();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -43,6 +69,7 @@ const VerMovimientosModal = ({ pedido }: { pedido: PedidoType }) => {
 
   const renderMovimiento = (estado: EstadoType) => {
     const movimiento = pedido.movimientos[estado];
+    const isEstado = estado === currentEstado;
     if (!movimiento?.fecha || !movimiento?.admin)
       return (
         <>
@@ -78,6 +105,7 @@ const VerMovimientosModal = ({ pedido }: { pedido: PedidoType }) => {
           bg={cardBg}
           p={4}
           w='100%'
+          boxShadow={isEstado ? '0 0 2px' : 'none'}
         >
           <Flex align='center' justify='space-between' mb={2}>
             <Heading size='sm'>{estado}</Heading>

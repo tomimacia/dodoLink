@@ -1,10 +1,7 @@
 import MovimientoCard from '@/components/movimientos/MovimientosID/MovimientoCard';
-import NotAuthorized from '@/components/Navigation/NotAuthorized';
 import NotFoundPage from '@/components/NotFoundPage';
 import { useUser } from '@/context/userContext';
-import { CheckAdminRol } from '@/data/data';
 import { getSingleDoc } from '@/firebase/services/getSingleDoc';
-import { getEstado } from '@/helpers/cobros/getEstado';
 import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
 import { formatIngreso } from '@/helpers/movimientos/formatIngreso';
 import { MovimientosType, PedidoType } from '@/types/types';
@@ -53,9 +50,6 @@ const MovimientoID = ({ movimiento }: { movimiento: PedidoType | null }) => {
         title='Movimiento no encontrado'
       />
     );
-  const estado = getEstado(movimiento?.movimientos);
-  if (!CheckAdminRol(user?.rol) && estado !== 'Pendiente')
-    return <NotAuthorized />;
   return <MovimientoCard movimiento={movimiento} />;
 };
 

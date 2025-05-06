@@ -15,13 +15,13 @@ import {
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
+import { Timestamp } from 'firebase/firestore';
 import { useRef, useState } from 'react';
 import ClienteYDetalle from './CobraFormComps/ClienteYDetalle';
 import ProductosTable from './CobraFormComps/ProductosTable';
 import TitleSearchYItem from './CobraFormComps/TitleSearchYItem';
 import MapEmbed from './EmbedMap';
-import { Timestamp } from 'firebase/firestore';
-import dateTexto from '@/helpers/dateTexto';
+import { extractSrcFromIframe } from '@/helpers/extractSrcFromIframe';
 
 const CobrarForm = ({
   onClose,
@@ -193,8 +193,20 @@ const CobrarForm = ({
     confirmButtonRef.current?.blur();
     isPago ? ConfirmarCompra() : ConfirmarReserva();
   };
+
   const confirmMap = () => {
-    setEmbed(embedValue);
+    const src = extractSrcFromIframe(embedValue);
+    if (!src) {
+      toast({
+        title: 'Error',
+        description: 'Ingresá un iframe válido',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    setEmbed(src);
     setEmbedValue('');
   };
   return (
@@ -221,7 +233,7 @@ const CobrarForm = ({
             borderColor='gray'
             borderRadius={5}
             value={embedValue}
-            placeholder='Ingresar mapa html'
+            placeholder='Insertar mapa html'
             onChange={(e) => setEmbedValue(e.target.value)}
           />
           <Button onClick={confirmMap} size='sm' bg='blue.700' color='white'>
@@ -229,7 +241,7 @@ const CobrarForm = ({
           </Button>
         </Flex>
       )}
-      <MapEmbed clean={() => setEmbed('')} src={embed} />
+      <MapEmbed initialShow clean={() => setEmbed('')} src={embed} />
       <TitleSearchYItem />
       <ProductosTable />
       <Flex mt='auto' p={5} flexDir='column' gap={3}>

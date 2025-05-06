@@ -5,24 +5,19 @@ import React, { useState } from 'react';
 import ReactLoading from 'react-loading';
 
 type MapEmbedType = {
+  initialShow?: boolean;
   hideButtons?: boolean;
   src: string;
   clean?: () => void;
 };
-const MapEmbed = ({ hideButtons = false, src, clean }: MapEmbedType) => {
-  const [showMap, setShowMap] = useState(true);
-  function extractSrcFromIframe(iframe: string) {
-    // Extraemos el src del iframe
-    const srcMatch = iframe.match(/src="([^"]+)"/);
+const MapEmbed = ({
+  hideButtons = false,
+  src,
+  clean,
+  initialShow,
+}: MapEmbedType) => {
+  const [showMap, setShowMap] = useState(initialShow);
 
-    if (srcMatch) {
-      const src = srcMatch[1];
-      return src; // Devuelve solo el src
-    }
-
-    // Si no se encuentra un src, retornar null
-    return null;
-  }
   const cleanFunc = () => {
     clean && clean();
     setShowMap(true);
@@ -30,7 +25,7 @@ const MapEmbed = ({ hideButtons = false, src, clean }: MapEmbedType) => {
   if (!src) return <p>No se especificó ubicación.</p>;
 
   return (
-    <Flex flexDir='column' width='100%' height={showMap ? '400px' : undefined}>
+    <Flex flexDir='column' width='100%' h={showMap ? '100%' : undefined}>
       {!hideButtons && (
         <Flex gap={2}>
           <Button
@@ -54,12 +49,13 @@ const MapEmbed = ({ hideButtons = false, src, clean }: MapEmbedType) => {
         </Flex>
       )}
       {showMap && (
-        <Flex w='100%' h='100%' pos='relative'>
+        <Flex minH='300px' w='100%' h='100%' pos='relative'>
           <Flex
             justify='center'
             align='center'
             pos='absolute'
             bg='gray.50'
+            borderRadius='8px'
             h='100%'
             w='100%'
           >
@@ -68,11 +64,17 @@ const MapEmbed = ({ hideButtons = false, src, clean }: MapEmbedType) => {
           <iframe
             width='100%'
             height='100%'
-            style={{ border: 0, zIndex: 1 }}
+            style={{
+              border: 0,
+              zIndex: 1,
+              borderRadius: '8px',
+              minHeight: '300px',
+            }}
+            title='Google Map'
             loading='lazy'
             allowFullScreen
             referrerPolicy='no-referrer-when-downgrade'
-            src={extractSrcFromIframe(src) || ''}
+            src={src || ''}
           ></iframe>
         </Flex>
       )}

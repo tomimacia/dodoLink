@@ -39,11 +39,11 @@ const TitleSearchYItem = () => {
     const { id } = producto;
     const newItems = items.some((i) => i.id === id)
       ? items.map((p) => {
-          if (p?.codigo?.join('-') === producto?.codigo?.join('-'))
+          if (p?.id === producto?.id)
             return { ...p, unidades: (p?.unidades || 0) + 1 };
           return p;
         })
-      : [...items, { ...producto, unidades: 1 }];
+      : [...items, { ...producto, unidades: producto?.unidades || 1 }];
     setItems(newItems);
   };
   const onChangeNewItem = (e: any) => {
@@ -58,10 +58,17 @@ const TitleSearchYItem = () => {
         duration: 3000,
         isClosable: true,
       });
-    addProducto({ ...newItem, codigo: [items.length * 77] });
+    addProducto({
+      ...newItem,
+      codigo: [items.length * 77],
+      id: items.length * 77 + '',
+      cantidad: Number(newItem.cantidad),
+      unidades: Number(newItem.cantidad),
+    });
     setNewItem(initialItem);
     onClose();
   };
+
   const valueRefNombre = useRef<HTMLInputElement | null>(null);
   const valueRefPrecio = useRef<HTMLInputElement | null>(null);
   const onKeyDownNombre = useEnter(valueRefNombre, () => addNewItem(newItem));

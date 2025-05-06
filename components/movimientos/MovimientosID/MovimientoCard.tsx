@@ -1,6 +1,7 @@
 import CopyButton from '@/components/CopyButton';
 import DeleteModal from '@/components/DeleteModal';
 import EstadoSteps from '@/components/ingresos/EstadoSteps';
+import NotAuthorized from '@/components/Navigation/NotAuthorized';
 import { useOnCurso } from '@/context/useOnCursoContext';
 import { useUser } from '@/context/userContext';
 import { CheckAdminRol } from '@/data/data';
@@ -9,10 +10,10 @@ import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { getEstado } from '@/helpers/cobros/getEstado';
 import dateTexto from '@/helpers/dateTexto';
 import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
+import { scrollIntoTheView } from '@/helpers/scrollIntoTheView';
 import useGetUsers from '@/hooks/users/useGetUsers';
 import { Estados, MovimientosType, PedidoType } from '@/types/types';
 import {
-  Button,
   Flex,
   Heading,
   Text,
@@ -26,20 +27,12 @@ import MapEmbed from '../EmbedMap';
 import ConfirmarPedidoModal from './ConfirmarPedidoModal';
 import QRCodeLabel from './QRCodeLabel';
 import VerMovimientosModal from './VerMovimientosModal';
-import { scrollIntoTheView } from '@/helpers/scrollIntoTheView';
+import { getCambiosResumen } from '@/helpers/getCambiosResumen';
 const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
   const { reservas } = useOnCurso();
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const { user } = useUser();
   const [currentMov, setCurrentMov] = useState(movimiento);
-  useEffect(() => {
-    const newMov = reservas?.find((r) => r.id === movimiento.id) || {
-      ...movimiento,
-      estado: 'Finalizado',
-    };
-    setCurrentMov(newMov);
-  }, [reservas]);
-  const customGrayBG = useColorModeValue('gray.50', 'gray.700');
   const {
     detalle,
     items,
@@ -51,10 +44,37 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
     movimientos,
     tramo,
   } = currentMov;
+  const fecha = formatearFecha(id);
+  const fetchNewMov = async () => {
+    try {
+      const mov = (await getSingleDoc('movimientos', fecha)) as MovimientosType;
+      const thisMov = mov.reservas.find((r) => r.id === movimiento.id);
+      if (thisMov) {
+        setCurrentMov(thisMov);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  useEffect(() => {
+    if (movimiento?.movimientos?.Finalizado?.fecha) {
+      setCurrentMov(movimiento);
+      return;
+    }
+    const newMov = reservas?.find((r) => r.id === movimiento.id);
+    if (newMov) {
+      setCurrentMov(newMov);
+    } else fetchNewMov();
+  }, [reservas]);
+  const customGrayBG = useColorModeValue('gray.50', 'gray.700');
+
   const { users } = useGetUsers();
   const estado = getEstado(movimientos);
   const toast = useToast();
-  const updatePedido = async (id: string) => {
+  const hasReserva = movimientos?.['En curso'].admin === user?.id;
+  if (!CheckAdminRol(user?.rol) && estado !== 'Pendiente' && !hasReserva)
+    return <NotAuthorized />;
+  const updatePedido = async (id: string, updatedPedido: PedidoType | null) => {
     if (estado === 'Finalizado' || !reservas) {
       toast({
         title: 'Finalizado',
@@ -66,41 +86,50 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
       return;
     }
 
-    const fecha = formatearFecha(id);
     const newEstado = Estados[Estados.indexOf(estado) + 1];
     setLoadingUpdate(true);
+
     const movimientoFetched = (await getSingleDoc(
       'movimientos',
       fecha
     )) as MovimientosType;
     const field = isPago ? 'compras' : 'reservas';
+
     const updatedReservas = (id: string, arr: PedidoType[]) => {
       const newReservas = arr.map((r) => {
-        if (r.id === id)
+        if (r.id === id) {
+          const cambios = updatedPedido
+            ? getCambiosResumen(r, updatedPedido)
+            : null;
           return {
-            ...r,
+            ...(updatedPedido || r),
             movimientos: {
-              ...movimientos,
+              ...r.movimientos,
               [newEstado]: {
                 fecha: Timestamp.now(),
                 admin: user?.id,
+                cambios,
               },
             },
           };
+        }
         return r;
       });
       return newReservas;
     };
+
     try {
       await setSingleDoc('movimientos', fecha, {
         [field]: updatedReservas(id, movimientoFetched.reservas),
       });
+
       await setSingleDoc('movimientos', 'enCurso', {
         [field]:
           newEstado === 'Finalizado'
             ? reservas?.filter((d) => d.id !== id)
             : updatedReservas(id, reservas),
       });
+
       toast({
         title: 'Éxito',
         description: 'Pedido actualizado con éxito',
@@ -117,11 +146,27 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
       }, 50);
     }
   };
+
   const creador = users?.find((user) => user.id === creadorID);
   const deleteFunc = async () => {
-    return;
+    if (movimientos?.Finalizado?.fecha) {
+      toast({
+        title: 'Finalizado',
+        description: 'No se puede eliminar un pedido finalizado',
+        status: 'info',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+    toast({
+      title: 'Próximamente',
+      description: 'No se puede eliminar aún',
+      status: 'info',
+      duration: 5000,
+      isClosable: true,
+    });
   };
-  const example = false;
   return (
     <Flex gap={5} flexDir='column'>
       <Flex flexDir='column'>
@@ -156,7 +201,7 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
           </Text>
         )}
       </Flex>
-      <Flex flexDir='column'>
+      <Flex gap={1} flexDir='column'>
         <EstadoSteps estado={estado} />
         <VerMovimientosModal pedido={currentMov} />
       </Flex>
@@ -232,14 +277,14 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
         >
           <QRCodeLabel pedido={currentMov} />
         </Flex>
-        <Flex id='embed-location' w='100%'>
-          <MapEmbed hideButtons src={mapCoords} />
+        <Flex h='100%' id='embed-location' w='100%'>
+          <MapEmbed initialShow hideButtons src={mapCoords} />
         </Flex>
       </Flex>
       <Flex justifyContent='center' my={10} gap={4}>
         <ConfirmarPedidoModal
           loading={loadingUpdate}
-          update={() => updatePedido(id)}
+          update={(newPedido: PedidoType) => updatePedido(id, newPedido)}
           pedido={currentMov}
         />
         {CheckAdminRol(user?.rol) && (

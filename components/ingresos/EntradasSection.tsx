@@ -20,7 +20,8 @@ const EntradasSection = ({
   const { user } = useUser();
   const filtered = grupo.filter((r) => {
     const estado = getEstado(r.movimientos);
-    return estado === 'Pendiente' || CheckAdminRol(user?.rol);
+    const hasReserva = r.movimientos?.['En curso'].admin === user?.id;
+    return CheckAdminRol(user?.rol) || estado === 'Pendiente' || hasReserva;
   });
   const getRoute = (route: string) => {
     if (title === 'Reservas') return `/PedidosID/${route}`;

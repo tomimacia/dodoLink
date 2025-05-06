@@ -3,7 +3,7 @@ import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import { ProductoType } from '@/types/types';
 import { Timestamp } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSessionStorage } from '../storageHooks/useSessionStorage';
 
 const useGetProductos = () => {
@@ -15,6 +15,7 @@ const useGetProductos = () => {
     'PRODUCTOS_LASTUPDATE_SECONDS_SESSION_STORAGE',
     null
   );
+  const hasFetched = useRef(false);
   const [loadingProductos, setLoadingProductos] = useState(false);
   const getProductos = async () => {
     console.log('Getting productos');
@@ -67,7 +68,8 @@ const useGetProductos = () => {
   // const availableProducts =
   //   productos?.filter((p) => p.cantidad > 0 && p.stock) || null;
   useEffect(() => {
-    if (productos !== null) return;
+    if (productos !== null || hasFetched.current) return;
+    hasFetched.current = true;
 
     try {
       getProductos();

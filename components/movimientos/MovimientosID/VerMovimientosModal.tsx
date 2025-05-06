@@ -1,7 +1,11 @@
 import dateTexto from '@/helpers/dateTexto';
 import useGetUsers from '@/hooks/users/useGetUsers';
 import { Estados, EstadoType, PedidoType } from '@/types/types';
-import { CheckCircleIcon, InfoOutlineIcon } from '@chakra-ui/icons';
+import {
+  CheckCircleIcon,
+  InfoOutlineIcon,
+  WarningIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -25,11 +29,29 @@ const VerMovimientosModal = ({ pedido }: { pedido: PedidoType }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const colorInicializado = useColorModeValue('blue.600', 'blue.300');
+  const colorID = useColorModeValue('gray.500', 'gray.300');
   const cardBg = useColorModeValue('gray.100', 'gray.700');
   const borderColor = useColorModeValue('gray.300', 'gray.600');
   const renderMovimiento = (estado: EstadoType) => {
     const movimiento = pedido.movimientos[estado];
-    if (!movimiento?.fecha || !movimiento?.admin) return null;
+    if (!movimiento?.fecha || !movimiento?.admin)
+      return (
+        <Box
+          key={estado + 'historial-mov-key'}
+          borderWidth={1}
+          borderRadius='lg'
+          borderColor={borderColor}
+          bg={cardBg}
+          p={4}
+          w='100%'
+        >
+          <Flex align='center' justify='space-between' mb={2}>
+            <Heading size='sm'>{estado}</Heading>
+            <Icon as={WarningIcon} color='orange.400' />
+          </Flex>
+          <Text fontSize='sm'>No realizado aún</Text>
+        </Box>
+      );
 
     const usuario = users?.find((u) => u.id === movimiento.admin);
     const fechaData = dateTexto(movimiento.fecha.seconds);
@@ -57,6 +79,21 @@ const VerMovimientosModal = ({ pedido }: { pedido: PedidoType }) => {
         <Text fontSize='sm'>
           <b>Responsable:</b> {usuario?.nombre} {usuario?.apellido}
         </Text>
+        <Flex gap={1}>
+          <Text fontSize='sm'>
+            <b>Cambios:</b>{' '}
+          </Text>
+          <Text fontSize='sm'>
+            {movimiento?.cambios
+              ? movimiento.cambios.split(',').map((cambio, index) => (
+                  <span key={index}>
+                    {cambio}
+                    <br />
+                  </span>
+                ))
+              : 'Sin cambios'}
+          </Text>
+        </Flex>
       </Box>
     );
   };
@@ -89,7 +126,7 @@ const VerMovimientosModal = ({ pedido }: { pedido: PedidoType }) => {
           <ModalCloseButton zIndex={10} _hover={{ bg: 'blackAlpha.300' }} />
           <ModalHeader>
             <Flex direction='column'>
-              <Text fontSize='sm' color='gray.500'>
+              <Text fontSize='sm' color={colorID}>
                 Pedido ID: {pedido.id}
               </Text>
               <Heading size='md'>Historial de Movimientos</Heading>

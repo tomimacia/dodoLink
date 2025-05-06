@@ -51,12 +51,13 @@ export type EstadoType =
   | 'Pendiente'
   | 'En curso'
   | 'Finalizado';
-type PedidoFechaParcial = {
+export type PedidoFechaParcial = {
   fecha: {
     seconds: number;
     nanoseconds: number;
   } | null;
   admin: string | null;
+  cambios?: string;
 };
 export type PedidoFechaType = {
   Inicializado: {
@@ -65,6 +66,7 @@ export type PedidoFechaType = {
       nanoseconds: number;
     };
     admin: string;
+    cambios?: string;
   };
   Preparación: PedidoFechaParcial;
   Pendiente: PedidoFechaParcial;
@@ -73,7 +75,7 @@ export type PedidoFechaType = {
 };
 export type PedidoType = {
   cliente: string;
-  detalle: string;  
+  detalle: string;
   movimientos: PedidoFechaType;
   id: string;
   isPago: boolean;

@@ -48,8 +48,8 @@ const TitleSearch = ({
     if (inputValue.length < 3) return [];
     return productos?.filter(
       (p) =>
-        p.nombre.toLowerCase().includes(inputValue.toLowerCase()) ||
-        p.codigo.some((c) => c === Number(inputValue))
+        p?.nombre?.toLowerCase().includes(inputValue.toLowerCase()) ||
+        p?.codigo?.some((c) => c === Number(inputValue))
     );
   }, [inputValue, productos]);
 
@@ -119,7 +119,7 @@ const TitleSearch = ({
             style={{ height: '24px', display: 'flex' }}
           >
             <Input
-              placeholder='Ingresá un producto o código'
+              placeholder='Buscar productos...'
               borderRadius={5}
               onChange={(e) => setInputValue(e.target.value)}
               value={inputValue}

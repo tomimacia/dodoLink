@@ -27,13 +27,11 @@ const EntradasTiempoReal = () => {
             />
           </Flex>
         )}
-        {
-          <EntradasSection
-            title='Reservas'
-            loading={loading}
-            grupo={reservas || []}
-          />
-        }
+        <EntradasSection
+          title='Reservas'
+          loading={loading}
+          grupo={reservas || []}
+        />
         {!devCompras && CheckAdminRol(user?.rol) && (
           <Divider borderColor='gray' />
         )}

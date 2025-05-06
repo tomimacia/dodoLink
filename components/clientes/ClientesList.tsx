@@ -33,7 +33,7 @@ const ClientesList = () => {
     const nameB = `${b?.apellido} ${b?.nombre}`.toLowerCase();
     return nameA.localeCompare(nameB);
   });
-  const { page, goingUp, totalPages, paginatedClients, handlePageChange } =
+  const { page, goingUp, totalPages, paginatedArr, handlePageChange } =
     usePagination(orderedClientes, itemsPerPage);
   const deleteClienteFront = (clientID: string) => {
     const newClientes = clientes.filter((c) => c.id !== clientID);
@@ -117,7 +117,7 @@ const ClientesList = () => {
               initial={{ x: goingUp ? 15 : -15, opacity: 0 }}
               exit={{ x: goingUp ? -15 : 15, opacity: 0 }}
             >
-              {paginatedClients.map((c) => {
+              {paginatedArr.map((c) => {
                 return (
                   <ClientCard
                     key={`client-list-key${c.id}`}

@@ -82,7 +82,7 @@ const ListadoProductos = () => {
         const isEmpresa = p.empresa === empresa;
         const matchesFilter =
           filterInput.length < 3 ||
-          p.nombre.toLowerCase().includes(filterInput.toLowerCase());
+          p?.nombre?.toLowerCase().includes(filterInput.toLowerCase());
         return isEmpresa && matchesFilter;
       })
       .sort((a, b) => a.nombre.localeCompare(b.nombre));

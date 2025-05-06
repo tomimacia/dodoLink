@@ -3,6 +3,7 @@ import { Button, Flex, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import PedidoBody from './PedidoBody';
+import { useThemeColors } from '@/hooks/useThemeColors';
 const PedidosRealTimeCard = ({
   pedido,
   loading,
@@ -12,39 +13,44 @@ const PedidosRealTimeCard = ({
   loading: boolean;
   delay: number;
 }) => {
+   const { brandColorLigth, brandColorDark } = useThemeColors();
   const { id } = pedido;
   return (
     <motion.div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        border: '1px solid gray',
-        padding: 8,
-        borderRadius: 20,
+        padding: '1rem',
+        borderRadius: '1rem',
         width: '500px',
         maxWidth: '100%',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        border: '1px solid #E2E8F0',
       }}
       initial={{ opacity: 0, x: 150 }}
       exit={{ opacity: 0, x: -150 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: 'tween', delay }}
     >
-      <Flex justify='space-between'>
-        <Text fontSize={14} fontStyle='italic'>
+      <Flex justify='space-between' mb={2}>
+        <Text fontSize='sm' color='gray.500' fontStyle='italic'>
           ID: {id}
         </Text>
       </Flex>
+
       <PedidoBody size='inicio' pedido={pedido} loading={loading} />
-      <Flex gap={2}>
+
+      <Flex mt={4} justify='flex-end'>
         <Button
           as={Link}
           href={`/PedidosID/${id}`}
           target='_blank'
-          bg='gray.600'
-          color='white'
-          w='fit-content'
+          bg={brandColorLigth}
+          color={brandColorDark}
           size='sm'
-          _hover={{ opacity: 0.65 }}
+          borderRadius='md'
+          _hover={{ bg: 'gray.600' }}
+          transition='all 0.2s'
         >
           Ver Pedido
         </Button>

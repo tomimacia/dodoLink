@@ -1,3 +1,4 @@
+import { useThemeColors } from '@/hooks/useThemeColors';
 import {
   Button,
   Flex,
@@ -31,11 +32,12 @@ const QrScanner = ({
       setLoading(false);
     }, 5000);
   };
+  const { brandColorLigth, brandColorDark } = useThemeColors();
   return (
     <>
       <Button
-        bg='gray.700'
-        color='white'
+        bg={brandColorLigth}
+        color={brandColorDark}
         size='sm'
         w='fit-content'
         _hover={{ opacity: 0.65 }}

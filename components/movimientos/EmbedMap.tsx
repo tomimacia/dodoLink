@@ -23,6 +23,10 @@ const MapEmbed = ({ hideButtons = false, src, clean }: MapEmbedType) => {
     // Si no se encuentra un src, retornar null
     return null;
   }
+  const cleanFunc = () => {
+    clean && clean();
+    setShowMap(true);
+  };
   if (!src) return <p>No se especificó ubicación.</p>;
 
   return (
@@ -43,7 +47,7 @@ const MapEmbed = ({ hideButtons = false, src, clean }: MapEmbedType) => {
             size='xs'
             bg='transparent'
             _hover={{ opacity: 0.8, textDecor: 'underline' }}
-            onClick={clean}
+            onClick={cleanFunc}
           >
             Borrar Mapa
           </Button>

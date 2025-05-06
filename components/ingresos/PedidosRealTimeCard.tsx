@@ -13,7 +13,7 @@ const PedidosRealTimeCard = ({
   loading: boolean;
   delay: number;
 }) => {
-   const { brandColorLigth, brandColorDark } = useThemeColors();
+  const { brandColorLigth, brandColorDark } = useThemeColors();
   const { id } = pedido;
   return (
     <motion.div
@@ -40,7 +40,7 @@ const PedidosRealTimeCard = ({
 
       <PedidoBody size='inicio' pedido={pedido} loading={loading} />
 
-      <Flex mt={4} justify='flex-end'>
+      <Flex mt='auto' pt={4} justify='flex-end'>
         <Button
           as={Link}
           href={`/PedidosID/${id}`}

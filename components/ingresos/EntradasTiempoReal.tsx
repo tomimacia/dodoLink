@@ -10,6 +10,7 @@ const EntradasTiempoReal = () => {
   const { user } = useUser();
   const { loadingColor } = useThemeColors();
   const { reservas, compras } = data ?? {};
+  const devCompras = true;
   return (
     <Flex m={2} gap={5} flexDir='column'>
       <Heading as='h2' size='xl' textAlign='center'>
@@ -33,8 +34,10 @@ const EntradasTiempoReal = () => {
             grupo={reservas || []}
           />
         }
-        {CheckAdminRol(user?.rol) && <Divider borderColor='gray' />}
-        {CheckAdminRol(user?.rol) && (
+        {!devCompras && CheckAdminRol(user?.rol) && (
+          <Divider borderColor='gray' />
+        )}
+        {!devCompras && CheckAdminRol(user?.rol) && (
           <EntradasSection
             title='Compras'
             loading={loading}

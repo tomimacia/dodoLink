@@ -22,6 +22,7 @@ import ProductosTable from './CobraFormComps/ProductosTable';
 import TitleSearchYItem from './CobraFormComps/TitleSearchYItem';
 import MapEmbed from './EmbedMap';
 import { extractSrcFromIframe } from '@/helpers/extractSrcFromIframe';
+import { sendTelegramFaltantes } from '@/nodemailer/telegram';
 
 const CobrarForm = ({
   onClose,
@@ -41,7 +42,7 @@ const CobrarForm = ({
   } = useCobrarFormContext();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
-
+  const [loadingTest, setLoadingTset] = useState(false);
   const toast = useToast();
 
   const fontColor = useColorModeValue('blue.700', 'blue.400');
@@ -209,9 +210,47 @@ const CobrarForm = ({
     setEmbed(src);
     setEmbedValue('');
   };
+  const test = async () => {
+    if (items.length === 0) {
+      toast({
+        title: 'Error',
+        description: 'No hay productos seleccionados',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    setLoadingTset(true);
+    try {
+      await sendTelegramFaltantes(items);
+      toast({
+        title: 'Éxito',
+        description: 'Mensaje enviado al bot de Telegram',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (e: any) {
+      console.error(e.message);
+    } finally {
+      setLoadingTset(false);
+    }
+  };
   return (
     <Flex minH='50vh' gap={3} flexDir='column'>
       <ClienteYDetalle />
+      <Button
+        onClick={test}
+        size='sm'
+        w='fit-content'
+        color='white'
+        bg='blue.700'
+        isLoading={loadingTest}
+        _hover={{ opacity: 0.7 }}
+      >
+        Test Telegram Bot
+      </Button>
       <Flex gap={2} align='center'>
         <Text fontWeight='bold'>Tramo (mts.):</Text>
         <Input

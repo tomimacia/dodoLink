@@ -37,6 +37,7 @@ const CargarModal = ({
     { bg: 'gray.700', color: 'white' },
     { bg: 'white', color: 'gray.700' }
   );
+  const toast = useToast();
   if (!CheckAdminRol(user?.rol)) return <></>;
   const handleOpen = async (initialIsCompra?: boolean) => {
     await checkForUpdates();
@@ -47,7 +48,7 @@ const CargarModal = ({
     resetFilters();
     onClose();
   };
-  const toast = useToast();
+
   const Pedido = () => {
     toast({
       title: 'No disponbile',

@@ -4,6 +4,7 @@ import NotFoundPage from '@/components/NotFoundPage';
 import { useUser } from '@/context/userContext';
 import { CheckAdminRol } from '@/data/data';
 import { getSingleDoc } from '@/firebase/services/getSingleDoc';
+import { getEstado } from '@/helpers/cobros/getEstado';
 import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
 import { MovimientosType, PedidoType } from '@/types/types';
 type ServerSideProps = {
@@ -36,12 +37,58 @@ export const getServerSideProps = async ({ params }: ServerSideProps) => {
     };
   }
   const formatIngreso = (i: PedidoType) => {
-    const { fecha } = i ?? {};
+    const { movimientos } = i ?? {};
+    const { Inicializado, Preparación, Pendiente, Finalizado } =
+      movimientos ?? {};
+    const EnCurso = movimientos['En curso'];
     return {
       ...i,
-      fecha: {
-        seconds: fecha?.seconds,
-        nanoseconds: fecha?.nanoseconds,
+      movimientos: {
+        Inicializado: Inicializado?.fecha
+          ? {
+              fecha: {
+                seconds: Inicializado?.fecha?.seconds,
+                nanoseconds: Inicializado?.fecha?.nanoseconds,
+              },
+              admin: Inicializado?.admin,
+            }
+          : null,
+        Preparación: Preparación?.fecha
+          ? {
+              fecha: {
+                seconds: Preparación?.fecha?.seconds,
+                nanoseconds: Preparación?.fecha?.nanoseconds,
+              },
+              admin: Preparación?.admin,
+            }
+          : null,
+        Pendiente: Pendiente?.fecha
+          ? {
+              fecha: {
+                seconds: Pendiente?.fecha?.seconds,
+                nanoseconds: Pendiente?.fecha?.nanoseconds,
+              },
+              admin: Pendiente?.admin,
+            }
+          : null,
+        'En curso': EnCurso?.fecha
+          ? {
+              fecha: {
+                seconds: EnCurso?.fecha?.seconds,
+                nanoseconds: EnCurso?.fecha?.nanoseconds,
+              },
+              admin: EnCurso?.admin,
+            }
+          : null,
+        Finalizado: Finalizado?.fecha
+          ? {
+              fecha: {
+                seconds: Finalizado?.fecha?.seconds,
+                nanoseconds: Finalizado?.fecha?.nanoseconds,
+              },
+              admin: Finalizado?.admin,
+            }
+          : null,
       },
     };
   };
@@ -55,7 +102,8 @@ export const getServerSideProps = async ({ params }: ServerSideProps) => {
 const MovimientoID = ({ movimiento }: { movimiento: PedidoType | null }) => {
   const { user } = useUser();
   if (!movimiento) return <NotFoundPage title='Movimiento no encontrado' />;
-  if (!CheckAdminRol(user?.rol) && movimiento.estado !== 'Pendiente')
+  const estado = getEstado(movimiento?.movimientos);
+  if (!CheckAdminRol(user?.rol) && estado !== 'Pendiente')
     return <NotAuthorized />;
   return <MovimientoCard movimiento={movimiento} />;
 };

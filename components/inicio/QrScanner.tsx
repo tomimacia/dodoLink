@@ -41,9 +41,9 @@ const QrScanner = ({
         _hover={{ opacity: 0.65 }}
         onClick={onOpen}
         isLoading={loading}
+        rightIcon={<FaQrcode />}
       >
         Escanear QR
-        <FaQrcode style={{ marginLeft: '10px' }} />
       </Button>
       <Modal
         size={['xl', '2xl', '3xl', '3xl']}

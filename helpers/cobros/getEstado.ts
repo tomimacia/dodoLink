@@ -1,18 +1,9 @@
-import { EstadoType } from '@/types/types';
-import { isInhabilitado } from './isInhabilitado';
+import { Estados, PedidoFechaType } from '@/types/types';
 
-export const getEstado = (c: any | null) => {
-  if (c?.activo === false) return 'Inactivo';
-  const vencimientoSeconds = c?.vencimiento?.seconds;
-  const paramSeconds = c?.horarioIngreso
-    ? c?.horarioIngreso?.seconds
-    : new Date().getTime() / 1000;
-  const venc = vencimientoSeconds;
-  const inhabilitado = isInhabilitado(c);
-  const estado: EstadoType = inhabilitado
-    ? 'Pendiente'
-    : venc > paramSeconds
-    ? 'Inicializado'
-    : 'En curso';
-  return estado;
+export const getEstado = (movimientos: PedidoFechaType) => {
+  const { Inicializado, Preparación, Pendiente, Finalizado } = movimientos;
+  const EnCurso = movimientos['En curso'];
+  const estados = [Inicializado, Preparación, Pendiente, EnCurso, Finalizado];
+  if (estados.every((estado) => estado?.fecha !== null)) return 'Finalizado';
+  return Estados[estados.findIndex((estado) => !estado?.fecha) - 1];
 };

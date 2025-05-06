@@ -11,6 +11,7 @@ import {
   Button,
   Flex,
   Input,
+  Text,
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
@@ -19,6 +20,8 @@ import ClienteYDetalle from './CobraFormComps/ClienteYDetalle';
 import ProductosTable from './CobraFormComps/ProductosTable';
 import TitleSearchYItem from './CobraFormComps/TitleSearchYItem';
 import MapEmbed from './EmbedMap';
+import { Timestamp } from 'firebase/firestore';
+import dateTexto from '@/helpers/dateTexto';
 
 const CobrarForm = ({
   onClose,
@@ -44,6 +47,7 @@ const CobrarForm = ({
   const fontColor = useColorModeValue('blue.700', 'blue.400');
   const confirmButtonRef = useRef<HTMLButtonElement | null>(null);
   const [embedValue, setEmbedValue] = useState('');
+  const [tramo, setTramo] = useState<number | null>(null);
   const [embed, setEmbed] = useState('');
   const formatItem = (item: ProductoType) => {
     const { creadorID, createdAt, ...rest } = item;
@@ -76,19 +80,41 @@ const CobrarForm = ({
         isClosable: true,
       });
     }
-    const fecha = new Date();
+    const movimientos = {
+      Inicializado: {
+        fecha: Timestamp.now(),
+        admin: user?.id,
+      },
+      Preparación: {
+        fecha: null,
+        admin: null,
+      },
+      Pendiente: {
+        fecha: null,
+        admin: null,
+      },
+      'En curso': {
+        fecha: null,
+        admin: null,
+      },
+      Finalizado: {
+        fecha: null,
+        admin: null,
+      },
+    };
     try {
       const newMovimiento = {
         detalle,
         cliente,
         creadorID: user?.id,
         items: items.map((i) => formatItem(i)),
-        fecha,
+        movimientos,
         isPago: false,
         mapCoords: embed,
-        estado: 'Inicializado',
         vistoPor: [],
+        tramo,
       };
+      console.log(newMovimiento);
       await CargarReserva(newMovimiento);
       // Actualizar el stock
       await ActualizarStock(items, productos || [], setProductos, false);
@@ -174,7 +200,20 @@ const CobrarForm = ({
   return (
     <Flex minH='50vh' gap={3} flexDir='column'>
       <ClienteYDetalle />
-      {!embed ? (
+      <Flex gap={2} align='center'>
+        <Text fontWeight='bold'>Tramo (mts.):</Text>
+        <Input
+          borderColor='gray'
+          size='sm'
+          borderRadius={5}
+          placeholder='Mts.'
+          type='number'
+          value={tramo || ''}
+          onChange={(e) => setTramo(Number(e.target.value))}
+          maxW='100px'
+        />
+      </Flex>
+      {!embed && (
         <Flex align='center' gap={2}>
           <Input
             size='sm'
@@ -189,20 +228,8 @@ const CobrarForm = ({
             Confirm
           </Button>
         </Flex>
-      ) : (
-        <Flex align='center' gap={2}>
-          <Button
-            onClick={() => setEmbed('')}
-            size='xs'
-            bg='red.700'
-            color='white'
-            _hover={{ opacity: 0.7 }}
-          >
-            Cancelar
-          </Button>
-        </Flex>
       )}
-      <MapEmbed src={embed} />
+      <MapEmbed clean={() => setEmbed('')} src={embed} />
       <TitleSearchYItem />
       <ProductosTable />
       <Flex mt='auto' p={5} flexDir='column' gap={3}>

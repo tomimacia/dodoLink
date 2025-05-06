@@ -6,21 +6,25 @@ import { ProductoType } from '@/types/types';
 import {
   Button,
   Flex,
+  Input,
   Select,
   Table,
   TableContainer,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
   useToast,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MdCancel, MdCheckBox, MdDelete } from 'react-icons/md';
 import ReactLoading from 'react-loading';
 import DeleteModal from '../DeleteModal';
 import ProductoModal from './Editar/ProductoModal';
+import usePagination from '@/hooks/data/usePagination';
+import PaginationControl from '../clientes/PaginationControl';
 const ListadoProductos = () => {
   const {
     productos,
@@ -36,13 +40,15 @@ const ListadoProductos = () => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  const [filterInput, setFilterInput] = useState('');
   const updateProductoAndFront = async (
     productoID: string,
     newProduct: ProductoType
   ) => {
     await updateProducto(productoID, newProduct);
     const newProductos = productos?.map((p) => {
-      if (p.id === productoID) return newProduct;
+      if (p.id === productoID) return { ...newProduct, id: productoID };
       return p;
     });
 
@@ -68,10 +74,25 @@ const ListadoProductos = () => {
       setLoading(false);
     }
   };
-  const filterProductos = (productos: ProductoType[] | null) => {
+  const itemsPerPage = 12;
+  const filteredProductos = useMemo(() => {
     if (!productos) return [];
-    return productos.filter((p) => p.empresa === empresa);
-  };
+    return productos
+      .filter((p) => {
+        const isEmpresa = p.empresa === empresa;
+        const matchesFilter =
+          filterInput.length < 3 ||
+          p.nombre.toLowerCase().includes(filterInput.toLowerCase());
+        return isEmpresa && matchesFilter;
+      })
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+  }, [productos, empresa, filterInput]);
+  const {
+    paginatedArr: paginatedProductos,
+    page,
+    totalPages,
+    handlePageChange,
+  } = usePagination(filteredProductos, itemsPerPage, true);
   // const [loadingMail, setLoadingMail] = useState(false);
 
   // const test = async ({
@@ -139,6 +160,21 @@ const ListadoProductos = () => {
           </Select>
         )}
       </Flex>
+      <Text>Total: {filteredProductos.length}</Text>
+      <Input
+        borderColor='gray'
+        size='sm'
+        maxW='250px'
+        onChange={(e) => setFilterInput(e.target.value)}
+        borderRadius={5}
+        placeholder='Ingresar nombre'
+      />
+      <PaginationControl
+        page={page}
+        totalPages={totalPages}
+        handlePageChange={handlePageChange}
+        show={filteredProductos.length > itemsPerPage}
+      />
       {loadingProductos ? (
         <Flex w='100%' my={10} justify='center'>
           <ReactLoading
@@ -168,7 +204,7 @@ const ListadoProductos = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {filterProductos(productos)
+              {paginatedProductos
                 ?.sort((a, b) => a.nombre.localeCompare(b.nombre))
                 .map((p) => {
                   const {
@@ -181,7 +217,16 @@ const ListadoProductos = () => {
                   } = p;
                   return (
                     <Tr key={id}>
-                      <Td>{nombre}</Td>
+                      <Td maxW='250px' overflow='hidden' whiteSpace='nowrap'>
+                        <Text
+                          isTruncated
+                          title={nombre}
+                          maxW='100%'
+                          fontSize='sm'
+                        >
+                          {nombre}
+                        </Text>
+                      </Td>
                       <Td fontSize='md'>
                         <b>{cantidad}</b> ({medida})
                       </Td>

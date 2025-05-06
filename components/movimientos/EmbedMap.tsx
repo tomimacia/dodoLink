@@ -2,8 +2,14 @@
 
 import { Button, Flex } from '@chakra-ui/react';
 import React, { useState } from 'react';
+import ReactLoading from 'react-loading';
 
-const MapEmbed = ({ hideButton = false, lat, lng, src, zoom = 15 }: any) => {
+type MapEmbedType = {
+  hideButtons?: boolean;
+  src: string;
+  clean?: () => void;
+};
+const MapEmbed = ({ hideButtons = false, src, clean }: MapEmbedType) => {
   const [showMap, setShowMap] = useState(true);
   function extractSrcFromIframe(iframe: string) {
     // Extraemos el src del iframe
@@ -21,27 +27,50 @@ const MapEmbed = ({ hideButton = false, lat, lng, src, zoom = 15 }: any) => {
 
   return (
     <Flex flexDir='column' width='100%' height={showMap ? '400px' : undefined}>
-      {!hideButton && (
-        <Button
-          w='fit-content'
-          size='xs'
-          bg='transparent'
-          _hover={{ opacity: 0.8, textDecor: 'underline' }}
-          onClick={() => setShowMap((prev) => !prev)}
-        >
-          {showMap ? 'Ocultar' : 'Mostrar'} Mapa
-        </Button>
+      {!hideButtons && (
+        <Flex gap={2}>
+          <Button
+            w='fit-content'
+            size='xs'
+            bg='transparent'
+            _hover={{ opacity: 0.8, textDecor: 'underline' }}
+            onClick={() => setShowMap((prev) => !prev)}
+          >
+            {showMap ? 'Ocultar' : 'Mostrar'} Mapa
+          </Button>
+          <Button
+            w='fit-content'
+            size='xs'
+            bg='transparent'
+            _hover={{ opacity: 0.8, textDecor: 'underline' }}
+            onClick={clean}
+          >
+            Borrar Mapa
+          </Button>
+        </Flex>
       )}
       {showMap && (
-        <iframe
-          width='100%'
-          height='100%'
-          style={{ border: 0 }}
-          loading='lazy'
-          allowFullScreen
-          referrerPolicy='no-referrer-when-downgrade'
-          src={extractSrcFromIframe(src) || ''}
-        ></iframe>
+        <Flex w='100%' h='100%' pos='relative'>
+          <Flex
+            justify='center'
+            align='center'
+            pos='absolute'
+            bg='gray.50'
+            h='100%'
+            w='100%'
+          >
+            <ReactLoading width='10%' type='spinningBubbles' color='#333c87' />
+          </Flex>
+          <iframe
+            width='100%'
+            height='100%'
+            style={{ border: 0, zIndex: 1 }}
+            loading='lazy'
+            allowFullScreen
+            referrerPolicy='no-referrer-when-downgrade'
+            src={extractSrcFromIframe(src) || ''}
+          ></iframe>
+        </Flex>
       )}
     </Flex>
   );

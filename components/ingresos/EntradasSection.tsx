@@ -7,6 +7,7 @@ import { CheckAdminRol } from '@/data/data';
 import NoPedidosCard from './NoPedidosCard';
 import QrScanner from '../inicio/QrScanner';
 import capitalizeFirst from '@/helpers/capitalizeFirst';
+import { getEstado } from '@/helpers/cobros/getEstado';
 const EntradasSection = ({
   grupo,
   loading,
@@ -17,9 +18,10 @@ const EntradasSection = ({
   title: string;
 }) => {
   const { user } = useUser();
-  const filtered = grupo.filter(
-    (r) => r.estado === 'Pendiente' || CheckAdminRol(user?.rol)
-  );
+  const filtered = grupo.filter((r) => {
+    const estado = getEstado(r.movimientos);
+    return estado === 'Pendiente' || CheckAdminRol(user?.rol);
+  });
   const getRoute = (route: string) => {
     if (title === 'Reservas') return `/PedidosID/${route}`;
     return `/ComprasID/${route}`;
@@ -43,7 +45,6 @@ const EntradasSection = ({
                   key={r.id + 'pedidoskey'}
                   loading={loading}
                   pedido={r}
-                  data={grupo}
                   delay={index * 0.2}
                 />
               );

@@ -51,17 +51,37 @@ export type EstadoType =
   | 'Pendiente'
   | 'En curso'
   | 'Finalizado';
+type PedidoFechaParcial = {
+  fecha: {
+    seconds: number;
+    nanoseconds: number;
+  } | null;
+  admin: string | null;
+};
+export type PedidoFechaType = {
+  Inicializado: {
+    fecha: {
+      seconds: number;
+      nanoseconds: number;
+    };
+    admin: string;
+  };
+  Preparación: PedidoFechaParcial;
+  Pendiente: PedidoFechaParcial;
+  'En curso': PedidoFechaParcial;
+  Finalizado: PedidoFechaParcial;
+};
 export type PedidoType = {
   cliente: string;
-  detalle: string;
-  estado: EstadoType;
-  fecha: Timestamp;
+  detalle: string;  
+  movimientos: PedidoFechaType;
   id: string;
   isPago: boolean;
   creadorID: string;
   mapCoords: string;
   vistoPor: string[];
   items: ProductoType[];
+  tramo: number | null;
 };
 export type MedidaType = 'Un.' | 'Kg.' | 'Mt.';
 export type ProductoType = {

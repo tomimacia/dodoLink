@@ -31,7 +31,7 @@ const ClientesModal = ({
     return clientes;
   };
   const clientesFinal = filterClientes(modalData?.list || []);
-  const { page, goingUp, totalPages, paginatedClients, handlePageChange } =
+  const { page, goingUp, totalPages, paginatedArr, handlePageChange } =
     usePagination(clientesFinal, itemsPerPage);
   const isSaldo = modalData.title.split(' ')[0] === 'Saldo';
   const handleClose = () => {
@@ -86,7 +86,7 @@ const ClientesModal = ({
               initial={{ x: goingUp ? 15 : -15, opacity: 0 }}
               exit={{ x: goingUp ? -15 : 15, opacity: 0 }}
             >
-              {paginatedClients.map((c: any) => {
+              {paginatedArr.map((c: any) => {
                 return (
                   <ClientesModalListItem
                     key={`clientes-modal-key-${c.id}${c?.vencimiento?.seconds}`}
@@ -95,7 +95,7 @@ const ClientesModal = ({
                   />
                 );
               })}
-              {paginatedClients.length === 0 && (
+              {paginatedArr.length === 0 && (
                 <Text fontStyle='italic'>No hay clientes para mostrar</Text>
               )}
             </motion.div>

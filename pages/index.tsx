@@ -8,7 +8,6 @@ export default function Home() {
       <FormProvider>
         <WelcomeComp />
         <Divider borderColor='gray' w='98%' mx='auto' />
-
         <EntradasTiempoReal />
       </FormProvider>
     </Flex>

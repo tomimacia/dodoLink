@@ -40,10 +40,9 @@ export const ConfirmValidation = (
   return true;
 };
 export const CargarReserva = async (newMovimiento: any) => {
-  const { fecha } = newMovimiento;
-  const fechaHoy = dateTexto(fecha.getTime() / 1000)
-    .numDate.split('/')
-    .join('-');
+  console.log(newMovimiento);
+  const { Inicializado } = newMovimiento?.movimientos;
+  const fechaHoy = dateTexto(Inicializado.fecha.seconds).slashDate;
   const id = createID(fechaHoy);
   const finalMov = { ...newMovimiento, id };
   console.log('cargando reserva', fechaHoy, id, finalMov);

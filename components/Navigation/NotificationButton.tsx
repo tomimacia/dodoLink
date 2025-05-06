@@ -2,6 +2,7 @@ import { useOnCurso } from '@/context/useOnCursoContext';
 import { useUser } from '@/context/userContext';
 import { CheckAdminRol } from '@/data/data';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
+import { getEstado } from '@/helpers/cobros/getEstado';
 import { PedidoType } from '@/types/types';
 import { BellIcon } from '@chakra-ui/icons';
 import {
@@ -23,12 +24,12 @@ const NotificationButton = () => {
   const notificationsUnseen =
     reservas?.filter((r) => {
       const noVisto = !r.vistoPor.some((v) => v === user?.id);
-      const puedeVer = r.estado === 'Pendiente' || CheckAdminRol(user?.rol);
+      const puedeVer = getEstado(r.movimientos) === 'Pendiente' || CheckAdminRol(user?.rol);
       return noVisto && puedeVer;
     }) || [];
   const notificationsToShow =
     reservas?.filter((r) => {
-      const puedeVer = r.estado === 'Pendiente' || CheckAdminRol(user?.rol);
+      const puedeVer = getEstado(r.movimientos) === 'Pendiente' || CheckAdminRol(user?.rol);
       return puedeVer;
     }) || [];
   const { push } = useRouter();

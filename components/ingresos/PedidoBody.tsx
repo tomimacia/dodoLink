@@ -1,3 +1,4 @@
+import { getEstado } from '@/helpers/cobros/getEstado';
 import { useThemeColors } from '@/hooks/useThemeColors';
 import { EstadoColors, Estados, PedidoType } from '@/types/types';
 import { Flex, Heading, Text } from '@chakra-ui/react';
@@ -25,7 +26,8 @@ const PedidoBody = ({
   };
   const thisSize = customSizes[size];
   const { invertedTextColor } = useThemeColors();
-  const { cliente, estado, detalle } = pedido ?? {};
+  const { cliente, detalle, movimientos } = pedido ?? {};
+  const estado = getEstado(movimientos);
   const prevColor =
     EstadoColors[Estados[Estados.indexOf(estado) - 1]] ?? 'gray';
   return (

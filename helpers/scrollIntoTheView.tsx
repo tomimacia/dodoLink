@@ -1,9 +1,6 @@
 export const scrollIntoTheView = (id: string) => {
-  let element = document.querySelector(id);
-  if (!element) return;
-  element.scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-    inline: "nearest",
-  });
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  }
 };

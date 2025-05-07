@@ -244,7 +244,7 @@ const ModalBodyBottomPart = ({
         <UnorderedList fontSize='lg' w='100%' maxW='300px'>
           {items.map((i) => {
             return (
-              <ListItem w='100%'>
+              <ListItem key={`preparacion-key-${i.id}`} w='100%'>
                 <Flex
                   borderBottom='1px solid #BEBEBE'
                   w='100%'
@@ -270,7 +270,7 @@ const ModalBodyBottomPart = ({
           <UnorderedList fontSize='lg' w='100%' maxW='300px'>
             {items.map((i) => {
               return (
-                <ListItem w='100%'>
+                <ListItem key={`prendiente-key-${i.id}`} w='100%'>
                   <Flex w='100%' justify='space-between'>
                     <Text>
                       {i.nombre} x{' '}

@@ -1,4 +1,4 @@
-import { sendTelegramMessage } from '@/nodemailer/telegram';
+import { sendTelegramMessage } from '@/alerts/telegram/contact';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(

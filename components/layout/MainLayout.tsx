@@ -7,6 +7,7 @@ import Footer from '../Footer';
 import Navbar from '../Navigation/NavBar';
 import SideNavMobile from '../Navigation/SideNavMobile';
 import MainChildren from './MainChildren';
+import { CurrentURL } from '@/data/data';
 const Layout = ({ children }: MainLayoutType) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useUser();
@@ -30,36 +31,30 @@ const Layout = ({ children }: MainLayoutType) => {
           content='dodoLink, conectividad en evolución'
         />
         <meta property='og:image' content='/Hlogo.png' />
-        <meta property='og:url' content='https://admin.dodolink.com.ar/' />
+        <meta property='og:url' content={CurrentURL} />
         <meta
           name='description'
           content='dodoLink, conectividad en evolución'
         />
 
-        <meta property='og:url' content='https://admin.dodolink.com.ar/' />
+        <meta property='og:url' content={CurrentURL} />
         <meta property='og:type' content='website' />
         <meta property='og:title' content='dodoLink Admin' />
         <meta
           property='og:description'
           content='dodoLink, conectividad en evolución'
         />
-        <meta
-          property='og:image'
-          content='https://admin.dodolink.com.ar/Hlogo.png'
-        />
+        <meta property='og:image' content={`${CurrentURL}Hlogo.png`} />
 
         <meta name='twitter:card' content='summary_large_image' />
-        <meta property='twitter:domain' content='admin.dodolink.com.ar' />
-        <meta property='twitter:url' content='https://admin.dodolink.com.ar/' />
+        <meta property='twitter:domain' content={CurrentURL} />
+        <meta property='twitter:url' content={CurrentURL} />
         <meta name='twitter:title' content='dodoLink Admin' />
         <meta
           name='twitter:description'
           content='dodoLink, conectividad en evolución'
         />
-        <meta
-          name='twitter:image'
-          content='https://admin.dodolink.com.ar/Hlogo.png'
-        />
+        <meta name='twitter:image' content={`${CurrentURL}Hlogo.png`} />
 
         {/* <meta
       name='google-site-verification'
@@ -69,10 +64,7 @@ const Layout = ({ children }: MainLayoutType) => {
         <meta name='twitter:image:alt' content='dodoLink Admin' />
         <meta name='twitter:title' content='dodoLink Admin' />
         <meta property='og:type' content='website' />
-        <link
-          href='https://admin.dodolink.com.ar/favicon.ico'
-          rel='apple-touch-icon'
-        />
+        <link href={`${CurrentURL}favicon.ico`} rel='apple-touch-icon' />
         <link rel='icon' href='/HeaderLogo.png' />
       </Head>
       <Flex

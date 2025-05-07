@@ -1,3 +1,4 @@
+import { mailsForNotification } from '@/data/data';
 import nodemailer from 'nodemailer';
 const user = process.env.NEXT_PUBLIC_NODEMAILER_USER || 'dodoLink25@gmail.com';
 const pass = process.env.NEXT_PUBLIC_NODEMAILER_PASSWORD;
@@ -11,5 +12,5 @@ export const transporter = nodemailer.createTransport({
 
 export const mailOptions = {
   from: user,
-  to: [user],
+  to: [...mailsForNotification, user],
 };

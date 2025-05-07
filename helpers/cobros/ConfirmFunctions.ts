@@ -1,3 +1,4 @@
+import { sendMailAndTelegram } from '@/alerts/sendMailAndTelegram';
 import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { ProductoType } from '@/types/types';
@@ -108,6 +109,10 @@ export const ActualizarStock = async (
       : i.cantidad - (i?.unidades || 1);
     return { ...noUnidades, cantidad: newCantidad };
   });
+  const faltantes = newItems.filter((p) => p.cantidad < p.target);
+  if (faltantes.length > 0) {
+    sendMailAndTelegram(faltantes);
+  }
   const newProductos = productos?.map((p) => {
     if (!newItems.some((i) => i.id === p.id)) return p;
     const newProducto = newItems.find((it) => it.id === p.id);

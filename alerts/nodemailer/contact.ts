@@ -1,16 +1,13 @@
 import dateTexto from '@/helpers/dateTexto';
+import { ProductoType } from '@/types/types';
 
-export const sendContactForm = async (data: {
-  productName: string;
-  currentQuantity: number;
-  targetQuantity: number;
-}) => {
+export const sendContactForm = async (productos: ProductoType[]) => {
   const finalData = {
-    ...data,
+    productos,
     date: dateTexto(new Date().getTime() / 1000).textoDate,
     time: dateTexto(new Date().getTime() / 1000).hourDate,
   };
-  const res = await fetch('/api/contact', {
+  const res = await fetch('/api/mail', {
     method: 'POST',
     body: JSON.stringify(finalData),
     headers: {

@@ -16,6 +16,7 @@ import { useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import useGetProductos from './data/useGetProductos';
+import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 
 const usePedidosForm = (movimiento: PedidoType) => {
   const { reservas } = useOnCurso();
@@ -225,6 +226,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
         setSingleDoc('movimientos', 'enCurso', {
           reservas: newReservas,
         }),
+        updateProductosLastStamp(),
       ];
       await Promise.all(promises);
       toast({

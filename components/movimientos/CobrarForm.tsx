@@ -6,6 +6,8 @@ import {
   CargarReserva,
   ConfirmValidation,
 } from '@/helpers/cobros/ConfirmFunctions';
+import { extractSrcFromIframe } from '@/helpers/extractSrcFromIframe';
+import { sendTelegramFaltantes } from '@/nodemailer/telegram';
 import { ProductoType } from '@/types/types';
 import {
   Button,
@@ -21,16 +23,8 @@ import ClienteYDetalle from './CobraFormComps/ClienteYDetalle';
 import ProductosTable from './CobraFormComps/ProductosTable';
 import TitleSearchYItem from './CobraFormComps/TitleSearchYItem';
 import MapEmbed from './EmbedMap';
-import { extractSrcFromIframe } from '@/helpers/extractSrcFromIframe';
-import { sendTelegramFaltantes } from '@/nodemailer/telegram';
 
-const CobrarForm = ({
-  onClose,
-  getNewClient,
-}: {
-  onClose: () => void;
-  getNewClient?: () => Promise<void>;
-}) => {
+const CobrarForm = ({ onClose }: { onClose: () => void }) => {
   const {
     items,
     productos,
@@ -115,19 +109,15 @@ const CobrarForm = ({
         vistoPor: [],
         tramo,
       };
-      console.log(newMovimiento);
       await CargarReserva(newMovimiento);
-      // Actualizar el stock
-      await ActualizarStock(items, productos || [], setProductos, false);
       toast({
         title: 'Éxito',
-        description: 'Ingreso registrado',
+        description: 'Reserva cargada exitosamente',
         status: 'success',
         duration: 3000,
         isClosable: true,
       });
       resetFilters();
-      if (getNewClient) getNewClient();
       onClose();
     } catch (e) {
       console.log(e);
@@ -194,7 +184,79 @@ const CobrarForm = ({
     confirmButtonRef.current?.blur();
     isPago ? ConfirmarCompra() : ConfirmarReserva();
   };
-
+  const addTest = async () => {
+    const movimientos = {
+      Inicializado: {
+        fecha: Timestamp.now(),
+        admin: user?.id,
+      },
+      Preparación: {
+        fecha: null,
+        admin: null,
+      },
+      Pendiente: {
+        fecha: null,
+        admin: null,
+      },
+      'En curso': {
+        fecha: null,
+        admin: null,
+      },
+      Finalizado: {
+        fecha: null,
+        admin: null,
+      },
+    };
+    setLoading(true);
+    try {
+      const newMovimiento = {
+        detalle: 'Detalle Test',
+        cliente: 'Test',
+        creadorID: user?.id,
+        items: [
+          {
+            target: 800,
+            medida: 'Un.',
+            nombre: 'Test',
+            codigo: [],
+            id: 'zSRhXErDrgHUliqiV4kY',
+            cantidadPorPack: 150,
+            cantidad: 2000,
+            empresa: 'dodoLink',
+            unidades: 150,
+          },
+        ],
+        movimientos,
+        isPago: false,
+        mapCoords:
+          'https://www.google.com/maps/d/embed?mid=1UGQcECeYZBB9y5X0esAkNzFRU8PjlRo&ehbc=2E312F',
+        vistoPor: [],
+        tramo: 150,
+      };
+      console.log(newMovimiento.items[0]);
+      await CargarReserva(newMovimiento);
+      toast({
+        title: 'Éxito',
+        description: 'Reserva cargada exitosamente',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      resetFilters();
+      onClose();
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: 'Error',
+        description: 'Hubo un error al confirmar',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   const confirmMap = () => {
     const src = extractSrcFromIframe(embedValue);
     if (!src) {
@@ -240,17 +302,30 @@ const CobrarForm = ({
   return (
     <Flex minH='50vh' gap={3} flexDir='column'>
       <ClienteYDetalle />
-      <Button
-        onClick={test}
-        size='sm'
-        w='fit-content'
-        color='white'
-        bg='blue.700'
-        isLoading={loadingTest}
-        _hover={{ opacity: 0.7 }}
-      >
-        Test Telegram Bot
-      </Button>
+      <Flex gap={2}>
+        <Button
+          onClick={test}
+          size='sm'
+          w='fit-content'
+          color='white'
+          bg='blue.700'
+          isLoading={loadingTest}
+          _hover={{ opacity: 0.7 }}
+        >
+          Test Telegram Bot
+        </Button>
+        {/* <Button
+          onClick={addTest}
+          size='sm'
+          w='fit-content'
+          color='white'
+          bg='blue.700'
+          isLoading={loading}
+          _hover={{ opacity: 0.7 }}
+        >
+          Add Test
+        </Button> */}
+      </Flex>
       <Flex gap={2} align='center'>
         <Text fontWeight='bold'>Tramo (mts.):</Text>
         <Input

@@ -2,205 +2,90 @@ import CopyButton from '@/components/CopyButton';
 import DeleteModal from '@/components/DeleteModal';
 import EstadoSteps from '@/components/ingresos/EstadoSteps';
 import NotAuthorized from '@/components/Navigation/NotAuthorized';
-import { useOnCurso } from '@/context/useOnCursoContext';
-import { useUser } from '@/context/userContext';
 import { CheckAdminRol } from '@/data/data';
-import { getSingleDoc } from '@/firebase/services/getSingleDoc';
-import { setSingleDoc } from '@/firebase/services/setSingleDoc';
-import { getEstado } from '@/helpers/cobros/getEstado';
 import dateTexto from '@/helpers/dateTexto';
-import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
 import { scrollIntoTheView } from '@/helpers/scrollIntoTheView';
-import useGetUsers from '@/hooks/users/useGetUsers';
-import { Estados, MovimientosType, PedidoType } from '@/types/types';
+import usePedidosForm from '@/hooks/usePedidosForm';
+import { PedidoType, ProductoType } from '@/types/types';
 import {
+  Button,
   Flex,
   Heading,
+  IconButton,
+  Stack,
   Text,
+  Tooltip,
   useColorModeValue,
-  useToast,
 } from '@chakra-ui/react';
-import { Timestamp } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
 import { MdLocationPin } from 'react-icons/md';
 import MapEmbed from '../EmbedMap';
-import ConfirmarPedidoModal from './ConfirmarPedidoModal';
+import ConfirmarPedidoModal from './ConfimarPedidoModal/ConfirmarPedidoModal';
 import QRCodeLabel from './QRCodeLabel';
 import VerMovimientosModal from './VerMovimientosModal';
-import { getCambiosResumen } from '@/helpers/getCambiosResumen';
-const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
-  const { reservas } = useOnCurso();
-  const [loadingUpdate, setLoadingUpdate] = useState(false);
-  const { user } = useUser();
-  const [currentMov, setCurrentMov] = useState(movimiento);
-  const {
-    detalle,
-    items,
-    cliente,
-    id,
-    isPago,
-    mapCoords,
-    creadorID,
-    movimientos,
-    tramo,
-  } = currentMov;
-  const fecha = formatearFecha(id);
-  const fetchNewMov = async () => {
-    try {
-      const mov = (await getSingleDoc('movimientos', fecha)) as MovimientosType;
-      const thisMov = mov.reservas.find((r) => r.id === movimiento.id);
-      if (thisMov) {
-        setCurrentMov(thisMov);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-  useEffect(() => {
-    if (movimiento?.movimientos?.Finalizado?.fecha) {
-      setCurrentMov(movimiento);
-      return;
-    }
-    const newMov = reservas?.find((r) => r.id === movimiento.id);
-    if (newMov) {
-      setCurrentMov(newMov);
-    } else fetchNewMov();
-  }, [reservas]);
-  const customGrayBG = useColorModeValue('gray.50', 'gray.700');
 
-  const { users } = useGetUsers();
-  const estado = getEstado(movimientos);
-  const toast = useToast();
+const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
+  const {
+    user,
+    productos,
+    estado,
+    loadingUpdate,
+    loadingDelete,
+    currentMov,
+    updatePedido,
+    deleteFunc,
+  } = usePedidosForm(movimiento);
+  const { detalle, items, cliente, id, isPago, mapCoords, movimientos, tramo } =
+    currentMov;
+  const customGrayBG = useColorModeValue('gray.50', 'gray.700');
+  // Check si el usuario tiene el pedido en curso para Cuadrilla
   const hasReserva = movimientos?.['En curso'].admin === user?.id;
   if (!CheckAdminRol(user?.rol) && estado !== 'Pendiente' && !hasReserva)
     return <NotAuthorized />;
-  const updatePedido = async (id: string, updatedPedido: PedidoType | null) => {
-    if (estado === 'Finalizado' || !reservas) {
-      toast({
-        title: 'Finalizado',
-        description: 'No se puede actualizar un pedido finalizado',
-        status: 'info',
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    const newEstado = Estados[Estados.indexOf(estado) + 1];
-    setLoadingUpdate(true);
-
-    const movimientoFetched = (await getSingleDoc(
-      'movimientos',
-      fecha
-    )) as MovimientosType;
-    const field = isPago ? 'compras' : 'reservas';
-
-    const updatedReservas = (id: string, arr: PedidoType[]) => {
-      const newReservas = arr.map((r) => {
-        if (r.id === id) {
-          const cambios = updatedPedido
-            ? getCambiosResumen(r, updatedPedido)
-            : null;
-          return {
-            ...(updatedPedido || r),
-            movimientos: {
-              ...r.movimientos,
-              [newEstado]: {
-                fecha: Timestamp.now(),
-                admin: user?.id,
-                cambios,
-              },
-            },
-          };
-        }
-        return r;
-      });
-      return newReservas;
-    };
-
-    try {
-      await setSingleDoc('movimientos', fecha, {
-        [field]: updatedReservas(id, movimientoFetched.reservas),
-      });
-
-      await setSingleDoc('movimientos', 'enCurso', {
-        [field]:
-          newEstado === 'Finalizado'
-            ? reservas?.filter((d) => d.id !== id)
-            : updatedReservas(id, reservas),
-      });
-
-      toast({
-        title: 'Éxito',
-        description: 'Pedido actualizado con éxito',
-        isClosable: true,
-        duration: 5000,
-        status: 'success',
-      });
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoadingUpdate(false);
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 50);
-    }
-  };
-
-  const creador = users?.find((user) => user.id === creadorID);
-  const deleteFunc = async () => {
-    if (movimientos?.Finalizado?.fecha) {
-      toast({
-        title: 'Finalizado',
-        description: 'No se puede eliminar un pedido finalizado',
-        status: 'info',
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
-    }
-    toast({
-      title: 'Próximamente',
-      description: 'No se puede eliminar aún',
-      status: 'info',
-      duration: 5000,
-      isClosable: true,
-    });
-  };
+  const showDelete =
+    user?.rol === 'Superadmin' ||
+    ['En curso', 'Finalizado'].every((e) => e !== estado);
   return (
     <Flex gap={5} flexDir='column'>
-      <Flex flexDir='column'>
+      <Stack spacing={1}>
         <Flex align='center' justify='space-between'>
           <Flex gap={3} align='center'>
-            <Text fontSize='sm'>
-              {!isPago ? 'Reserva' : 'Compra'} - <i>{id}</i>
+            <Text fontSize='sm' color='gray.600'>
+              {isPago ? 'Compra' : 'Reserva'} -{' '}
+              <Text as='span' fontWeight='medium' fontFamily='mono'>
+                {id}
+              </Text>
             </Text>
             <CopyButton
               content={id}
               description='Código guardado en el portapapeles'
             />
           </Flex>
-          <MdLocationPin
-            onClick={() => scrollIntoTheView('embed-location')}
-            cursor='pointer'
-          />
+          <Tooltip label='Ver ubicación'>
+            <IconButton
+              icon={<MdLocationPin />}
+              variant='ghost'
+              aria-label='Ver ubicación'
+              onClick={() => scrollIntoTheView('embed-location')}
+            />
+          </Tooltip>
         </Flex>
-        <Heading fontWeight='normal' size='lg'>
-          <strong> {cliente}</strong>
+
+        <Heading size='lg'>
+          <strong>{cliente}</strong>
         </Heading>
-        <Text fontStyle='italic'>
-          Fecha:{' '}
-          <b>
-            {dateTexto(movimientos?.Inicializado?.fecha.seconds, true).numDate}
-          </b>{' '}
-          - {dateTexto(movimientos?.Inicializado?.fecha.seconds).hourDate} HS
+
+        <Text fontSize='sm'>
+          <b>Fecha:</b>{' '}
+          {dateTexto(movimientos?.Inicializado?.fecha.seconds, true).numDate} -{' '}
+          {dateTexto(movimientos?.Inicializado?.fecha.seconds).hourDate} HS
         </Text>
+
         {tramo !== 0 && tramo && (
-          <Text fontStyle='italic'>
-            Tramo: <b>{tramo} Mts.</b>
+          <Text fontSize='sm'>
+            <b>Tramo:</b> {tramo} Mts.
           </Text>
         )}
-      </Flex>
+      </Stack>
       <Flex gap={1} flexDir='column'>
         <EstadoSteps estado={estado} />
         <VerMovimientosModal currentEstado={estado} pedido={currentMov} />
@@ -248,17 +133,6 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
           ))}
         </Flex>
       </Flex>
-
-      {/* Información del creador */}
-      <Flex w='100%' maxW='700px' fontSize='md' p={2} flexDir='column' gap={1}>
-        <Text>
-          Admin:{' '}
-          <b>
-            {creador?.nombre} {creador?.apellido}
-          </b>
-        </Text>
-      </Flex>
-
       {/* Código QR + Mapa */}
       <Flex
         gap={4}
@@ -277,6 +151,7 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
         >
           <QRCodeLabel pedido={currentMov} />
         </Flex>
+
         <Flex h='100%' id='embed-location' w='100%'>
           <MapEmbed initialShow hideButtons src={mapCoords} />
         </Flex>
@@ -284,16 +159,21 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
       <Flex justifyContent='center' my={10} gap={4}>
         <ConfirmarPedidoModal
           loading={loadingUpdate}
-          update={(newPedido: PedidoType) => updatePedido(id, newPedido)}
+          update={(
+            newPedido: PedidoType,
+            newItems: ProductoType[],
+            sobrantes: ProductoType[]
+          ) => updatePedido(id, newPedido, newItems, sobrantes)}
+          productos={productos}
           pedido={currentMov}
         />
-        {CheckAdminRol(user?.rol) && (
+        {showDelete && CheckAdminRol(user?.rol) && (
           <DeleteModal
             textContent='Eliminar'
             title='Pedido'
             nombre={`${currentMov.id} (${estado})`}
             size='md'
-            loadingForm={loadingUpdate}
+            loadingForm={loadingDelete}
             DeleteProp={deleteFunc}
           />
         )}

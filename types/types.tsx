@@ -24,6 +24,7 @@ export type UserType = {
   email: string;
   apellido: string;
   usuario: string;
+  inventario: ProductoType[];
   rol: RolType;
 };
 

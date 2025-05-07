@@ -1,6 +1,6 @@
 import { getEstado } from '@/helpers/cobros/getEstado';
 import { EstadoColors, Estados, PedidoType } from '@/types/types';
-import { Flex, Heading, Text } from '@chakra-ui/react';
+import { Flex, Heading, Text, Tooltip } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 const PedidoBody = ({
   pedido,
@@ -40,6 +40,7 @@ const PedidoBody = ({
       <Heading
         title={cliente}
         noOfLines={1}
+        cursor='default'
         as='h2'
         fontSize='xl'
         fontWeight='semibold'
@@ -47,7 +48,7 @@ const PedidoBody = ({
         {cliente}
       </Heading>
 
-      <Text py={1} fontSize='md'>
+      <Text cursor='default' title={detalle} noOfLines={1} py={1} fontSize='md'>
         {detalle}
       </Text>
     </Flex>

@@ -23,11 +23,9 @@ import { useUser } from '@/context/userContext';
 
 const CargarModal = ({
   size,
-  getNewClient,
 }: {
   initialIsPago?: boolean;
-  size: string;
-  getNewClient?: () => Promise<void>;
+  size: string; 
 }) => {
   const { resetFilters, setIsPago, isPago, checkForUpdates, loadingProductos } =
     useCobrarFormContext();
@@ -86,6 +84,7 @@ const CargarModal = ({
         </MenuButton>
         <MenuList boxShadow='0 0 2px'>
           {/* MenuItems are not rendered unless Menu is open */}
+          <MenuItem p={0} w={0} h={0}/>
           <MenuItem
             _hover={customHover}
             boxShadow='0 0 3px'
@@ -136,7 +135,7 @@ const CargarModal = ({
             Nueva {isPago ? 'Orden de Compra' : 'Reserva de Pedido'}
           </ModalHeader>
           <ModalBody>
-            <CobrarForm getNewClient={getNewClient} onClose={onClose} />
+            <CobrarForm onClose={onClose} />
           </ModalBody>
         </ModalContent>
       </Modal>

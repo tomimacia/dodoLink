@@ -1,12 +1,23 @@
 import React, { useRef } from 'react';
 import dateTexto from '@/helpers/dateTexto';
 import { PedidoType } from '@/types/types';
-import { Box, Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
 import QRCode from 'react-qr-code';
 import { useReactToPrint } from 'react-to-print';
 import { IoMdPrint } from 'react-icons/io';
+import { getEstado } from '@/helpers/cobros/getEstado';
 const QRCodeLabel = ({ pedido }: { pedido: PedidoType }) => {
   const { id, cliente, detalle, items, movimientos } = pedido;
+  const estado = getEstado(movimientos);
+  const toast = useToast();
   const { fecha } = movimientos.Inicializado;
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
@@ -69,7 +80,19 @@ const QRCodeLabel = ({ pedido }: { pedido: PedidoType }) => {
       {/* Botón de impresión */}
 
       <Button
-        onClick={reactToPrintFn}
+        onClick={() => {
+          if (estado === 'Inicializado') {
+            toast({
+              title: 'Actualizar Estado',
+              description: 'Confirma los datos para poder imprimir la etiqueta',
+              isClosable: true,
+              duration: 5000,
+              status: 'error',
+            });
+            return;
+          }
+          reactToPrintFn();
+        }}
         bg='gray.700'
         color='white'
         size='sm'

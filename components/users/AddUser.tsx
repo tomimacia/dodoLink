@@ -48,10 +48,10 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
         nombre,
         apellido,
         rol,
-        inventario: null,
+        inventario: [],
       };
       if (!id) return;
-      await setSingleDoc('users', id || 'noID', newUser);
+      await setSingleDoc('users', id, newUser);
       await sendPasswordResetEmail(auth, email);
       getUsers();
       toast({

@@ -35,7 +35,7 @@ const UserBody = ({ user }: { user: UserType | null }) => {
         borderRadius='md'
         boxShadow='sm'
         bg='white'
-        _dark={{ bg: 'gray.800', borderColor: 'gray.600' }}
+        _dark={{ bg: 'gray.700', borderColor: 'gray.600' }}
       >
         <Divider borderColor='gray.300' />
         <Flex align='center' justify='space-between'>
@@ -72,7 +72,7 @@ const UserBody = ({ user }: { user: UserType | null }) => {
                 p={2}
                 borderRadius='md'
                 bg='white'
-                _dark={{ bg: 'gray.800' }}
+                _dark={{ bg: 'gray.700' }}
                 boxShadow='xs'
                 border='1px solid'
                 borderColor='gray.100'

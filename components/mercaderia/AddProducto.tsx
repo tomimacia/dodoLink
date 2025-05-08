@@ -14,7 +14,7 @@ import {
   Input,
   Select,
   Text,
-  useToast
+  useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import PopoverInfoIcon from '../inicio/PopoverInfoIcon';
@@ -26,8 +26,8 @@ const AddProducto = () => {
     cantidad: '',
     medida: 'Un.',
     empresa: 'dodoLink',
-    cantidadPorPack: null,
-    target: null,
+    cantidadPorPack: 0,
+    target: 0,
   };
   const [form, setForm] = useState<any>(initialForm);
   const [adding, setAdding] = useState(false);
@@ -176,7 +176,7 @@ const AddProducto = () => {
         <Input
           onChange={onChange}
           name='cantidadPorPack'
-          value={form.cantidadPorPack}
+          value={form.cantidadPorPack || ''}
           type='number'
           autoComplete='off'
           formNoValidate
@@ -193,7 +193,7 @@ const AddProducto = () => {
         <Input
           onChange={onChange}
           name='target'
-          value={form.target}
+          value={form.target || ''}
           type='number'
           autoComplete='off'
           formNoValidate

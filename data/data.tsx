@@ -36,6 +36,11 @@ export const Routes = [
         route: 'Inventario/Listado',
         roles: ['Admin', 'Superadmin', 'Supervisor'],
       },
+      {
+        label: 'Asignados ',
+        route: 'Inventario/Asignados',
+        roles: ['Admin', 'Superadmin', 'Supervisor'],
+      },
     ],
   },
   {

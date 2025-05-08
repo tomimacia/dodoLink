@@ -35,6 +35,10 @@ const SubNav = ({ subNavItems }: { subNavItems: SubNavItemType[] }) => {
               size='sm'
               border='1px solid gray'
               bg={isSelected ? 'gray.600' : 'transparent'}
+              _dark={{
+                bg: isSelected ? 'gray.500' : 'gray.600',
+                color: isSelected ? 'white' : 'gray.100',
+              }}
               _active={{ opacity: 1 }}
               _focus={{ opacity: 1 }}
               color={isSelected ? 'white' : undefined}

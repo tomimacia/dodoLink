@@ -67,14 +67,13 @@ const VerMovimientosModal = ({
   const cardBg = useColorModeValue('gray.100', 'gray.700');
   const borderColor = useColorModeValue('gray.300', 'gray.600');
 
-  const renderMovimiento = (estado: EstadoType) => {
+  const RenderMovimiento = ({ estado }: { estado: EstadoType }) => {
     const movimiento = pedido.movimientos[estado];
     const isEstado = estado === currentEstado;
     if (!movimiento?.fecha || !movimiento?.admin)
       return (
         <>
           <Box
-            key={estado + 'historial-mov-key'}
             borderWidth={1}
             borderRadius='lg'
             borderColor={borderColor}
@@ -204,9 +203,12 @@ const VerMovimientosModal = ({
             </Box>
             <ArrowIconShow estado='Inicializado' />
             <Stack spacing={0}>
-              {Estados.filter((e) => e !== 'Inicializado').map((estado) =>
-                renderMovimiento(estado)
-              )}
+              {Estados.filter((e) => e !== 'Inicializado').map((estado) => (
+                <RenderMovimiento
+                  estado={estado}
+                  key={estado + 'historial-mov-key'}
+                />
+              ))}
             </Stack>
           </ModalBody>
         </ModalContent>

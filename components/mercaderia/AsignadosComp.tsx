@@ -47,7 +47,12 @@ const AsignadosComp = () => {
           alignItems='center'
           w='fit-content'
         >
-          <FormLabel cursor='pointer' htmlFor='cuadrilla-switch' mb='0' fontSize='sm'>
+          <FormLabel
+            cursor='pointer'
+            htmlFor='cuadrilla-switch'
+            mb='0'
+            fontSize='sm'
+          >
             Solo Cuadrilla
           </FormLabel>
           <Switch

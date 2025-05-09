@@ -113,7 +113,6 @@ const ModalBodyBottomPart = ({
       return newItems;
     });
   };
-  console.log(sobrantes);
   return (
     <>
       {estado === 'Inicializado' && (

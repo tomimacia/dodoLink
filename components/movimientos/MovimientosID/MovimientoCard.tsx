@@ -162,8 +162,9 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
           update={(
             newPedido: PedidoType,
             newItems: ProductoType[],
-            sobrantes: ProductoType[]
-          ) => updatePedido(id, newPedido, newItems, sobrantes)}
+            sobrantes: ProductoType[],
+            onClose: () => void
+          ) => updatePedido(id, newPedido, newItems, sobrantes, onClose)}
           productos={productos}
           pedido={currentMov}
         />

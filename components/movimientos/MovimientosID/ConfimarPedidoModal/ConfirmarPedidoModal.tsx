@@ -29,7 +29,8 @@ const ConfirmarPedidoModal = ({
   update: (
     newPedido: PedidoType,
     newItems: ProductoType[],
-    sobrantes: ProductoType[]
+    sobrantes: ProductoType[],
+    onClose: () => void
   ) => Promise<void>;
   productos: ProductoType[] | null;
   pedido: PedidoType;
@@ -91,8 +92,7 @@ const ConfirmarPedidoModal = ({
       mapCoords,
     };
 
-    await update(newPedido, items, sobrantes);
-    onClose();
+    await update(newPedido, items, sobrantes, onClose);
   };
   const toast = useToast();
   const handleClose = () => {

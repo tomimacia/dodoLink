@@ -52,7 +52,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
     if (newMov) {
       setCurrentMov(newMov);
     } else fetchNewMov();
-  }, [reservas]);
+  }, [JSON.stringify(reservas)]);
 
   // Test para actualizar (devuelve true o false)
   const testUpdate = (newItems: ProductoType[]) => {
@@ -121,7 +121,8 @@ const usePedidosForm = (movimiento: PedidoType) => {
     id: string,
     updatedPedido: PedidoType | null,
     newItems: ProductoType[],
-    sobrantes: ProductoType[]
+    sobrantes: ProductoType[],
+    onClose: () => void
   ) => {
     const canUpdate = testUpdate(newItems);
     if (!canUpdate || !reservas) return;
@@ -134,14 +135,14 @@ const usePedidosForm = (movimiento: PedidoType) => {
     )) as MovimientosType;
     const field = isPago ? 'compras' : 'reservas';
     try {
-      if (estado === 'Inicializado' || estado === 'En curso') {
+      if (estado === 'Inicializado') {
         await ActualizarStock(newItems, productos || [], setProductos, false);
       }
       if (estado === 'En curso' && sobrantes.some((s) => s?.cantidad > 0)) {
         await updateInventario(sobrantes);
         await refreshUser();
       }
-      const prom1 = setSingleDoc('movimientos', fecha, {
+      await setSingleDoc('movimientos', fecha, {
         [field]: getUpdatedReservas(
           id,
           movimientoFetched.reservas,
@@ -150,7 +151,8 @@ const usePedidosForm = (movimiento: PedidoType) => {
           user?.id
         ),
       });
-      const prom2 = setSingleDoc('movimientos', 'enCurso', {
+      onClose();
+      await setSingleDoc('movimientos', 'enCurso', {
         [field]:
           newEstado === 'Finalizado'
             ? reservas?.filter((d) => d.id !== id)
@@ -162,7 +164,6 @@ const usePedidosForm = (movimiento: PedidoType) => {
                 user?.id
               ),
       });
-      await Promise.all([prom1, prom2]);
       toast({
         title: 'Éxito',
         description: 'Pedido actualizado con éxito',

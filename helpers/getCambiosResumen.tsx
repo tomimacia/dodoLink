@@ -49,7 +49,6 @@ export const getCambiosResumen = (
     const updatedItem = updatedItemsMap[id];
     if (updatedItem && !isEqual(prevItem, updatedItem)) {
       if (prevItem.unidades !== updatedItem.unidades) {
-        console.log(prevItem);
         cambioUnidades.push(prevItem.nombre || 'Sin nombre');
       }
     }

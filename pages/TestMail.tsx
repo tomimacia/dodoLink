@@ -11,6 +11,7 @@ const productosPrueba: ProductoType[] = [
     empresa: 'DataCore Solutions',
     cantidadPorPack: 1,
     target: 3,
+    queryArr: [],
   },
   {
     nombre: 'Switch HP ProCurve 24p',
@@ -21,6 +22,7 @@ const productosPrueba: ProductoType[] = [
     empresa: 'DataCore Solutions',
     cantidadPorPack: 1,
     target: 6,
+    queryArr: [],
   },
   {
     nombre: 'Cable de Fibra Óptica LC-LC 10m',
@@ -31,6 +33,7 @@ const productosPrueba: ProductoType[] = [
     empresa: 'DataCore Solutions',
     cantidadPorPack: 10,
     target: 50,
+    queryArr: [],
   },
   {
     nombre: 'Fibra Óptica Monomodo LC/UPC 9/125µm',
@@ -41,6 +44,7 @@ const productosPrueba: ProductoType[] = [
     empresa: 'DataCore Solutions',
     cantidadPorPack: 100,
     target: 200, // stock mínimo requerido
+    queryArr: [],
   },
 ];
 

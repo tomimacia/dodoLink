@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { Timestamp } from 'firebase/firestore';
 import { useRef, useState } from 'react';
+import debounce from 'lodash/debounce';
 import ClienteYDetalle from './CobraFormComps/ClienteYDetalle';
 import ProductosTable from './CobraFormComps/ProductosTable';
 import TitleSearchYItem from './CobraFormComps/TitleSearchYItem';
@@ -41,10 +42,56 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
   const [embedValue, setEmbedValue] = useState('');
   const [tramo, setTramo] = useState<number | null>(null);
   const [embed, setEmbed] = useState('');
+
+  const lastChangeTimeRef = useRef<number>(0);
+  const debouncedConfirmMap = useRef(
+    debounce(() => {
+      confirmMap();
+    }, 1000)
+  ).current;
+
+  const confirmMap = () => {
+    const src = extractSrcFromIframe(embedValue);
+    if (!src) {
+      toast({
+        title: 'Error',
+        description: 'Ingresá un iframe válido',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    setEmbed(src);
+    setEmbedValue('');
+  };
+
+ const handleEmbedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+  setEmbedValue(value);
+
+  // Si el input contiene un iframe válido, lo extraemos y lo seteamos
+  if (value.includes('<iframe') && value.includes('src=')) {
+    const src = extractSrcFromIframe(value);
+    if (src) {
+      setEmbed(src);
+      setEmbedValue(''); // Limpiar input luego de confirmar
+      toast({
+        title: 'Mapa agregado',
+        description: 'El iframe fue detectado y procesado automáticamente',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  }
+};
+
   const formatItem = (item: ProductoType) => {
     const { creadorID, createdAt, ...rest } = item;
     return rest;
   };
+
   const ConfirmarReserva = async () => {
     setLoading(true);
     const isValidated = ConfirmValidation(
@@ -129,6 +176,7 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
       setLoading(false);
     }
   };
+
   const ConfirmarCompra = async () => {
     setLoading(true);
     const isValidated = ConfirmValidation(
@@ -153,7 +201,6 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
         vistoPor: [],
       };
       await CargarCompra(newMovimiento);
-      // Actualizar el stock
       toast({
         title: 'Éxito',
         description: 'Egreso registrado',
@@ -176,25 +223,12 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
       setLoading(false);
     }
   };
+
   const ConfirmarMovimiento = async () => {
     confirmButtonRef.current?.blur();
     isPago ? ConfirmarCompra() : ConfirmarReserva();
   };
-  const confirmMap = () => {
-    const src = extractSrcFromIframe(embedValue);
-    if (!src) {
-      toast({
-        title: 'Error',
-        description: 'Ingresá un iframe válido',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    setEmbed(src);
-    setEmbedValue('');
-  };
+
   return (
     <Flex minH='50vh' gap={3} flexDir='column'>
       <ClienteYDetalle />
@@ -212,25 +246,47 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
           maxW='100px'
         />
       </Flex>
-      {!embed && (
-        <Flex align='center' gap={2}>
-          <Input
-            size='sm'
-            maxW='600px'
-            borderColor='gray'
-            borderRadius={5}
-            value={embedValue}
-            placeholder='Insertar mapa html'
-            onChange={(e) => setEmbedValue(e.target.value)}
-          />
-          <Button onClick={confirmMap} size='sm' bg='blue.700' color='white'>
-            Confirm
-          </Button>
-        </Flex>
-      )}
+
+    {!embed && (
+  <Flex align='center' gap={2}>
+    <Input
+      size='sm'
+      maxW='600px'
+      borderColor='gray'
+      borderRadius={5}
+      value={embedValue}
+      placeholder='Insertar iframe del mapa'
+      onChange={handleEmbedChange}
+    />
+    <Button
+      onClick={() => {
+        const src = extractSrcFromIframe(embedValue);
+        if (!src) {
+          toast({
+            title: 'Error',
+            description: 'Ingresá un iframe válido',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          });
+          return;
+        }
+        setEmbed(src);
+        setEmbedValue('');
+      }}
+      size='sm'
+      bg='blue.700'
+      color='white'
+    >
+      Confirmar
+    </Button>
+  </Flex>
+)}
+
       <MapEmbed initialShow clean={() => setEmbed('')} src={embed} />
       <TitleSearchYItem />
       <ProductosTable />
+
       <Flex mt='auto' p={5} flexDir='column' gap={3}>
         <Button
           type='submit'

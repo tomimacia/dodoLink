@@ -14,6 +14,7 @@ import QRCode from 'react-qr-code';
 import { useReactToPrint } from 'react-to-print';
 import { IoMdPrint } from 'react-icons/io';
 import { getEstado } from '@/helpers/cobros/getEstado';
+import { CurrentURL } from '@/data/data';
 const QRCodeLabel = ({ pedido }: { pedido: PedidoType }) => {
   const { id, cliente, detalle, items, movimientos } = pedido;
   const estado = getEstado(movimientos);
@@ -73,7 +74,7 @@ const QRCodeLabel = ({ pedido }: { pedido: PedidoType }) => {
         </Box>
 
         <Flex justify='center' mt={4}>
-          <QRCode value={id} size={125} />
+          <QRCode value={`${CurrentURL}PedidosID/${id}`} size={125} />
         </Flex>
       </Flex>
 

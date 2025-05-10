@@ -14,8 +14,10 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import ForgotPasswordModal from './ForgotPasswordModal';
 const LoginFormAndScreens = ({
+  loadingUser,
   refreshUser,
 }: {
+  loadingUser: boolean;
   refreshUser: () => Promise<void>;
 }) => {
   const [recuerdameUser, setRecuerdameUser] = useLocalStorage(
@@ -69,6 +71,7 @@ const LoginFormAndScreens = ({
       });
     }
   };
+  const isLoading = loadingUser || loading;
   return (
     <Flex
       h='100%'
@@ -185,7 +188,7 @@ const LoginFormAndScreens = ({
             fontWeight='700'
             boxShadow='0 0 10px rgba(0, 0, 0, .5)'
             _focus={{ boxShadow: 'none' }}
-            isLoading={loading}
+            isLoading={isLoading}
             size={['sm', 'sm', 'md', 'md']}
           >
             Ingresar

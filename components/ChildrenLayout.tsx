@@ -24,7 +24,7 @@ const ChildrenLayout = ({
     <Flex py={1} w='100%' flexDir='column'>
       <SubNav subNavItems={subNavItems} />
       {title && (
-        <Heading textAlign='center' size='lg'>
+        <Heading my={3} textAlign='center' size='lg'>
           {title}
         </Heading>
       )}

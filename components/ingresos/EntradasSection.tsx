@@ -23,10 +23,16 @@ const EntradasSection = ({
     const hasReserva = r.movimientos?.['En curso'].admin === user?.id;
     return CheckAdminRol(user?.rol) || estado === 'Pendiente' || hasReserva;
   });
-  const getRoute = (route: string) => {
-    if (title === 'Reservas') return `/PedidosID/${route}`;
-    return `/ComprasID/${route}`;
+  const arrangeItems = (pedidos: PedidoType[]) => {
+    return pedidos.sort((a, b) => {
+      const estadoA = getEstado(a.movimientos);
+      const estadoB = getEstado(b.movimientos);
+      const lastSecondsA = a.movimientos[estadoA]?.fecha?.seconds || 0;
+      const lastSecondsB = b.movimientos[estadoB]?.fecha?.seconds || 0;
+      return lastSecondsB - lastSecondsA;
+    });
   };
+  const arrangedItems = arrangeItems(filtered);
   return (
     <Flex gap={2} flexDir='column'>
       <Heading as='h3' size='lg'>
@@ -34,13 +40,12 @@ const EntradasSection = ({
       </Heading>
       <QrScanner
         title={`Escanear Código de ${capitalizeFirst(title.slice(0, -1))}`}
-        getRoute={getRoute}
       />
       {filtered.length === 0 && <NoPedidosCard title={title.toLowerCase()} />}
       <Flex w='100%' flexWrap='wrap' gap={2}>
         <AnimatePresence>
           {filtered.length > 0 &&
-            filtered.map((r: PedidoType, index: number) => {
+            arrangedItems.map((r: PedidoType, index: number) => {
               return (
                 <PedidosRealTimeCard
                   key={r.id + 'pedidoskey'}

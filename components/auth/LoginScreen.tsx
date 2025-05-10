@@ -18,7 +18,7 @@ const LoginScreen = ({ refreshUser }: { refreshUser: () => Promise<void> }) => {
       {loading ? (
         <LoadingScreen />
       ) : (
-        <LoginFormAndScreens refreshUser={refreshUser} />
+        <LoginFormAndScreens loadingUser={loading} refreshUser={refreshUser} />
       )}
     </Flex>
   );

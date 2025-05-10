@@ -1,9 +1,7 @@
 import { useOnCurso } from '@/context/useOnCursoContext';
 import { useUser } from '@/context/userContext';
 import { CheckAdminRol } from '@/data/data';
-import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { getEstado } from '@/helpers/cobros/getEstado';
-import { PedidoType } from '@/types/types';
 import { BellIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -24,27 +22,18 @@ const NotificationButton = () => {
   const notificationsUnseen =
     reservas?.filter((r) => {
       const noVisto = !r.vistoPor.some((v) => v === user?.id);
-      const puedeVer = getEstado(r.movimientos) === 'Pendiente' || CheckAdminRol(user?.rol);
+      const puedeVer =
+        getEstado(r.movimientos) === 'Pendiente' || CheckAdminRol(user?.rol);
       return noVisto && puedeVer;
     }) || [];
   const notificationsToShow =
     reservas?.filter((r) => {
-      const puedeVer = getEstado(r.movimientos) === 'Pendiente' || CheckAdminRol(user?.rol);
+      const puedeVer =
+        getEstado(r.movimientos) === 'Pendiente' || CheckAdminRol(user?.rol);
       return puedeVer;
     }) || [];
   const { push } = useRouter();
-  const updateNotifications = () => {
-    if (notificationsUnseen.length > 0) {
-      const actualizadas = reservas?.map((r) =>
-        notificationsUnseen.some((n) => n.id === r.id)
-          ? { ...r, vistoPor: [...r.vistoPor, user?.id] }
-          : r
-      );
-      setSingleDoc('movimientos', 'enCurso', {
-        reservas: actualizadas,
-      });
-    }
-  };
+
   const customImageBG = useColorModeValue('gray.500', 'gray.700');
   const customSize = useBreakpointValue(['xs', 'sm', 'sm', 'sm', 'sm']) || 'sm';
 
@@ -70,7 +59,7 @@ const NotificationButton = () => {
           {notificationsUnseen.length}
         </Box>
       )}
-      <Menu onOpen={updateNotifications}>
+      <Menu>
         <MenuButton
           as={IconButton}
           aria-label='Options'
@@ -89,22 +78,32 @@ const NotificationButton = () => {
           fontSize='sm'
           boxShadow='rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 5px 10px, rgba(0, 0, 0, 0.4) 0px 5px 40px'
         >
-          {notificationsToShow?.map((n, ind) => {
+          {notificationsToShow.map((n, ind) => {
+            const noVisto = !n.vistoPor?.includes(user?.id || '');
             return (
               <MenuItem
                 onClick={() => push(`/PedidosID/${n.id}`)}
-                key={`notification-key-${n}-${ind}`}
+                key={`notification-key-${n.id}-${ind}`}
+                fontWeight={noVisto ? 'bold' : 'normal'}
+                bg={noVisto ? 'gray.100' : 'transparent'}
+                _hover={{ bg: noVisto ? 'gray.200' : 'gray.100' }}
+                display='flex'
+                justifyContent='space-between'
               >
-                {`${n.isPago ? 'Compra' : 'Reserva'} - `}
-                {n.cliente}
+                <Box>{`${n.isPago ? 'Compra' : 'Reserva'} - ${n.cliente}`}</Box>
+                {noVisto && (
+                  <Box
+                    w='8px'
+                    h='8px'
+                    bg='red.500'
+                    borderRadius='full'
+                    ml={2}
+                    alignSelf='center'
+                  />
+                )}
               </MenuItem>
             );
           })}
-          {notificationsToShow.length === 0 && (
-            <MenuItem bg='transparent' cursor='default'>
-              No tienes notificaciones
-            </MenuItem>
-          )}
         </MenuList>
       </Menu>
     </Flex>

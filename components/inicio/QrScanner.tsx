@@ -16,13 +16,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { FaQrcode } from 'react-icons/fa';
 import ReactLoading from 'react-loading';
-const QrScanner = ({
-  title,
-  getRoute,
-}: {
-  title: string;
-  getRoute: (id: string) => string;
-}) => {
+const QrScanner = ({ title }: { title: string }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -68,7 +62,7 @@ const QrScanner = ({
                 onScan={(scanResult) => {
                   startLoading();
                   if (scanResult.length > 0) {
-                    router.push(getRoute(scanResult[0]?.rawValue));
+                    router.push(scanResult[0]?.rawValue);
                   }
                 }}
               />

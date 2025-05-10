@@ -2,6 +2,7 @@ import { getEstado } from '@/helpers/cobros/getEstado';
 import { EstadoColors, Estados, PedidoType } from '@/types/types';
 import { Flex, Heading, Text, Tooltip } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 const PedidoBody = ({
   pedido,
   loading,
@@ -13,6 +14,11 @@ const PedidoBody = ({
 }) => {
   const { cliente, detalle, movimientos } = pedido ?? {};
   const estado = getEstado(movimientos);
+  const hasMounted = useRef(false);
+
+  useEffect(() => {
+    hasMounted.current = true;
+  }, []);
   const prevColor =
     EstadoColors[Estados[Estados.indexOf(estado) - 1]] ?? 'gray';
   return (
@@ -22,19 +28,20 @@ const PedidoBody = ({
         style={{
           display: 'inline-flex',
           alignItems: 'center',
-          borderRadius: '999px',
+          borderRadius: '50px',
           padding: '4px 12px',
           fontSize: '0.9rem',
-          fontWeight: 600,
+          fontWeight: 500,
           color: 'white',
           backgroundColor: EstadoColors[estado],
           width: 'fit-content',
+          gap: 4,
         }}
         initial={{ backgroundColor: prevColor }}
         animate={{ backgroundColor: EstadoColors[estado] }}
-        transition={{ duration: 1 }}
+        transition={hasMounted.current ? { duration: 1 } : { duration: 0 }}
       >
-        Estado: {estado}
+        Estado: <b>{estado}</b>
       </motion.div>
 
       <Heading

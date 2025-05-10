@@ -18,9 +18,11 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MapEmbed from '../../EmbedMap';
 import TitleSearch from '../../TitleSearch';
+import { getSingleDoc } from '@/firebase/services/getSingleDoc';
+import ReactLoading from 'react-loading';
 
 type ItemsHandlerType = [
   ProductoType[],
@@ -64,6 +66,7 @@ const ModalBodyBottomPart = ({
   const [mapCoords, setMapCoords] = mapCoordsHandler;
   const [sobrantes, setSobrantes] = sobrantesHandler;
   const toast = useToast();
+  const [loadingNew, setLoadingNew] = useState(false);
   const checkItem = (id: string) => {
     const newCheckedItems = checkedItems.map((i: any) => {
       if (i.id === id) {
@@ -88,7 +91,6 @@ const ModalBodyBottomPart = ({
     setMapCoords(src);
     setEmbedValue('');
   };
-
   const addProducto = (producto: ProductoType) => {
     const { id } = producto;
     const newItems = items.some((i) => i.id === id)
@@ -113,6 +115,30 @@ const ModalBodyBottomPart = ({
       return newItems;
     });
   };
+  useEffect(() => {
+    if (estado !== 'Inicializado') return;
+    console.log('fetchingNew');
+    const updateItems = async () => {
+      const newItemsPromise = items.map((i) => getSingleDoc('productos', i.id));
+      setLoadingNew(true);
+      try {
+        const newItemsFetched = (await Promise.all(
+          newItemsPromise
+        )) as ProductoType[];
+        const newItems = items.map((prevItem) => {
+          const findNew = newItemsFetched.find((i) => i?.id === prevItem.id);
+          return findNew
+            ? { ...prevItem, cantidad: findNew.cantidad }
+            : prevItem;
+        });
+        setItems(newItems);
+      } catch (e) {
+        console.error(e);
+      }
+      setLoadingNew(false);
+    };
+    updateItems();
+  }, []);
   return (
     <>
       {estado === 'Inicializado' && (
@@ -186,49 +212,60 @@ const ModalBodyBottomPart = ({
               Productos del pedido:
             </Text>
             <VStack spacing={2} align='stretch'>
-              {items.map((item) => {
-                return (
-                  <Flex
-                    key={item.id + 'listed-item-key'}
-                    justify='space-between'
-                    align='center'
-                    p={2}
-                    bg='gray.100'
-                    borderRadius='md'
-                    _dark={{ bg: 'gray.700' }}
-                  >
-                    <Text>{item.nombre}</Text>
-                    <Text
-                      color={
-                        !item?.unidades || item.cantidad >= item.unidades
-                          ? undefined
-                          : 'red'
-                      }
+              {loadingNew ? (
+                <Flex p={4} justify='center'>
+                  <ReactLoading
+                    type='bars'
+                    color='#3182ce'
+                    height='50px'
+                    width='50px'
+                  />
+                </Flex>
+              ) : (
+                items.map((item) => {
+                  return (
+                    <Flex
+                      key={item.id + 'listed-item-key'}
+                      justify='space-between'
+                      align='center'
+                      p={2}
+                      bg='gray.100'
+                      borderRadius='md'
+                      _dark={{ bg: 'gray.700' }}
                     >
-                      {item.cantidad}
-                    </Text>
-                    <HStack>
-                      {/* Input editable (reemplazá por lógica real si querés permitir editar) */}
-                      <Input
-                        type='number'
-                        size='sm'
-                        name={item.id}
-                        onChange={onChange}
-                        w='60px'
-                        defaultValue={item.unidades}
-                        // onChange={(e) => handleCantidadChange(item.id, e.target.value)}
-                      />
-                      <Text fontSize='sm'>{item.medida}</Text>
-                      <DeleteIcon
-                        fontSize='sm'
-                        cursor='pointer'
-                        _hover={{ opacity: 0.65 }}
-                        onClick={() => deleteProducto(item.id)}
-                      />
-                    </HStack>
-                  </Flex>
-                );
-              })}
+                      <Text>{item.nombre}</Text>
+                      <Text
+                        color={
+                          !item?.unidades || item.cantidad >= item.unidades
+                            ? undefined
+                            : 'red'
+                        }
+                      >
+                        {item.cantidad}
+                      </Text>
+                      <HStack>
+                        {/* Input editable (reemplazá por lógica real si querés permitir editar) */}
+                        <Input
+                          type='number'
+                          size='sm'
+                          name={item.id}
+                          onChange={onChange}
+                          w='60px'
+                          defaultValue={item.unidades}
+                          // onChange={(e) => handleCantidadChange(item.id, e.target.value)}
+                        />
+                        <Text fontSize='sm'>{item.medida}</Text>
+                        <DeleteIcon
+                          fontSize='sm'
+                          cursor='pointer'
+                          _hover={{ opacity: 0.65 }}
+                          onClick={() => deleteProducto(item.id)}
+                        />
+                      </HStack>
+                    </Flex>
+                  );
+                })
+              )}
             </VStack>
             <Flex pos='relative' my={3}>
               <TitleSearch

@@ -99,6 +99,7 @@ export type ProductoType = {
   empresa: string;
   cantidadPorPack: number;
   target: number;
+  queryArr: string[];
 };
 export type DestinatarioType = 'Cliente' | 'Consumidor Final';
 export type TipoDePagoType = 'Efectivo' | 'Mercadopago';

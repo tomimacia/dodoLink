@@ -27,8 +27,8 @@ const PedidosRealTimeCard = ({
         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         border: '1px solid #E2E8F0',
       }}
-      initial={{ opacity: 0, x: 150 }}
-      exit={{ opacity: 0, x: -150 }}
+      initial={{ opacity: 0, x: 20 }}
+      exit={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: 'tween', delay }}
     >

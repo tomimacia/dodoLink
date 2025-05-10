@@ -168,7 +168,7 @@ export const TimeData = {
     'Sábado',
   ],
 };
-export const CurrentURL = "https://dodo-link.vercel.app/"
+export const CurrentURL = process.env.NEXT_PUBLIC_CURRENT_URL;
 export const mailsForNotification = [
   'mdoval@dodolink.com.ar',
   'lperez@dodolink.com.ar',

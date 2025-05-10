@@ -1,68 +1,62 @@
 import { getMultipleDocs } from '@/firebase/services/getMultipleDocs';
 import { useEnter } from '@/hooks/eventHooks/useEnter';
+import useScanDetection from '@/hooks/useScanDetection';
 import { ProductoType } from '@/types/types';
 import {
+  Box,
   Button,
   Flex,
   Input,
   Text,
   useColorModeValue,
   useToast,
+  Heading,
 } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FormEvent, useRef, useState } from 'react';
 import ReactLoading from 'react-loading';
 import ProductoCard from './ProductoCard';
-import useScanDetection from '@/hooks/useScanDetection';
+
+const MotionBox = motion(Box);
 
 const ConsultarProducto = () => {
   const [consulta, setConsulta] = useState('');
   const [loadingForm, setLoadingForm] = useState<boolean>(false);
-  const [registryProducto, setRegistryProducto] = useState<ProductoType | null>(
-    null
+  const [registryProductos, setRegistryProductos] = useState<ProductoType[]>(
+    []
   );
   const toast = useToast();
   const valueRef = useRef<HTMLInputElement | null>(null);
 
-  const variants = {
-    initial: {
-      opacity: 0,
-    },
-    enter: {
-      opacity: 1,
-    },
-    exit: {
-      opacity: 0,
-    },
-  };
-  const buscarProducto = async (codigo: String) => {
+  const buscarProducto = async (input: string) => {
     setLoadingForm(true);
     try {
+      const isNumeric = !isNaN(Number(input));
       const productos = (await getMultipleDocs(
         'productos',
-        'codigo',
+        isNumeric ? 'codigo' : 'queryArr',
         'array-contains',
-        Number(codigo)
+        isNumeric ? Number(input) : input.toLowerCase()
       )) as ProductoType[];
 
       if (productos.length === 0) {
         toast({
           title: 'No encontrado',
-          description: `Código ${codigo} no registrado`,
+          description: `No se encontraron productos con "${input}"`,
           status: 'warning',
-          duration: 9000,
+          duration: 5000,
           isClosable: true,
         });
       } else {
-        setRegistryProducto(productos[0]);
+        setRegistryProductos(productos);
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
       toast({
         title: 'Error inesperado',
         description: 'Hubo un error buscando el producto',
         status: 'error',
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     } finally {
@@ -70,104 +64,118 @@ const ConsultarProducto = () => {
       setConsulta('');
     }
   };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!consulta) return;
     await buscarProducto(consulta);
   };
+
   useScanDetection({
-    onComplete: (code) => {
-      if (!registryProducto) return;
-      if (registryProducto.codigo + '' === code) return;
+    onComplete: (code: any) => {
+      if (registryProductos.length === 0) return;
+      // if (registryProducto.codigo + '' === code) return;
       buscarProducto(code);
     },
     minLength: 5,
   });
+
   const onKeyDown = useEnter(valueRef, onSubmit);
+
   const borrarColor = useColorModeValue(
     { bg: 'gray.700', color: 'white' },
     { bg: 'gray.200', color: 'black' }
   );
+
   return (
     <AnimatePresence mode='wait'>
-      <motion.div
+      <MotionBox
         key={
-          loadingForm ? 'Loading' : registryProducto ? 'ShowUser' : 'ShowInput'
+          loadingForm
+            ? 'Loading'
+            : registryProductos.length
+            ? 'Results'
+            : 'Form'
         }
-        initial='initial'
-        animate='enter'
-        exit='exit'
-        variants={variants}
-        style={{
-          display: 'flex',
-          width: '100%',
-          flexDirection: 'column',
-        }}
-        layout
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        w='100%'        
+        mx='auto'
+        mt={6}
+        px={4}
       >
-        {!loadingForm &&
-          (registryProducto ? (
-            <Flex gap={4} flexDir='column'>
+        {loadingForm ? (
+          <Flex p={4} justify='center'>
+            <ReactLoading
+              type='bars'
+              color='#3182ce'
+              height='70px'
+              width='70px'
+            />
+          </Flex>
+        ) : registryProductos.length ? (
+          <Flex direction='column' gap={4}>
+            <Flex justify='space-between' align='center' mb={2}>
+              <Text fontSize='md'>
+                Resultados: <b>{registryProductos.length}</b>
+              </Text>
               <Button
-                w='fit-content'
-                alignSelf='flex-end'
+                size='sm'
                 bg={borrarColor.bg}
                 color={borrarColor.color}
-                size='xs'
-                onClick={() => setRegistryProducto(null)}
-                _hover={{ opacity: 0.65 }}
+                onClick={() => setRegistryProductos([])}
+                _hover={{ opacity: 0.8 }}
               >
-                Borrar Consulta
+                Borrar consulta
               </Button>
-              <ProductoCard
-                setNewProducto={setRegistryProducto}
-                producto={registryProducto}
-              />
             </Flex>
-          ) : (
-            <Flex p={2} gap={2} flexDir='column'>
-              <Text fontWeight='bold' fontSize='lg'>
-                Consultar por Código
-              </Text>
+            {registryProductos.map((regProd) => (
+              <ProductoCard
+                key={regProd.id}
+                producto={regProd}
+                delay={0}
+                setNewProductos={setRegistryProductos}
+              />
+            ))}
+          </Flex>
+        ) : (
+          <form onSubmit={onSubmit}>
+            <Flex direction='column' gap={4}>
+              <Box>
+                <Heading size='md' mb={1}>
+                  Consultar Producto
+                </Heading>
+                <Text fontSize='sm'>Buscar por nombre o código</Text>
+              </Box>
               <Input
-                borderColor='gray'
-                name='consulta_DNI'
-                borderRadius='5px'
-                maxW='250px'
                 ref={valueRef}
-                onKeyDown={onKeyDown}
-                onWheel={(e: any) => e.target.blur()}
                 size='sm'
-                type='number'
+                maxW='300px'
                 value={consulta}
                 onChange={(e) => setConsulta(e.target.value)}
-                placeholder='Ingresar código'
-                autoFocus
+                onKeyDown={onKeyDown}
+                onWheel={(e: any) => e.target.blur()}
+                placeholder='Ej: arroz o 123456'
+                borderRadius='md'
+                borderColor='gray.400'
               />
               <Button
                 type='submit'
                 isLoading={loadingForm}
                 size='sm'
                 w='fit-content'
-                bg='blue.400'
-                onClick={onSubmit}
-                _hover={{ opacity: 0.65 }}
+                bg='blue.500'
+                color='white'
+                _hover={{ bg: 'blue.600' }}
               >
-                Ingresar
+                Buscar
               </Button>
             </Flex>
-          ))}
-        {loadingForm && (
-          <Flex p={4} justify='center' mx='auto'>
-            <ReactLoading
-              type='bars'
-              color='#333c87'
-              height='70px'
-              width='70px'
-            />
-          </Flex>
+          </form>
         )}
-      </motion.div>
+      </MotionBox>
     </AnimatePresence>
   );
 };

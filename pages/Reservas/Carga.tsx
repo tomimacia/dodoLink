@@ -1,8 +1,14 @@
-import AltaCliente from '@/components/clientes/AltaCliente';
+import CargaPage from '@/components/reservas/CargaPage';
+import CargaReservaFormPage from '@/components/reservas/CargaReservaFormPage';
+import { FormProvider } from '@/context/useCobrarFormContext';
 
 const Alta = () => {
   // return <AltaCliente />;
-  return <>Próximamente</>;
+  return (
+    <FormProvider>
+      <CargaReservaFormPage />;
+    </FormProvider>
+  );
 };
 
 export default Alta;

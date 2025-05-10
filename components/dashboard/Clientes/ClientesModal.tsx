@@ -1,4 +1,4 @@
-import PaginationControl from '@/components/clientes/PaginationControl';
+import PaginationControl from '@/components/reservas/PaginationControl';
 import usePagination from '@/hooks/data/usePagination';
 import {
   Divider,

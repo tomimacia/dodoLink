@@ -1,4 +1,4 @@
-import ConsultarCliente from '@/components/clientes/ConsultarCliente';
+import ConsultarCliente from '@/components/reservas/ConsultarPedido';
 
 const Consultar = () => {
   // return <ConsultarCliente />;

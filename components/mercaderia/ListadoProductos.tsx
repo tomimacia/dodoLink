@@ -24,7 +24,7 @@ import ReactLoading from 'react-loading';
 import DeleteModal from '../DeleteModal';
 import ProductoModal from './Editar/ProductoModal';
 import usePagination from '@/hooks/data/usePagination';
-import PaginationControl from '../clientes/PaginationControl';
+import PaginationControl from '../reservas/PaginationControl';
 const ListadoProductos = () => {
   const {
     productos,

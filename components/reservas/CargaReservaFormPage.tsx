@@ -10,21 +10,29 @@ import { ProductoType } from '@/types/types';
 import {
   Button,
   Flex,
+  Heading,
   Input,
   Text,
+  Textarea,
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
 import { Timestamp } from 'firebase/firestore';
 import { useRef, useState } from 'react';
-import ClienteYDetalle from './CobraFormComps/ClienteYDetalle';
-import ProductosTable from './CobraFormComps/ProductosTable';
-import TitleSearchYItem from './CobraFormComps/TitleSearchYItem';
-import MapEmbed from './EmbedMap';
+import ProductosTable from '../movimientos/CobraFormComps/ProductosTable';
+import TitleSearchYItem from '../movimientos/CobraFormComps/TitleSearchYItem';
+import MapEmbed from '../movimientos/EmbedMap';
 
-const CobrarForm = ({ onClose }: { onClose: () => void }) => {
-  const { items, resetFilters, detalle, cliente, isPago } =
-    useCobrarFormContext();
+const CargaReservaFormPage = () => {
+  const {
+    items,
+    resetFilters,
+    setCliente,
+    setDetalle,
+    detalle,
+    cliente,
+    isPago,
+  } = useCobrarFormContext();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -130,54 +138,8 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
         isClosable: true,
       });
       resetFilters();
-      onClose();
-    } catch (e) {
-      console.log(e);
-      toast({
-        title: 'Error',
-        description: 'Hubo un error al confirmar',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const ConfirmarCompra = async () => {
-    setLoading(true);
-    const isValidated = ConfirmValidation(
-      detalle,
-      cliente,
-      items.length === 0,
-      toast
-    );
-    if (!isValidated) {
-      setLoading(false);
-      return;
-    }
-    const fecha = new Date();
-    try {
-      const newMovimiento = {
-        detalle,
-        cliente,
-        creadorID: user?.id,
-        items: items.map((i) => formatItem(i)),
-        fecha,
-        isPago: true,
-        vistoPor: [],
-      };
-      await CargarCompra(newMovimiento);
-      toast({
-        title: 'Éxito',
-        description: 'Egreso registrado',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      resetFilters();
-      onClose();
+      setTramo(null);
+      setEmbed('');
     } catch (e) {
       console.log(e);
       toast({
@@ -194,12 +156,42 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
 
   const ConfirmarMovimiento = async () => {
     confirmButtonRef.current?.blur();
-    isPago ? ConfirmarCompra() : ConfirmarReserva();
+    ConfirmarReserva();
   };
 
   return (
-    <Flex minH='50vh' gap={3} flexDir='column'>
-      <ClienteYDetalle />
+    <Flex p={[1, 2, 2, 3, 3]} minH='50vh' maxW='700px' gap={5} flexDir='column'>
+      <Heading as='h2' fontSize={24}>
+        Carga de Reserva
+      </Heading>
+      <Flex gap={2} flexDir='column'>
+        <Text fontSize='lg' fontWeight='bold'>
+          Cliente
+        </Text>
+        <Input
+          placeholder='Datos de Cliente'
+          borderRadius={5}
+          borderColor='gray'
+          size='sm'
+          isDisabled={isPago}
+          value={cliente}
+          disabled={isPago}
+          onChange={(e) => setCliente(e.target.value)}
+        />
+      </Flex>
+      <Flex w='100%' gap={2} flexDir='column'>
+        <Text fontSize='lg' fontWeight='bold'>
+          Detalle
+        </Text>
+        <Textarea
+          placeholder='Agregar detalle'
+          borderRadius={5}
+          borderColor='gray'
+          size='sm'
+          value={detalle}
+          onChange={(e) => setDetalle(e.target.value as string)}
+        />
+      </Flex>
 
       <Flex gap={2} align='center'>
         <Text fontWeight='bold'>Tramo (mts.):</Text>
@@ -279,4 +271,4 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-export default CobrarForm;
+export default CargaReservaFormPage;

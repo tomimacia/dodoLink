@@ -157,7 +157,7 @@ const ConsultarProducto = () => {
                 onChange={(e) => setConsulta(e.target.value)}
                 onKeyDown={onKeyDown}
                 onWheel={(e: any) => e.target.blur()}
-                placeholder='Ej: arroz o 123456'
+                placeholder='Ej: switch o 123456'
                 borderRadius='md'
                 borderColor='gray.400'
               />

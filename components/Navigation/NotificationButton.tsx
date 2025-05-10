@@ -91,6 +91,7 @@ const NotificationButton = () => {
                 justifyContent='space-between'
               >
                 <Box>{`${n.isPago ? 'Compra' : 'Reserva'} - ${n.cliente}`}</Box>
+
                 {noVisto && (
                   <Box
                     w='8px'
@@ -104,6 +105,11 @@ const NotificationButton = () => {
               </MenuItem>
             );
           })}
+          {notificationsToShow.length === 0 && (
+            <MenuItem bg='transparent' cursor='default'>
+              No tienes notificaciones
+            </MenuItem>
+          )}
         </MenuList>
       </Menu>
     </Flex>

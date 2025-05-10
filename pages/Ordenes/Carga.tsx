@@ -1,4 +1,4 @@
-import AltaCliente from '@/components/clientes/AltaCliente';
+import AltaCliente from '@/components/reservas/AltaCliente';
 
 const Alta = () => {
   // return <AltaCliente />;

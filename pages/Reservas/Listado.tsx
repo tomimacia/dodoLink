@@ -1,7 +1,7 @@
-import ClientesList from '@/components/clientes/ClientesList';
+import ClientesList from '@/components/reservas/PedidosList';
 
 const Listado = () => {
-  // return <ClientesList />;
+  return <ClientesList />;
   return <>Próximamente</>;
 };
 

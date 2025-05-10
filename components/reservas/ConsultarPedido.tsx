@@ -13,8 +13,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { FormEvent, useRef, useState } from 'react';
 import ReactLoading from 'react-loading';
 import ClienteModal from './Editar/ClienteModal';
+import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
+import { MovimientosType, PedidoType } from '@/types/types';
 
-const ConsultarCliente = () => {
+const ConsultarPedido = () => {
   const { user } = useUser();
   const [consulta, setConsulta] = useState('');
   const [loadingForm, setLoadingForm] = useState<boolean>(false);
@@ -39,7 +41,7 @@ const ConsultarCliente = () => {
     if (consulta.length < 7) {
       toast({
         title: 'Error',
-        description: 'Ingresa un DNI válido',
+        description: 'Ingresa un ID válido',
         status: 'error',
         duration: 9000,
         isClosable: true,
@@ -48,19 +50,26 @@ const ConsultarCliente = () => {
     }
     setLoadingForm(true);
     try {
-      const cliente = (await getSingleDoc('clientes', consulta)) as any;
-
-      if (!cliente) {
-        toast({
-          title: 'No encontrado',
-          description: `DNI ${consulta} no registrado`,
-          status: 'warning',
-          duration: 9000,
-          isClosable: true,
-        });
-      } else {
-        setRegistryUser(cliente);
+      const docID = formatearFecha(consulta);
+      const movimientos = (await getSingleDoc(
+        'movimientos',
+        docID
+      )) as MovimientosType;
+      if (!movimientos) {
+        return {
+          props: {
+            movimiento: null,
+          },
+        };
       }
+      const pedidos = [...movimientos.reservas, ...movimientos.compras];
+      const selectedMov = pedidos.find((i) => i?.id === consulta) as
+        | PedidoType
+        | undefined;
+      if (!selectedMov) {
+        return;
+      }
+      setRegistryUser(selectedMov);
     } catch (e) {
       console.log(e);
       toast({
@@ -80,6 +89,7 @@ const ConsultarCliente = () => {
     { bg: 'darkGray', color: 'white' },
     { bg: 'gray.200', color: 'black' }
   );
+  console.log(consulta);
   return (
     <AnimatePresence mode='wait'>
       <motion.div
@@ -124,7 +134,7 @@ const ConsultarCliente = () => {
           ) : (
             <Flex p={2} gap={2} flexDir='column'>
               <Text fontWeight='bold' fontSize='lg'>
-                Consultar por Código
+                Consultar por ID
               </Text>
               <Input
                 borderColor='gray'
@@ -135,10 +145,16 @@ const ConsultarCliente = () => {
                 onWheel={(e: any) => e.target.blur()}
                 onKeyDown={onKeyDown}
                 size='sm'
-                type='number'
+                type='text' // debe mantenerse como text para permitir "-"
                 value={consulta}
-                onChange={(e) => setConsulta(e.target.value)}
-                placeholder='Ingresar DNI'
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Solo permite números y guiones
+                  if (/^[0-9-]*$/.test(value)) {
+                    setConsulta(value);
+                  }
+                }}
+                placeholder='Ingresar ID único'
                 autoFocus
                 autoComplete='off'
                 formNoValidate
@@ -171,4 +187,4 @@ const ConsultarCliente = () => {
   );
 };
 
-export default ConsultarCliente;
+export default ConsultarPedido;

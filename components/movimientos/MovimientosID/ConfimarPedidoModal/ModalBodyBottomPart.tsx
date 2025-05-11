@@ -277,16 +277,23 @@ const ModalBodyBottomPart = ({
         </VStack>
       )}
       {estado === 'Preparación' && (
-        <UnorderedList fontSize='lg' w='100%' maxW='300px'>
+        <UnorderedList fontSize='lg' w='100%' maxW='400px'>
           {items.map((i) => {
             return (
               <ListItem key={`preparacion-key-${i.id}`} w='100%'>
                 <Flex
+                  justify='space-between'
                   borderBottom='1px solid #BEBEBE'
                   w='100%'
-                  justify='space-between'
                 >
-                  <Text>{i.nombre}</Text>
+                  <Flex gap={2}>
+                    <Text noOfLines={1}>
+                      <b>{i.nombre}</b>
+                    </Text>
+                    <Text>
+                      x {i.unidades} {i.medida}
+                    </Text>
+                  </Flex>
                   <Checkbox
                     borderColor='#BEBEBE'
                     isChecked={checkedItems.some(
@@ -303,7 +310,7 @@ const ModalBodyBottomPart = ({
       {estado === 'Pendiente' && (
         <Flex gap={2} flexDir='column'>
           <Text>Verificá que estén todos los productos.</Text>
-          <UnorderedList fontSize='lg' w='100%' maxW='300px'>
+          <UnorderedList fontSize='lg' w='100%'>
             {items.map((i) => {
               return (
                 <ListItem key={`prendiente-key-${i.id}`} w='100%'>
@@ -324,7 +331,7 @@ const ModalBodyBottomPart = ({
       {estado === 'En curso' && (
         <Flex gap={2} flexDir='column'>
           <Text fontWeight='medium'>Confirmar sobrante de materiales:</Text>
-          <UnorderedList fontSize='md' w='100%' maxW='400px'>
+          <UnorderedList spacing={2} fontSize='md'>
             {items.map((i) => {
               const sobrante = sobrantes.find((s) => s.id === i.id);
               const isChecked = !!sobrante;
@@ -348,7 +355,7 @@ const ModalBodyBottomPart = ({
               return (
                 <ListItem key={`${i.id}-sobrantes`} w='100%'>
                   <Flex
-                    gap={4}
+                    gap={2}
                     align='center'
                     p={3}
                     borderRadius='lg'
@@ -369,7 +376,6 @@ const ModalBodyBottomPart = ({
                           ? 'red.500'
                           : 'gray.500'
                       }
-                      minW='100px'
                     >
                       {i.unidades} {i.medida}
                     </Text>

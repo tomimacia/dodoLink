@@ -1,9 +1,10 @@
-import { PedidoType } from '@/types/types';
+import { PedidoType, ProductoType } from '@/types/types';
 import isEqual from 'lodash/isEqual';
 
 export const getCambiosResumen = (
   prev: PedidoType,
-  updated: PedidoType
+  updated: PedidoType,
+  sobrantes: ProductoType[]
 ): string | null => {
   const cambios: string[] = [];
 
@@ -34,13 +35,13 @@ export const getCambiosResumen = (
   // Detectar eliminados
   const removedItems = prevItemsNombres.filter((id) => !updatedItemsMap[id]);
   if (removedItems.length) {
-    cambios.push(`items eliminados: ${removedItems.join(', ')}`);
+    cambios.push(`Items eliminados: ${removedItems.join(', ')}`);
   }
 
   // Detectar agregados
   const addedItems = updatedItemNombres.filter((id) => !prevItemsMap[id]);
   if (addedItems.length) {
-    cambios.push(`items agregados: ${addedItems.join(', ')}`);
+    cambios.push(`Items agregados: ${addedItems.join(', ')}`);
   }
 
   // Comparar cambios en items existentes
@@ -49,12 +50,22 @@ export const getCambiosResumen = (
     const updatedItem = updatedItemsMap[id];
     if (updatedItem && !isEqual(prevItem, updatedItem)) {
       if (prevItem.unidades !== updatedItem.unidades) {
-        cambioUnidades.push(prevItem.nombre || 'Sin nombre');
+        cambioUnidades.push(
+          `${prevItem.nombre} (${prevItem?.unidades} → ${updatedItem?.unidades})` ||
+            'Sin nombre'
+        );
       }
     }
   }
   if (cambioUnidades.length) {
-    cambios.push(`items modificados: ${cambioUnidades.join(', ')}`);
+    cambios.push(`Items modificados: ${cambioUnidades.join(', ')}`);
+  }
+  if (sobrantes.length) {
+    cambios.push(
+      `Sobrantes: ${sobrantes
+        .map((p) => `${p.nombre} (${p.cantidad} ${p.medida})`)
+        .join(', ')}`
+    );
   }
 
   return cambios.length ? cambios.join(', ') : null;

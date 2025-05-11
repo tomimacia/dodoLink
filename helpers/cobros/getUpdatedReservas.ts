@@ -1,4 +1,4 @@
-import { EstadoType, PedidoType } from '@/types/types';
+import { EstadoType, PedidoType, ProductoType } from '@/types/types';
 import { getCambiosResumen } from '../getCambiosResumen';
 import { Timestamp } from 'firebase/firestore';
 
@@ -7,12 +7,13 @@ export const getUpdatedReservas = (
   arr: PedidoType[],
   newEstado: EstadoType,
   updatedPedido: PedidoType | null,
+  sobrantes: ProductoType[],
   userID?: string
 ) => {
   const newReservas = arr.map((r) => {
     if (r.id === pedidoID) {
       const cambios = updatedPedido
-        ? getCambiosResumen(r, updatedPedido)
+        ? getCambiosResumen(r, updatedPedido, sobrantes)
         : null;
       return {
         ...(updatedPedido || r),

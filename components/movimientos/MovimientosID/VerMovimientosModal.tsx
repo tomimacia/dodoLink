@@ -119,21 +119,23 @@ const VerMovimientosModal = ({
           <Text fontSize='sm'>
             <b>Responsable:</b> {usuario?.nombre} {usuario?.apellido}
           </Text>
-          <Flex gap={1}>
-            <Text fontSize='sm'>
-              <b>Cambios:</b>{' '}
-            </Text>
-            <Text fontSize='sm'>
-              {movimiento?.cambios
-                ? movimiento.cambios.split(',').map((cambio, index) => (
-                    <span key={index}>
-                      {cambio}
-                      <br />
-                    </span>
-                  ))
-                : 'Sin cambios'}
-            </Text>
-          </Flex>
+          {estado !== 'Pendiente' && estado !== 'En curso' && (
+            <Flex gap={1}>
+              <Text fontSize='sm'>
+                <b>{estado !== "Finalizado" ? "Cambios" : "Sobrantes"}:</b>{' '}
+              </Text>
+              <Text fontSize='sm'>
+                {movimiento?.cambios
+                  ? movimiento.cambios.split(',').map((cambio, index) => (
+                      <span key={index}>
+                        {cambio}
+                        <br />
+                      </span>
+                    ))
+                  : estado !== "Finalizado" ? 'Sin cambios' : "Sin sobrantes"}
+              </Text>
+            </Flex>
+          )}
         </Box>
         <ArrowIconShow estado={estado} />
       </>

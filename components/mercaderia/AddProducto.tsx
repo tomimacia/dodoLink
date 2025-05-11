@@ -80,7 +80,7 @@ const AddProducto = () => {
         createdAt: new Date(),
         cantidadPorPack: Number(cantidadPorPack) || 1,
         target: Number(target) || 1,
-        queryArr: nombre.split(' '),
+        queryArr: nombre.toLowerCase().split(' '),
       };
       const producto = await addSingleDoc('productos', newProducto);
       await updateProductosLastStamp();

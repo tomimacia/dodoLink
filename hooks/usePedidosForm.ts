@@ -148,6 +148,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
           movimientoFetched.reservas,
           newEstado,
           updatedPedido,
+          sobrantes,
           user?.id
         ),
       });
@@ -161,6 +162,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
                 reservas,
                 newEstado,
                 updatedPedido,
+                sobrantes,
                 user?.id
               ),
       });

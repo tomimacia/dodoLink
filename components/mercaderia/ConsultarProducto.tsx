@@ -101,7 +101,7 @@ const ConsultarProducto = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        w='100%'        
+        w='100%'
         mx='auto'
         mt={6}
         px={4}

@@ -12,8 +12,15 @@ import {
   Input,
   ListItem,
   Switch,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
   Textarea,
+  Th,
+  Thead,
+  Tr,
   UnorderedList,
   useToast,
   VStack,
@@ -211,40 +218,32 @@ const ModalBodyBottomPart = ({
             <Text mt={4} mb={2} fontWeight='semibold'>
               Productos del pedido:
             </Text>
-            <VStack spacing={2} align='stretch'>
-              {loadingNew ? (
-                <Flex p={4} justify='center'>
-                  <ReactLoading
-                    type='bars'
-                    color='#3182ce'
-                    height='50px'
-                    width='50px'
-                  />
-                </Flex>
-              ) : (
-                items.map((item) => {
-                  return (
-                    <Flex
-                      key={item.id + 'listed-item-key'}
-                      justify='space-between'
-                      align='center'
-                      p={2}
-                      bg='gray.100'
-                      borderRadius='md'
-                      _dark={{ bg: 'gray.700' }}
-                    >
-                      <Text>{item.nombre}</Text>
-                      <Text
+            <TableContainer>
+              <Table size='sm' variant='simple'>
+                <Thead>
+                  <Tr>
+                    <Th>Nombre</Th>
+                    <Th>Stock</Th>
+                    <Th>Cantidad</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {items.map((item) => (
+                    <Tr key={item.id}>
+                      {/* Nombre del producto */}
+                      <Td>{item.nombre}</Td>
+                      {/* Stock disponible */}
+                      <Td
                         color={
                           !item?.unidades || item.cantidad >= item.unidades
                             ? undefined
                             : 'red'
                         }
                       >
-                        {item.cantidad}
-                      </Text>
-                      <HStack>
-                        {/* Input editable (reemplazá por lógica real si querés permitir editar) */}
+                        {item.cantidad || 'Sin stock'}
+                      </Td>
+                      {/* Cantidad en el pedido */}
+                      <Td w='80px'>
                         <Input
                           type='number'
                           size='sm'
@@ -254,25 +253,21 @@ const ModalBodyBottomPart = ({
                           defaultValue={item.unidades}
                           // onChange={(e) => handleCantidadChange(item.id, e.target.value)}
                         />
-                        <Text fontSize='sm'>{item.medida}</Text>
-                        <DeleteIcon
-                          fontSize='sm'
-                          cursor='pointer'
-                          _hover={{ opacity: 0.65 }}
+                      </Td>
+                      <Td w='20px'>
+                        <Button
+                          variant='link'
+                          color='red'
                           onClick={() => deleteProducto(item.id)}
-                        />
-                      </HStack>
-                    </Flex>
-                  );
-                })
-              )}
-            </VStack>
-            <Flex pos='relative' my={3}>
-              <TitleSearch
-                productos={productos || []}
-                addProducto={addProducto}
-              />
-            </Flex>
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
           </Box>
         </VStack>
       )}

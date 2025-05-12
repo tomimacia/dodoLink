@@ -122,7 +122,7 @@ const VerMovimientosModal = ({
           {estado !== 'Pendiente' && estado !== 'En curso' && (
             <Flex gap={1}>
               <Text fontSize='sm'>
-                <b>{estado !== "Finalizado" ? "Cambios" : "Sobrantes"}:</b>{' '}
+                <b>{estado !== 'Finalizado' ? 'Cambios' : 'Sobrantes'}:</b>{' '}
               </Text>
               <Text fontSize='sm'>
                 {movimiento?.cambios
@@ -132,7 +132,9 @@ const VerMovimientosModal = ({
                         <br />
                       </span>
                     ))
-                  : estado !== "Finalizado" ? 'Sin cambios' : "Sin sobrantes"}
+                  : estado !== 'Finalizado'
+                  ? 'Sin cambios'
+                  : 'Sin sobrantes'}
               </Text>
             </Flex>
           )}

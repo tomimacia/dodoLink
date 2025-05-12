@@ -41,12 +41,10 @@ export const ConfirmValidation = (
   return true;
 };
 export const CargarReserva = async (newMovimiento: any) => {
-  console.log(newMovimiento);
   const { Inicializado } = newMovimiento?.movimientos;
   const fechaHoy = dateTexto(Inicializado.fecha.seconds).slashDate;
   const id = createID(fechaHoy);
   const finalMov = { ...newMovimiento, id };
-  console.log('cargando reserva', fechaHoy, id, finalMov);
   const dayDoc = (await getSingleDoc('movimientos', fechaHoy)) as any;
   if (!dayDoc) {
     await setSingleDoc('movimientos', fechaHoy, {

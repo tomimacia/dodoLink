@@ -4,12 +4,15 @@ import usePagination from '@/hooks/data/usePagination';
 import {
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Heading,
   Icon,
   IconButton,
   Input,
   Menu,
   MenuButton,
+  MenuItem,
   MenuList,
   Select,
   Text,
@@ -23,58 +26,113 @@ import ReactLoading from 'react-loading';
 import PaginationControl from './PaginationControl';
 import PedidoCard from './PedidoCard';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
-import { addDays, isToday, subDays } from 'date-fns';
+import {
+  addDays,
+  addMonths,
+  isThisMonth,
+  isToday,
+  subDays,
+  subMonths,
+} from 'date-fns';
 import { DayPicker } from 'react-day-picker';
+import useGetMovMonthData from '@/hooks/data/useGetMovMonthData';
+import { PedidoType } from '@/types/types';
+import { TimeData } from '@/data/data';
 import 'react-day-picker/style.css';
 const PedidosList = () => {
-  const [date, setDate] = useState(new Date());
+  const hoy = new Date();
+  const [date, setDate] = useState(hoy);
   const [lapso, setLapso] = useState('Diario');
+
+  const { monthReservas, loadingMonthData, getMonthData } = useGetMovMonthData(
+    date.getMonth(),
+    date.getFullYear()
+  );
   const fecha = dateTexto(date.getTime() / 1000).slashDate;
   const { reservas, getData, loadingData } = useGetMovDayData(fecha);
+  const selectedData = lapso === 'Diario' ? reservas : monthReservas;
   const [isList, setIsList] = useState(false);
   const [consulta, setConsulta] = useState('');
   const filterPedidos = useCallback(() => {
-    if (consulta.trim().length < 2) return reservas; // Evita búsquedas con pocos caracteres
+    if (consulta.trim().length < 2) return selectedData; // Evita búsquedas con pocos caracteres
 
-    return reservas?.filter((c) => {
+    return selectedData?.filter((c: PedidoType) => {
       const consultaLower = consulta.toLowerCase().trim(); // Limpia espacios extras
       return (
         c.id.toLowerCase().includes(consultaLower) ||
         c.cliente.toLowerCase().includes(consultaLower)
       );
     });
-  }, [consulta, reservas]);
+  }, [consulta, selectedData]);
   const filteredPedidos = filterPedidos();
   const toast = useToast();
   const resevasFinal = filteredPedidos || [];
   const itemsPerPage = 12;
   const { page, goingUp, totalPages, paginatedArr, handlePageChange } =
     usePagination(resevasFinal, itemsPerPage);
-  const plusOneDay = () => {
-    if (isToday(date)) {
-      return toast({
-        title: 'No puedes pasar al día siguiente',
-        description: 'El día seleccionado es hoy',
-        status: 'info',
-        duration: 5000,
-        isClosable: true,
-      });
+  const plusDate = () => {
+    if (lapso === 'Diario') {
+      if (isToday(date)) {
+        return toast({
+          title: 'No puedes pasar al día siguiente',
+          description: 'El día seleccionado es hoy',
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      setDate((prev) => addDays(prev, 1));
     }
-    setDate((prev) => addDays(prev, 1));
+    if (lapso === 'Mensual') {
+      if (isThisMonth(date)) {
+        return toast({
+          title: 'No puedes pasar al mes siguiente',
+          description: 'El mes seleccionado es el actual',
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      setDate((prev) => addMonths(prev, 1));
+    }
   };
-  const minusOneDay = () => {
-    if (dateTexto(date.getTime() / 1000).slashDate === '17-2-2025') {
-      return toast({
-        title: 'No puedes retroceder',
-        description: 'No hay mas data hacia atrás (alta de sistema)',
-        status: 'info',
-        duration: 5000,
-        isClosable: true,
-      });
+  const minusDate = () => {
+    if (lapso === 'Diario') {
+      if (dateTexto(date.getTime() / 1000).slashDate === '08-05-2025') {
+        return toast({
+          title: 'No puedes retroceder',
+          description: 'No hay mas data hacia atrás (alta de sistema)',
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      setDate((prev) => subDays(prev, 1));
     }
-    setDate((prev) => subDays(prev, 1));
+    if (lapso === 'Mensual') {
+      // Definir la fecha mínima como mayo de 2025
+      const may2025 = new Date(2025, 4, 1); // Mayo es el mes 4 (indexado desde 0)
+
+      // Retroceder un mes
+      const newDate = subMonths(date, 1);
+
+      // Comprobar si la nueva fecha es anterior a mayo de 2025
+      if (newDate < may2025) {
+        return toast({
+          title: 'No puedes retroceder',
+          description: 'No puedes ir más atrás de mayo de 2025.',
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+
+      // Si la nueva fecha es válida, actualizar el estado
+      setDate(newDate);
+    }
   };
   const LapseOptions = ['Diario', 'Mensual'];
+  const isLoading = loadingData || loadingMonthData;
   return (
     <Flex gap={5} direction='column' p={4} rounded='lg' boxShadow='md'>
       <Heading size='md'>Listado de Reservas</Heading>
@@ -97,8 +155,11 @@ const PedidosList = () => {
             color='white'
             size='sm'
             _hover={{ bg: 'gray.700' }}
-            onClick={getData}
-            isLoading={loadingData}
+            onClick={() => {
+              getData();
+              getMonthData();
+            }}
+            isLoading={isLoading}
           >
             Actualizar
           </Button>
@@ -150,7 +211,7 @@ const PedidosList = () => {
             cursor='pointer'
             as={isList ? FaTableCellsLarge : FaThLarge}
             color={isList ? 'gray.400' : 'gray.700'}
-             _dark={{ color: isList ? 'gray.400' : 'gray.200' }}
+            _dark={{ color: isList ? 'gray.400' : 'gray.200' }}
             onClick={() => setIsList(false)}
           />
           <Icon
@@ -178,23 +239,26 @@ const PedidosList = () => {
         <IconButton
           aria-label='Retroceder día'
           icon={<ArrowLeftIcon />}
-          onClick={minusOneDay}
+          onClick={minusDate}
           size='sm'
           bg='gray.700'
           color='white'
           _hover={{ bg: 'gray.800' }}
-          disabled={loadingData}
+          disabled={isLoading}
         />
         <AnimatePresence mode='wait'>
-          {!loadingData && (
+          {!isLoading && (
             <motion.div
-              key={`label-day-${date.getTime()}`}
+              key={`label-day-${date.getTime()}-${lapso}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
               <Heading as='h3' size='md' color='gray.700'>
-                {dateTexto(date.getTime() / 1000, true).textoDate}
+                {lapso === 'Diario' &&
+                  dateTexto(date.getTime() / 1000, true).textoDate}
+                {lapso === 'Mensual' &&
+                  `${TimeData.meses[date.getMonth()]} de ${date.getFullYear()}`}
               </Heading>
             </motion.div>
           )}
@@ -202,15 +266,15 @@ const PedidosList = () => {
         <IconButton
           aria-label='Avanzar día'
           icon={<ArrowRightIcon />}
-          onClick={plusOneDay}
+          onClick={plusDate}
           size='sm'
           bg='gray.700'
           color='white'
           _hover={{ bg: 'gray.800' }}
-          disabled={loadingData}
+          disabled={isLoading}
         />
       </Flex>
-      {loadingData ? (
+      {isLoading ? (
         <Flex justify='center' w='full' py={6}>
           <ReactLoading type='bars' color='#333c87' />
         </Flex>
@@ -225,7 +289,7 @@ const PedidosList = () => {
 
           <AnimatePresence mode='wait'>
             <motion.div
-              key={`content-${page}-${isList ? 'list' : 'grid'}`}
+              key={`content-${page}-${isList ? 'list' : 'grid'}-${lapso}`}
               style={{
                 display: 'flex',
                 flexDirection: isList ? 'column' : undefined,
@@ -258,7 +322,7 @@ const PedidosList = () => {
         </Flex>
       )}
 
-      {!loadingData && resevasFinal.length === 0 && (
+      {!isLoading && resevasFinal.length === 0 && (
         <Text align='center' py={4}>
           No se encontraron resultados.
         </Text>

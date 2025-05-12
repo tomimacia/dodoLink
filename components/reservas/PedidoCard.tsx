@@ -43,7 +43,12 @@ const PedidoCard = ({
       <Flex direction='column' gap={2}>
         <Flex align='center' gap={2}>
           <FaUserAlt />
-          <Text fontWeight='bold' fontSize='lg'>
+          <Text
+            title={pedido.cliente}
+            noOfLines={1}
+            fontWeight='bold'
+            fontSize='lg'
+          >
             {pedido.cliente}
           </Text>
         </Flex>

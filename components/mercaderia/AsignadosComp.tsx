@@ -17,8 +17,10 @@ import useGetProductos from '@/hooks/data/useGetProductos';
 import { ProductoType, UserType } from '@/types/types';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
+import { useUser } from '@/context/userContext';
 
 const AsignadosComp = () => {
+  const { user } = useUser();
   const { users, loadingUserList, getUsers } = useGetUsers();
   useEffect(() => {
     getUsers();
@@ -186,11 +188,13 @@ const AsignadosComp = () => {
                   <Text color='gray.500'>Sin productos asignados</Text>
                 )}
               </Flex>
-              <EditarInventarioModal
-                allProductos={productos || []}
-                user={u}
-                updateInventario={updateInventario}
-              />
+              {(user?.rol === 'Superadmin' || user?.rol === 'Supervisor') && (
+                <EditarInventarioModal
+                  allProductos={productos || []}
+                  user={u}
+                  updateInventario={updateInventario}
+                />
+              )}
             </Box>
           ))}
         </Flex>

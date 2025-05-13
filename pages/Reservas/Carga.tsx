@@ -1,4 +1,3 @@
-import CargaPage from '@/components/reservas/CargaPage';
 import CargaReservaFormPage from '@/components/reservas/CargaReservaFormPage';
 import { FormProvider } from '@/context/useCobrarFormContext';
 

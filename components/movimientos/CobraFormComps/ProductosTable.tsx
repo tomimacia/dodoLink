@@ -1,5 +1,4 @@
 import { useCobrarFormContext } from '@/context/useCobrarFormContext';
-import { addDots } from '@/helpers/addDots';
 import { DeleteIcon } from '@chakra-ui/icons';
 import {
   Flex,
@@ -8,7 +7,6 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Switch,
   Table,
   TableContainer,
   Tbody,
@@ -64,7 +62,7 @@ const ProductosTable = () => {
                       fontWeight={
                         cantidad < (unidades || 0) ? 'bold' : 'normal'
                       }
-                      color={cantidad < (unidades || 0) ? 'red.500' : undefined}
+                      color={cantidad === 0 || cantidad < (unidades || 0) ? 'red.500' : undefined}
                     >
                       {cantidad} ({medida})
                     </Text>

@@ -55,22 +55,15 @@ const QRCodeLabel = ({ pedido }: { pedido: PedidoType }) => {
           Fecha: {dateTexto(fecha.seconds).numDate} -{' '}
           {dateTexto(fecha.seconds, true).hourDate} HS
         </Text>
-
-        {detalle && (
-          <Text mb={2} fontStyle='italic'>
-            {detalle}
-          </Text>
-        )}
-
         <Box borderTop='1px solid gray' my={2} pt={2}>
-          <Text fontWeight='bold'>Materiales:</Text>
-          <VStack align='start' spacing={1}>
-            {items.map((item, idx) => (
-              <Text key={idx}>
-                - {item.nombre} x {item.unidades}
+          {detalle && (
+            <>
+              <Text fontWeight='bold'>Detalle</Text>
+              <Text mb={2} fontStyle='italic'>
+                {detalle}
               </Text>
-            ))}
-          </VStack>
+            </>
+          )}
         </Box>
 
         <Flex justify='center' mt={4}>

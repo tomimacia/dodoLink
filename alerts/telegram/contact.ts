@@ -54,7 +54,11 @@ export function parseProductosFaltantes(products: ProductoType[]): string {
   let mensaje = `<b>🚨 Productos Faltantes</b>\n<i>Fecha: ${date.numDate}</i>\n<i>Hora: ${date.hourDate}</i>\n\n`;
 
   products.forEach((product) => {
-    mensaje += `<b>${product.nombre}</b>\n`;
+    const isCritico = product.cantidad < product.target / 2;
+    const prefijo = isCritico ? '🔴 ' : '';
+    const sufijo = isCritico ? ' <b>[CRÍTICO]</b>' : '';
+
+    mensaje += `${prefijo}<b>${product.nombre}</b>${sufijo}\n`;
     mensaje += `Cantidad: <i>${product.cantidad}</i>\n`;
     mensaje += `Target: <i>${product.target}</i>\n\n`;
   });

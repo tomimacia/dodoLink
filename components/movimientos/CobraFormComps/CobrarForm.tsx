@@ -17,10 +17,10 @@ import {
 } from '@chakra-ui/react';
 import { Timestamp } from 'firebase/firestore';
 import { useRef, useState } from 'react';
-import ClienteYDetalle from './CobraFormComps/ClienteYDetalle';
-import ProductosTable from './CobraFormComps/ProductosTable';
-import TitleSearchYItem from './CobraFormComps/TitleSearchYItem';
-import MapEmbed from './EmbedMap';
+import ClienteYDetalle from './ClienteYDetalle';
+import MapEmbed from '../EmbedMap';
+import TitleSearchYItem from './TitleSearchYItem';
+import ProductosTable from './ProductosTable';
 
 const CobrarForm = ({ onClose }: { onClose: () => void }) => {
   const { items, resetFilters, detalle, cliente, isPago } =
@@ -73,7 +73,7 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
       return;
     }
     const itemsSinSotck = items.filter(
-      (item) => (item.unidades || 0) > item.cantidad
+      (item) => (item.unidades || 0) > item.cantidad || item.cantidad === 0
     );
     if (itemsSinSotck.length > 0) {
       setLoading(false);

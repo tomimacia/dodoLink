@@ -1,17 +1,9 @@
 import { getEstado } from '@/helpers/cobros/getEstado';
 import { EstadoColors, Estados, PedidoType } from '@/types/types';
-import { Flex, Heading, Text, Tooltip } from '@chakra-ui/react';
+import { Flex, Heading, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-const PedidoBody = ({
-  pedido,
-  loading,
-  size,
-}: {
-  pedido: PedidoType;
-  loading?: boolean;
-  size: 'inicio' | 'consulta';
-}) => {
+const PedidoBody = ({ pedido }: { pedido: PedidoType }) => {
   const { cliente, detalle, movimientos } = pedido ?? {};
   const estado = getEstado(movimientos);
   const hasMounted = useRef(false);

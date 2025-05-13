@@ -93,57 +93,12 @@ const ListadoProductos = () => {
     totalPages,
     handlePageChange,
   } = usePagination(filteredProductos, itemsPerPage, true);
-  // const [loadingMail, setLoadingMail] = useState(false);
 
-  // const test = async ({
-  //   name,
-  //   quantity,
-  //   target,
-  // }: {
-  //   name: string;
-  //   quantity: number;
-  //   target: number;
-  // }) => {
-  //   setLoadingMail(true);
-  //   try {
-  //     await sendContactForm({
-  //       productName: name,
-  //       currentQuantity: quantity,
-  //       targetQuantity: target,
-  //     });
-  //     toast({
-  //       title: 'Exito',
-  //       isClosable: true,
-  //       duration: 5000,
-  //       status: 'success',
-  //     });
-  //   } catch (error) {
-  //     toast({
-  //       title: 'Error al enviar correo',
-  //       isClosable: true,
-  //       duration: 5000,
-  //       status: 'error',
-  //     });
-  //     console.error(error);
-  //   } finally {
-  //     setLoadingMail(false);
-  //   }
-  // };
   return (
     <Flex flexDir='column' gap={3} mt={3}>
-      <Flex gap={2}>
-        <Button
-          bg='gray.600'
-          color='white'
-          w='fit-content'
-          size='sm'
-          _hover={{ opacity: 0.65 }}
-          onClick={getProductos}
-          isLoading={loadingProductos}
-        >
-          Actualizar
-        </Button>
-        {user?.rol === 'Superadmin' && (
+      {user?.rol === 'Superadmin' && (
+        <Flex align='center' gap={2}>
+          <Text>Empresa:</Text>
           <Select
             onChange={(e) => setEmpresa(e.target.value)}
             name='tipo'
@@ -158,8 +113,8 @@ const ListadoProductos = () => {
             <option value='dodoLink'>dodoLink</option>
             <option value='Grupo IN'>Grupo IN</option>
           </Select>
-        )}
-      </Flex>
+        </Flex>
+      )}
       <Text>Total: {filteredProductos.length}</Text>
       <Input
         borderColor='gray'

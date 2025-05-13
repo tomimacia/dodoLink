@@ -121,12 +121,13 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
           {items.map((p) => (
             <Flex
               key={p.id + '-listed-pedido-id-key'}
-              fontSize='md'
+              fontSize='sm'
               justify='space-between'
               borderBottom='1px solid #BEBEBE'
+              gap={1}
             >
               <Text>{p.nombre}</Text>
-              <Text fontWeight='bold'>
+              <Text minW='40px' fontWeight='bold'>
                 {p.unidades} {p.medida}
               </Text>
             </Flex>

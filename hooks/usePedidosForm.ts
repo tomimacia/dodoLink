@@ -196,6 +196,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
       }
     });
     await Promise.all(promisesUpdate);
+    await updateProductosLastStamp();
   };
   const deleteFunc = async () => {
     if (estado === 'Finalizado') {
@@ -229,7 +230,6 @@ const usePedidosForm = (movimiento: PedidoType) => {
         setSingleDoc('movimientos', 'enCurso', {
           reservas: newReservas,
         }),
-        updateProductosLastStamp(),
       ];
       await Promise.all(promises);
       toast({

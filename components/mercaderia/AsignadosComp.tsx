@@ -10,18 +10,107 @@ import {
   FormControl,
   FormLabel,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactLoading from 'react-loading';
+import EditarInventarioModal from './Editar/EditarInventarioModal';
+import useGetProductos from '@/hooks/data/useGetProductos';
+import { ProductoType, UserType } from '@/types/types';
+import { setSingleDoc } from '@/firebase/services/setSingleDoc';
+import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 
 const AsignadosComp = () => {
   const { users, loadingUserList, getUsers } = useGetUsers();
+  useEffect(() => {
+    getUsers();
+  }, []);
+  const { productos, setProductos } = useGetProductos();
   const [cuadrilla, setCuadrilla] = useState(false);
   // Filtramos solo los usuarios que tienen inventario
-  const usersWithInventory = users?.filter((u) => {
-    const hasInventario = u.inventario && u.inventario.length > 0;
-    const isCuadrilla = cuadrilla ? u?.rol === 'Cuadrilla' : true;
-    return hasInventario && isCuadrilla;
-  });
+  const usersForMapping = users
+    ?.filter((u) => {
+      const show = u?.rol === 'Cuadrilla' || u?.rol === 'Superadmin';
+      return show;
+    })
+    .sort((a, b) => b.inventario.length - a.inventario.length);
+  const updateInventario = async (
+    user: UserType,
+    newInventario: ProductoType[],
+    ajustarStock: boolean
+  ) => {
+    const finalInventario = newInventario.filter((p) => p.cantidad > 0);
+    await setSingleDoc('users', user.id, { inventario: finalInventario });
+
+    // RESTAR stock por aumento o producto nuevo
+    const addPromises = newInventario
+      .map((p) => {
+        const oldItem = user.inventario.find((i) => i.id === p.id);
+        const DBItem = productos?.find((db) => db.id === p.id);
+        if (!DBItem) return null;
+
+        const oldCant = oldItem?.cantidad ?? 0;
+        const diff = p.cantidad - oldCant;
+        if (diff > 0) {
+          return setSingleDoc('productos', p.id, {
+            cantidad: DBItem.cantidad - diff,
+          });
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    // SUMAR stock si se redujo cantidad o se eliminó un producto
+    const subPromises = ajustarStock
+      ? user.inventario
+          .map((oldP) => {
+            const newP = newInventario.find((p) => p.id === oldP.id);
+            const newCant = newP?.cantidad ?? 0;
+            const diff = oldP.cantidad - newCant;
+            if (diff > 0) {
+              const DBItem = productos?.find((pDB) => pDB.id === oldP.id);
+              if (!DBItem) return null;
+              return setSingleDoc('productos', oldP.id, {
+                cantidad: DBItem.cantidad + diff,
+              });
+            }
+            return null;
+          })
+          .filter(Boolean)
+      : [];
+
+    // Actualización local
+    const productosActualizados = productos?.map((p) => {
+      const oldItem = user.inventario.find((oldP) => oldP.id === p.id);
+      const newItem = newInventario.find((newP) => newP.id === p.id);
+
+      if (oldItem && !newItem) {
+        return ajustarStock
+          ? { ...p, cantidad: p.cantidad + oldItem.cantidad }
+          : p;
+      }
+
+      if (!oldItem && newItem) {
+        return { ...p, cantidad: p.cantidad - newItem.cantidad };
+      }
+
+      if (oldItem && newItem) {
+        const diff = newItem.cantidad - oldItem.cantidad;
+        if (diff > 0) return { ...p, cantidad: p.cantidad - diff };
+        if (diff < 0 && ajustarStock)
+          return { ...p, cantidad: p.cantidad + Math.abs(diff) };
+      }
+
+      return p;
+    });
+
+    const promisesFinal = [...addPromises, ...subPromises];
+    await Promise.all(promisesFinal);
+
+    if (promisesFinal.length > 0) updateProductosLastStamp();
+
+    if (productosActualizados) setProductos(productosActualizados);
+
+    await getUsers();
+  };
 
   return (
     <Flex flexDir='column' gap={4}>
@@ -67,9 +156,9 @@ const AsignadosComp = () => {
         <Flex justify='center' align='center' minH='150px'>
           <ReactLoading type='bars' color='#3182ce' height={40} width={40} />
         </Flex>
-      ) : usersWithInventory?.length ? (
+      ) : (
         <Flex maxW='450px' direction='column' gap={4}>
-          {usersWithInventory.map((u) => (
+          {usersForMapping?.map((u) => (
             <Box
               key={u.id}
               border='1px solid'
@@ -87,20 +176,24 @@ const AsignadosComp = () => {
                 {u.rol}
               </Text>
               <Divider my={2} />
-              <Flex direction='column' gap={1}>
+              <Flex mb={2} direction='column' gap={1}>
                 {u.inventario.map((p, idx) => (
                   <Text key={`${u.id}-${idx}`} fontSize='sm'>
                     {p.nombre} — {p.cantidad} {p.medida}
                   </Text>
                 ))}
+                {u.inventario.length === 0 && (
+                  <Text color='gray.500'>Sin productos asignados</Text>
+                )}
               </Flex>
+              <EditarInventarioModal
+                allProductos={productos || []}
+                user={u}
+                updateInventario={updateInventario}
+              />
             </Box>
           ))}
         </Flex>
-      ) : (
-        <Text fontStyle='italic' color='gray.500'>
-          No hay resultados para mostrar.
-        </Text>
       )}
     </Flex>
   );

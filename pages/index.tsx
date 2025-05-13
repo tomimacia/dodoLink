@@ -7,9 +7,9 @@ export default function Home() {
     <Flex gap={5} flexDir='column' w='100%'>
       <FormProvider>
         <WelcomeComp />
-        <Divider borderColor='gray' w='98%' mx='auto' />
-        <EntradasTiempoReal />
       </FormProvider>
+      <Divider borderColor='gray' w='98%' mx='auto' />
+      <EntradasTiempoReal />
     </Flex>
   );
 }

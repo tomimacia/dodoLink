@@ -1,8 +1,8 @@
 import { useUser } from '@/context/userContext';
 import dateTexto from '@/helpers/dateTexto';
 import { Flex, Text } from '@chakra-ui/react';
-import CargarModal from '../movimientos/CargarModal';
 import ClockComp from './Clock';
+import CargarModal from '../movimientos/CargarModal';
 
 const WelcomeComp = () => {
   const { user } = useUser();

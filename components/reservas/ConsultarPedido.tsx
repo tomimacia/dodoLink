@@ -89,7 +89,6 @@ const ConsultarPedido = () => {
     { bg: 'darkGray', color: 'white' },
     { bg: 'gray.200', color: 'black' }
   );
-  console.log(consulta);
   return (
     <AnimatePresence mode='wait'>
       <motion.div

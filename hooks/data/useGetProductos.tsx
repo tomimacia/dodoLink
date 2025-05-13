@@ -18,7 +18,7 @@ const useGetProductos = () => {
   const hasFetched = useRef(false);
   const [loadingProductos, setLoadingProductos] = useState(false);
   const getProductos = async () => {
-    console.log('Getting productos');
+    console.log('Getting products');
     setLoadingProductos(true);
     try {
       const productsFetched = await getCollection('productos');
@@ -35,7 +35,6 @@ const useGetProductos = () => {
     }
   };
   const checkForUpdates = async () => {
-    setLoadingProductos(true);
     try {
       const metadata = await getSingleDoc('productos', 'metadata');
       const lastUpdateFirestore = (metadata as any)?.lastUpdate?.seconds;
@@ -43,6 +42,8 @@ const useGetProductos = () => {
         // console.log('Datos desactualizados, obteniendo productos...');
         getProductos();
         setLastUpdate(lastUpdateFirestore);
+      } else {
+        console.log('Products already updated');
       }
     } catch (err) {
       console.log('Error verificando actualización de productos', err);
@@ -68,15 +69,15 @@ const useGetProductos = () => {
   // const availableProducts =
   //   productos?.filter((p) => p.cantidad > 0 && p.stock) || null;
   useEffect(() => {
-    if (productos !== null || hasFetched.current) return;
+    if (hasFetched.current) return;
     hasFetched.current = true;
 
-    try {
+    if (productos === null) {
       getProductos();
-    } catch (err) {
-      console.log('Error getting productos', err);
+    } else {
+      checkForUpdates();
     }
-  }, [productos, lastUpdateProductos, setProductos, getProductos]);
+  }, [productos, lastUpdateProductos]);
   return {
     loadingProductos,
     setProductos,

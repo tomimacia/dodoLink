@@ -7,8 +7,8 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalHeader,
   ModalOverlay,
-  Text,
   useDisclosure
 } from '@chakra-ui/react';
 import ProductoForm from './ProductoForm';
@@ -72,10 +72,8 @@ const ProductoModal = ({
             _hover={{ bg: 'blackAlpha.400' }}
             bg='blackAlpha.200'
           />
+          <ModalHeader>Editar Producto</ModalHeader>
           <ModalBody p={5}>
-            <Text p={3} fontSize='lg'>
-              Editar Producto
-            </Text>
             <ProductoForm
               updateProducto={updateProducto}
               onClose={onClose}

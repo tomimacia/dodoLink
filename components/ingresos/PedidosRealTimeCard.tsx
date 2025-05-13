@@ -38,7 +38,7 @@ const PedidosRealTimeCard = ({
         </Text>
       </Flex>
 
-      <PedidoBody size='inicio' pedido={pedido} loading={loading} />
+      <PedidoBody pedido={pedido} />
 
       <Flex mt='auto' pt={4} justify='flex-end'>
         <Button

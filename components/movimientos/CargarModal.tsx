@@ -17,16 +17,11 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import CobrarForm from './CobrarForm';
 import { CheckAdminRol } from '@/data/data';
 import { useUser } from '@/context/userContext';
+import CobrarForm from './CobraFormComps/CobrarForm';
 
-const CargarModal = ({
-  size,
-}: {
-  initialIsPago?: boolean;
-  size: string; 
-}) => {
+const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
   const { resetFilters, setIsPago, isPago, checkForUpdates, loadingProductos } =
     useCobrarFormContext();
   const { user } = useUser();
@@ -84,7 +79,7 @@ const CargarModal = ({
         </MenuButton>
         <MenuList boxShadow='0 0 2px'>
           {/* MenuItems are not rendered unless Menu is open */}
-          <MenuItem p={0} w={0} h={0}/>
+          <MenuItem p={0} w={0} h={0} />
           <MenuItem
             _hover={customHover}
             boxShadow='0 0 3px'

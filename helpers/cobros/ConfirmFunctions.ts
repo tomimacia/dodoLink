@@ -107,7 +107,7 @@ export const ActualizarStock = async (
       : i.cantidad - (i?.unidades || 1);
     return { ...noUnidades, cantidad: newCantidad };
   });
-  const faltantes = newItems.filter((p) => p.cantidad < p.target);
+  const faltantes = newItems.filter((p) => p.cantidad <= p.target);
   if (faltantes.length > 0) {
     sendMailAndTelegram(faltantes);
   }

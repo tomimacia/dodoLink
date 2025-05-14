@@ -16,14 +16,13 @@ const ColorModeSwitch = () => {
         aria-label='switch-icon'
         icon={colorMode === 'light' ? <SunIcon /> : <MoonIcon />}
         onClick={toggleColorMode}
-        outlineColor={'gray.300'}
+        outlineColor={colorMode === 'light' ? 'blackAlpha.400' : 'gray.400'}
         cursor='pointer'
-        fontSize={[16, 18, 18, 18, 18]}
+        fontSize={18}
         ml={1}
         size={customSize}
-        color='white'
         _hover={{
-          color: 'whiteAlpha.700',
+          color: colorMode === 'light' ? 'blackAlpha.400' : 'whiteAlpha.700',
         }}
         bg='transparent'
       >

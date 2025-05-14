@@ -30,7 +30,7 @@ const Layout = ({ children }: MainLayoutType) => {
           property='og:description'
           content='dodoLink, conectividad en evolución'
         />
-        <meta property='og:image' content='/Hlogo.png' />
+        <meta property='og:image' content='/HlogoLight.jpeg' />
         <meta property='og:url' content={CurrentURL} />
         <meta
           name='description'
@@ -44,7 +44,7 @@ const Layout = ({ children }: MainLayoutType) => {
           property='og:description'
           content='dodoLink, conectividad en evolución'
         />
-        <meta property='og:image' content={`${CurrentURL}Hlogo.png`} />
+        <meta property='og:image' content={`${CurrentURL}HlogoLight.jpeg`} />
 
         <meta name='twitter:card' content='summary_large_image' />
         <meta property='twitter:domain' content={CurrentURL} />
@@ -54,7 +54,7 @@ const Layout = ({ children }: MainLayoutType) => {
           name='twitter:description'
           content='dodoLink, conectividad en evolución'
         />
-        <meta name='twitter:image' content={`${CurrentURL}Hlogo.png`} />
+        <meta name='twitter:image' content={`${CurrentURL}HlogoLight.jpeg`} />
 
         {/* <meta
       name='google-site-verification'

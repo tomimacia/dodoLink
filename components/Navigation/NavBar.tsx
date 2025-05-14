@@ -23,8 +23,9 @@ export default function Navbar({
   const { user, refreshUser } = useUser();
   const isOnline = user !== null;
   const imageNavbarSize = useBreakpointValue([45, 70]);
-  const customImageBG = useColorModeValue('gray.500', 'gray.700');
-  const customIconSize = useBreakpointValue([24, 30, 30, 30, 30]);
+  const customImageBG = useColorModeValue('white', 'gray.700');
+  const customIconSize = useBreakpointValue([24, 32, 32, 32, 32]);
+  const navBarImage = useColorModeValue('/HlogoLight.jpeg', '/Hlogo.png');
   return (
     <Box
       bg={customImageBG}
@@ -65,18 +66,14 @@ export default function Navbar({
                 borderRadius={5}
                 cursor='pointer'
                 height={imageNavbarSize}
-                src='/Hlogo.png'
+                src={navBarImage}
               />
             </Link>
 
             <Flex mx={2} align='center' gap={[1, 1, 2, 3, 3]}>
               <NotificationButton />
               <Link as={NextLink} _hover={{ opacity: 0.65 }} href='/Profile'>
-                <FaUserCircle
-                  color='white'
-                  cursor='pointer'
-                  fontSize={customIconSize}
-                />
+                <FaUserCircle cursor='pointer' fontSize={customIconSize} />
               </Link>
               <ColorModeSwitch />
             </Flex>

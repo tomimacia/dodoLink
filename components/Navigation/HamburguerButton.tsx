@@ -14,7 +14,6 @@ const HamburguerButton = ({
     as={HamburgerIcon}
     alignSelf='center'
     bg='transparent'
-    color='white'
     _hover={{ opacity: 0.65 }}
     _active={{ opacity: 0.65 }}
     mx={mx}

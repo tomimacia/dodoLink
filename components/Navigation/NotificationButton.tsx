@@ -34,7 +34,8 @@ const NotificationButton = () => {
     }) || [];
   const { push } = useRouter();
 
-  const customImageBG = useColorModeValue('gray.500', 'gray.700');
+  const customImageColor = useColorModeValue('#FFF', 'gray.700');
+  const customImageBG = useColorModeValue('gray.700', '#FFF');
   const customSize = useBreakpointValue(['xs', 'sm', 'sm', 'sm', 'sm']) || 'sm';
 
   return (
@@ -64,14 +65,13 @@ const NotificationButton = () => {
           as={IconButton}
           aria-label='Options'
           icon={<BellIcon />}
-          variant='outline'
           borderColor='gray'
           _hover={{ opacity: 0.65 }}
           borderRadius='50%'
           fontSize={[18, 20, 20, 20, 20]}
           size={customSize}
-          color={customImageBG}
-          bg='white'
+          color={customImageColor}
+          bg={customImageBG}
           // _active={{ bg: 'gray.600' }}
         />
         <MenuList

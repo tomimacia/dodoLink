@@ -1,6 +1,7 @@
+import { getEstado } from '@/helpers/cobros/getEstado';
 import dateTexto from '@/helpers/dateTexto';
 import { useThemeColors } from '@/hooks/useThemeColors';
-import { EstadoColors, EstadoType, PedidoType } from '@/types/types';
+import { EstadoColors, PedidoType } from '@/types/types';
 import {
   Badge,
   Box,
@@ -15,11 +16,9 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import Link from 'next/link';
-import { FaCartShopping } from 'react-icons/fa6';
+import { FaListUl } from 'react-icons/fa';
 import { IoLocation } from 'react-icons/io5';
 import MapEmbed from './EmbedMap';
-import { FaListUl } from 'react-icons/fa';
-import { getEstado } from '@/helpers/cobros/getEstado';
 
 const PedidoConsultaCard = ({
   pedido,
@@ -28,12 +27,13 @@ const PedidoConsultaCard = ({
   pedido: PedidoType;
   isCompra: boolean;
 }) => {
-  const estadoActual = getEstado(pedido?.movimientos)
+  const estadoActual = getEstado(pedido?.movimientos);
 
   const estadoData = pedido.movimientos[estadoActual];
   const color = EstadoColors[estadoActual];
   const bg = useColorModeValue('white', 'gray.800');
   const border = useColorModeValue('gray.200', 'gray.700');
+  const itemCustomGrayBG = useColorModeValue('gray.100', 'gray.700');
   const { brandColorLigth, brandColorDark } = useThemeColors();
 
   return (
@@ -116,7 +116,7 @@ const PedidoConsultaCard = ({
           {pedido.items.map((item, index) => (
             <Box
               key={index}
-              bg={useColorModeValue('gray.100', 'gray.700')}
+              bg={itemCustomGrayBG}
               px={3}
               py={1}
               borderRadius='md'

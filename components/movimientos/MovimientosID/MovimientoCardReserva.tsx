@@ -1,6 +1,6 @@
 import CopyButton from '@/components/CopyButton';
 import DeleteModal from '@/components/DeleteModal';
-import EstadoSteps from '@/components/ingresos/EstadoSteps';
+import EstadoStepsReserva from '@/components/movimientos/MovimientosID/EstadoStepsReserva';
 import NotAuthorized from '@/components/Navigation/NotAuthorized';
 import { CheckAdminRol } from '@/data/data';
 import dateTexto from '@/helpers/dateTexto';
@@ -8,7 +8,6 @@ import { scrollIntoTheView } from '@/helpers/scrollIntoTheView';
 import usePedidosForm from '@/hooks/usePedidosForm';
 import { PedidoType, ProductoType } from '@/types/types';
 import {
-  Button,
   Flex,
   Heading,
   IconButton,
@@ -19,11 +18,12 @@ import {
 } from '@chakra-ui/react';
 import { MdLocationPin } from 'react-icons/md';
 import MapEmbed from '../EmbedMap';
-import ConfirmarPedidoModal from './ConfimarPedidoModal/ConfirmarPedidoModal';
+import ConfirmarReservaModal from './ConfimarPedidoModal/ConfirmarReservaModal';
 import QRCodeLabel from './QRCodeLabel';
 import VerMovimientosModal from './VerMovimientosModal';
+import { Fragment } from 'react';
 
-const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
+const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
   const {
     user,
     productos,
@@ -37,6 +37,7 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
   const { detalle, items, cliente, id, isPago, mapCoords, movimientos, tramo } =
     currentMov;
   const customGrayBG = useColorModeValue('gray.50', 'gray.700');
+  const customGray = useColorModeValue('gray.600', 'gray.200');
   // Check si el usuario tiene el pedido en curso para Cuadrilla
   const hasReserva = movimientos?.['En curso'].admin === user?.id;
   if (!CheckAdminRol(user?.rol) && estado !== 'Pendiente' && !hasReserva)
@@ -49,8 +50,8 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
       <Stack spacing={1}>
         <Flex align='center' justify='space-between'>
           <Flex gap={3} align='center'>
-            <Text fontSize='sm' color='gray.600'>
-              {isPago ? 'Compra' : 'Reserva'} -{' '}
+            <Text fontSize='sm' color={customGray}>
+              Reserva -{' '}
               <Text as='span' fontWeight='medium' fontFamily='mono'>
                 {id}
               </Text>
@@ -87,8 +88,12 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
         )}
       </Stack>
       <Flex gap={1} flexDir='column'>
-        <EstadoSteps estado={estado} />
-        <VerMovimientosModal currentEstado={estado} pedido={currentMov} />
+        <EstadoStepsReserva estado={estado} />
+        <VerMovimientosModal
+          isPago={isPago}
+          currentEstado={estado}
+          pedido={currentMov}
+        />
       </Flex>
       <Flex flexDir='column' gap={2}>
         <Heading fontWeight='normal' as='h2' size='md'>
@@ -102,7 +107,25 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
           bg={customGrayBG}
           whiteSpace='pre-wrap'
         >
-          <Text fontSize='sm'>{detalle || 'Sin descripción'}</Text>
+          {detalle ? (
+            <Text
+              cursor='default'
+              title={detalle.join('\n')}
+              py={1}
+              fontSize='md'
+            >
+              {detalle.map((l) => {
+                return (
+                  <Fragment key={`${l}-detalle-${id}}`}>
+                    <span>{l}</span>
+                    <br />
+                  </Fragment>
+                );
+              })}
+            </Text>
+          ) : (
+            <Text fontSize='sm'>{'Sin descripción'}</Text>
+          )}
         </Flex>
       </Flex>
       {/* Lista de productos */}
@@ -135,6 +158,7 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
         </Flex>
       </Flex>
       {/* Código QR + Mapa */}
+
       <Flex
         gap={4}
         mt={4}
@@ -157,8 +181,9 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
           <MapEmbed initialShow hideButtons src={mapCoords} />
         </Flex>
       </Flex>
+
       <Flex justifyContent='center' my={10} gap={4}>
-        <ConfirmarPedidoModal
+        <ConfirmarReservaModal
           loading={loadingUpdate}
           update={(
             newPedido: PedidoType,
@@ -166,7 +191,6 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
             sobrantes: ProductoType[],
             onClose: () => void
           ) => updatePedido(id, newPedido, newItems, sobrantes, onClose)}
-          productos={productos}
           pedido={currentMov}
         />
         {showDelete && CheckAdminRol(user?.rol) && (
@@ -184,4 +208,4 @@ const MovimientoCard = ({ movimiento }: { movimiento: PedidoType }) => {
   );
 };
 
-export default MovimientoCard;
+export default MovimientoCardReserva;

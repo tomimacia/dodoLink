@@ -38,9 +38,6 @@ const EntradasSection = ({
       <Heading as='h3' size='lg'>
         {title}
       </Heading>
-      <QrScanner
-        title={`Escanear Código de ${capitalizeFirst(title.slice(0, -1))}`}
-      />
       {filtered.length === 0 && <NoPedidosCard title={title.toLowerCase()} />}
       <Flex w='100%' flexWrap='wrap' gap={2}>
         <AnimatePresence>

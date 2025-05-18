@@ -19,11 +19,10 @@ import ModalBodyBottomPart from './ModalBodyBottomPart';
 import ModalBodyTopPart from './ModalBodyTopPart';
 import ModalFooterComp from './ModalFooterComp';
 
-const ConfirmarPedidoModal = ({
+const ConfirmarReservaModal = ({
   loading,
   update,
   pedido,
-  productos,
 }: {
   loading: boolean;
   update: (
@@ -32,7 +31,6 @@ const ConfirmarPedidoModal = ({
     sobrantes: ProductoType[],
     onClose: () => void
   ) => Promise<void>;
-  productos: ProductoType[] | null;
   pedido: PedidoType;
 }) => {
   const { id, movimientos } = pedido;
@@ -40,7 +38,7 @@ const ConfirmarPedidoModal = ({
   const [items, setItems] = useState<ProductoType[]>(pedido.items);
   const [sobrantes, setSobrantes] = useState<ProductoType[]>([]);
   const [cliente, setCliente] = useState(pedido.cliente);
-  const [detalle, setDetalle] = useState(pedido.detalle);
+  const [detalle, setDetalle] = useState(pedido.detalle.join('\n'));
   const [tramo, setTramo] = useState(pedido.tramo);
   const [mapCoords, setMapCoords] = useState(pedido.mapCoords);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -86,7 +84,7 @@ const ConfirmarPedidoModal = ({
     const newPedido: PedidoType = {
       ...pedido,
       cliente,
-      detalle,
+      detalle: detalle.split('\n'),
       tramo,
       items,
       mapCoords,
@@ -97,7 +95,7 @@ const ConfirmarPedidoModal = ({
   const toast = useToast();
   const handleClose = () => {
     setCliente(pedido.cliente);
-    setDetalle(pedido.detalle);
+    setDetalle(pedido.detalle.join('\n'));
     setTramo(pedido.tramo);
     setMapCoords(pedido.mapCoords);
     setItems(pedido.items);
@@ -151,7 +149,6 @@ const ConfirmarPedidoModal = ({
             <Divider my={3} />
             <ModalBodyBottomPart
               estado={estado}
-              productos={productos}
               checkedItemsHandler={[checkedItems, setCheckedItems]}
               itemsHandler={[items, setItems]}
               clienteHandler={[cliente, setCliente]}
@@ -174,4 +171,4 @@ const ConfirmarPedidoModal = ({
   );
 };
 
-export default ConfirmarPedidoModal;
+export default ConfirmarReservaModal;

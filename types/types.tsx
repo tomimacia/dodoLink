@@ -39,6 +39,11 @@ export const Estados: EstadoType[] = [
   'En curso',
   'Finalizado',
 ];
+export const EstadosCompra: EstadoType[] = [
+  'Inicializado',
+  'En curso',
+  'Finalizado',
+];
 export const EstadoColors: Record<EstadoType, string> = {
   Inicializado: '#A0AEC0', // gris medio (gray.400)
   Preparación: '#63B3ED', // azul claro (blue.300)
@@ -52,31 +57,52 @@ export type EstadoType =
   | 'Pendiente'
   | 'En curso'
   | 'Finalizado';
+// Representa un cambio completo con datos del usuario, ítems y fecha
+export type MovCambioObject = {
+  user: UserType;
+  items: ProductoType[];
+  date: {
+    seconds: number;
+    nanoseconds: number;
+  };
+};
+
+// Puede ser una lista de cambios completos o simplemente una lista de strings
+export type CambiosType = MovCambioObject[] | string[];
+
+// Estado parcial (usado en varios estados del pedido)
 export type PedidoFechaParcial = {
   fecha: {
     seconds: number;
     nanoseconds: number;
   } | null;
   admin: string | null;
-  cambios?: string;
+  cambios?: CambiosType | null;
 };
-export type PedidoFechaType = {
-  Inicializado: {
-    fecha: {
-      seconds: number;
-      nanoseconds: number;
-    };
-    admin: string;
-    cambios?: string;
+
+// Estado completo (Inicializado) tiene campos obligatorios
+export type PedidoFechaInicializado = {
+  fecha: {
+    seconds: number;
+    nanoseconds: number;
   };
+  admin: string;
+  cambios?: CambiosType | null;
+};
+
+// Agrupa todos los estados del pedido
+export type PedidoFechaType = {
+  Inicializado: PedidoFechaInicializado;
   Preparación: PedidoFechaParcial;
   Pendiente: PedidoFechaParcial;
   'En curso': PedidoFechaParcial;
   Finalizado: PedidoFechaParcial;
 };
+
+// Tipo completo del pedido
 export type PedidoType = {
   cliente: string;
-  detalle: string;
+  detalle: string[];
   movimientos: PedidoFechaType;
   id: string;
   isPago: boolean;
@@ -85,6 +111,7 @@ export type PedidoType = {
   vistoPor: string[];
   items: ProductoType[];
   tramo: number | null;
+  confirmedItems?: ProductoType[];
 };
 export type MedidaType = 'Un.' | 'Kg.' | 'Mt.';
 export type ProductoType = {
@@ -100,6 +127,7 @@ export type ProductoType = {
   cantidadPorPack: number;
   target: number;
   queryArr: string[];
+  isChecked?: boolean;
 };
 export type DestinatarioType = 'Cliente' | 'Consumidor Final';
 export type TipoDePagoType = 'Efectivo' | 'Mercadopago';

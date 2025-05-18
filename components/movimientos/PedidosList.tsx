@@ -1,31 +1,24 @@
+import { TimeData } from '@/data/data';
 import dateTexto from '@/helpers/dateTexto';
 import useGetMovDayData from '@/hooks/data/useGetMovDayData';
+import useGetMovMonthData from '@/hooks/data/useGetMovMonthData';
 import usePagination from '@/hooks/data/usePagination';
+import { PedidoType } from '@/types/types';
+import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
-  FormControl,
-  FormLabel,
   Heading,
   Icon,
   IconButton,
   Input,
   Menu,
   MenuButton,
-  MenuItem,
   MenuList,
   Select,
   Text,
   useToast,
 } from '@chakra-ui/react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useState } from 'react';
-import { FaListUl, FaThLarge, FaThList } from 'react-icons/fa';
-import { FaTableCellsLarge } from 'react-icons/fa6';
-import ReactLoading from 'react-loading';
-import PaginationControl from './PaginationControl';
-import PedidoCard from './PedidoCard';
-import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import {
   addDays,
   addMonths,
@@ -34,23 +27,27 @@ import {
   subDays,
   subMonths,
 } from 'date-fns';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useState } from 'react';
 import { DayPicker } from 'react-day-picker';
-import useGetMovMonthData from '@/hooks/data/useGetMovMonthData';
-import { PedidoType } from '@/types/types';
-import { TimeData } from '@/data/data';
 import 'react-day-picker/style.css';
-const PedidosList = () => {
+import { FaListUl, FaThLarge, FaThList } from 'react-icons/fa';
+import { FaTableCellsLarge } from 'react-icons/fa6';
+import ReactLoading from 'react-loading';
+import PaginationControl from '../reservas/PaginationControl';
+import PedidoCard from './PedidoCard';
+const PedidosList = ({ isCompra }: { isCompra: boolean }) => {
   const hoy = new Date();
   const [date, setDate] = useState(hoy);
   const [lapso, setLapso] = useState('Diario');
 
-  const { monthReservas, loadingMonthData, getMonthData } = useGetMovMonthData(
-    date.getMonth(),
-    date.getFullYear()
-  );
+  const { monthCompras, monthReservas, loadingMonthData, getMonthData } =
+    useGetMovMonthData(date.getMonth(), date.getFullYear());
   const fecha = dateTexto(date.getTime() / 1000).slashDate;
-  const { reservas, getData, loadingData } = useGetMovDayData(fecha);
-  const selectedData = lapso === 'Diario' ? reservas : monthReservas;
+  const { compras, reservas, getData, loadingData } = useGetMovDayData(fecha);
+  const monthly = isCompra ? monthCompras : monthReservas;
+  const daily = isCompra ? compras : reservas;
+  const selectedData = lapso === 'Diario' ? daily : monthly;
   const [isList, setIsList] = useState(false);
   const [consulta, setConsulta] = useState('');
   const filterPedidos = useCallback(() => {
@@ -98,7 +95,7 @@ const PedidosList = () => {
   };
   const minusDate = () => {
     if (lapso === 'Diario') {
-      if (dateTexto(date.getTime() / 1000).slashDate === '08-05-2025') {
+      if (dateTexto(date.getTime() / 1000).slashDate === '17-05-2025') {
         return toast({
           title: 'No puedes retroceder',
           description: 'No hay mas data hacia atrás (alta de sistema)',
@@ -135,7 +132,9 @@ const PedidosList = () => {
   const isLoading = loadingData || loadingMonthData;
   return (
     <Flex gap={5} direction='column' p={4} rounded='lg' boxShadow='md'>
-      <Heading size='md'>Listado de Reservas</Heading>
+      <Heading size='md'>
+        Listado de {isCompra ? 'Compras' : 'Reservas'}
+      </Heading>
 
       {/* Controles de filtros y fecha */}
       <Flex
@@ -196,7 +195,7 @@ const PedidosList = () => {
                   onSelect={setDate} // Maneja el estado
                   captionLayout='dropdown'
                   disabled={{
-                    before: new Date('2025-05-08'),
+                    before: new Date('2025-05-17'),
                     after: new Date(),
                   }}
                 />

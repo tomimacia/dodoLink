@@ -14,7 +14,6 @@ import {
   NumberInput,
   NumberInputField,
   Select,
-  Switch,
   Text,
   useColorModeValue,
   useToast,
@@ -34,7 +33,6 @@ const ProductoForm = ({
   setNewProducto?: (newProducto: ProductoType) => void;
 }) => {
   const { codigo, ...rest } = producto;
-  console.log(rest);
   const [formData, setFormData] = useState({ ...rest });
   const [codigos, setCodigos] = useState(codigo);
   const [loading, setLoading] = useState(false);
@@ -101,11 +99,6 @@ const ProductoForm = ({
     const newCodigos = codigos.filter((_, i) => i !== ind);
     setCodigos(newCodigos);
   };
-  // const onChangeCodigo = (e: any, ind: number) => {
-  //   const newCodigos = [...codigos];
-  //   newCodigos[ind] = Number(e.target.value);
-  //   setCodigos(newCodigos);
-  // };
   const handlePacks = (isSum: boolean) => {
     setCantidaEnPacks((prev) => prev + (isSum ? 1 : -1));
     setFormData((prev) => ({

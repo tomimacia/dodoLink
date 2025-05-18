@@ -1,6 +1,6 @@
 import dateTexto from '@/helpers/dateTexto';
 import useGetUsers from '@/hooks/users/useGetUsers';
-import { Estados, EstadoType, PedidoType } from '@/types/types';
+import { Estados, EstadosCompra, EstadoType, PedidoType } from '@/types/types';
 import {
   ArrowDownIcon,
   CheckCircleIcon,
@@ -25,40 +25,44 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import HistorialCambiosEnCurso from './HistorialCambiosEnCurso';
 
 const VerMovimientosModal = ({
   currentEstado,
   pedido,
+  isPago,
 }: {
   currentEstado: EstadoType;
   pedido: PedidoType;
+  isPago: boolean;
 }) => {
-  const ArrowIconShow = ({ estado }: { estado: EstadoType }) => {
-    if (estado === 'Finalizado') return <></>;
-    const isEstado = estado === currentEstado;
-    if (isEstado) {
-      return (
-        <motion.div
-          style={{
-            display: 'flex',
-            marginTop: '4px',
-            marginBottom: '4px',
-            justifyContent: 'center',
-            filter: 'drop-shadow(0 0 2px rgba(0, 0, 0, 0.5))',
-          }}
-          animate={{ y: [-0.5, 0.5, -0.5] }}
-          transition={{ duration: 1, repeat: Infinity }}
-        >
-          <ArrowDownIcon fontSize='xs' color='blue.500' />
-        </motion.div>
-      );
-    }
-    return (
-      <Flex my={1} justify='center'>
-        <ArrowDownIcon fontSize='xs' />
-      </Flex>
-    );
-  };
+  //Arrow con movimiento
+  // const ArrowIconShow = ({ estado }: { estado: EstadoType }) => {
+  //   if (estado === 'Finalizado') return <></>;
+  //   const isEstado = estado === currentEstado;
+  //   if (isEstado) {
+  //     return (
+  //       <motion.div
+  //         style={{
+  //           display: 'flex',
+  //           marginTop: '4px',
+  //           marginBottom: '4px',
+  //           justifyContent: 'center',
+  //           filter: 'drop-shadow(0 0 2px rgba(0, 0, 0, 0.5))',
+  //         }}
+  //         animate={{ y: [-0.5, 0.5, -0.5] }}
+  //         transition={{ duration: 1, repeat: Infinity }}
+  //       >
+  //         <ArrowDownIcon fontSize='xs' color='blue.500' />
+  //       </motion.div>
+  //     );
+  //   }
+  //   return (
+  //     <Flex my={1} justify='center'>
+  //       <ArrowDownIcon fontSize='xs' />
+  //     </Flex>
+  //   );
+  // };
   const { users } = useGetUsers();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -80,6 +84,7 @@ const VerMovimientosModal = ({
             bg={cardBg}
             p={4}
             w='100%'
+            mb={4}
           >
             <Flex align='center' justify='space-between' mb={2}>
               <Heading size='sm'>{estado}</Heading>
@@ -87,7 +92,7 @@ const VerMovimientosModal = ({
             </Flex>
             <Text fontSize='sm'>No realizado aún</Text>
           </Box>
-          <ArrowIconShow estado={estado} />
+          {/* <ArrowIconShow estado={estado} /> */}
         </>
       );
 
@@ -119,27 +124,21 @@ const VerMovimientosModal = ({
           <Text fontSize='sm'>
             <b>Responsable:</b> {usuario?.nombre} {usuario?.apellido}
           </Text>
-          {estado !== 'Pendiente' && estado !== 'En curso' && (
-            <Flex gap={1}>
+          {estado !== 'Pendiente' && !(estado === 'En curso' && !isPago) && (
+            <Flex flexDir='column' gap={1}>
               <Text fontSize='sm'>
-                <b>{estado !== 'Finalizado' ? 'Cambios' : 'Sobrantes'}:</b>{' '}
+                <b>Actualizaciones</b>{' '}
+                {!movimiento?.cambios ? ': Sin Actualizaciones' : ''}
               </Text>
-              <Text fontSize='sm'>
-                {movimiento?.cambios
-                  ? movimiento.cambios.split(',').map((cambio, index) => (
-                      <span key={index}>
-                        {cambio}
-                        <br />
-                      </span>
-                    ))
-                  : estado !== 'Finalizado'
-                  ? 'Sin cambios'
-                  : 'Sin sobrantes'}
-              </Text>
+              <HistorialCambiosEnCurso
+                estado={estado}
+                movimiento={movimiento}
+                isPago={isPago}
+              />
             </Flex>
           )}
         </Box>
-        <ArrowIconShow estado={estado} />
+        {/* <ArrowIconShow estado={estado} /> */}
       </>
     );
   };
@@ -147,6 +146,7 @@ const VerMovimientosModal = ({
   const inicial = pedido.movimientos.Inicializado;
   const inicialUser = users?.find((u) => u.id === inicial.admin);
   const inicialFecha = dateTexto(inicial.fecha.seconds);
+  const finalEstados = !pedido.isPago ? Estados : EstadosCompra;
 
   return (
     <Flex>
@@ -186,6 +186,7 @@ const VerMovimientosModal = ({
               borderColor={borderColor}
               bg={cardBg}
               p={4}
+              mb={4}
               w='100%'
             >
               <Flex align='center' justify='space-between' mb={2}>
@@ -205,14 +206,16 @@ const VerMovimientosModal = ({
                 {inicialUser?.apellido}
               </Text>
             </Box>
-            <ArrowIconShow estado='Inicializado' />
-            <Stack spacing={0}>
-              {Estados.filter((e) => e !== 'Inicializado').map((estado) => (
-                <RenderMovimiento
-                  estado={estado}
-                  key={estado + 'historial-mov-key'}
-                />
-              ))}
+            {/* <ArrowIconShow estado='Inicializado' /> */}
+            <Stack spacing={4}>
+              {finalEstados
+                .filter((e) => e !== 'Inicializado')
+                .map((estado) => (
+                  <RenderMovimiento
+                    estado={estado}
+                    key={estado + 'historial-mov-key'}
+                  />
+                ))}
             </Stack>
           </ModalBody>
         </ModalContent>

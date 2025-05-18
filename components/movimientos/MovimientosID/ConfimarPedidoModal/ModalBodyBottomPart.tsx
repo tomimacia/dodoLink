@@ -1,14 +1,16 @@
+import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { extractSrcFromIframe } from '@/helpers/extractSrcFromIframe';
-import { EstadoType, PedidoType, ProductoType } from '@/types/types';
+import { EstadoType, ProductoType } from '@/types/types';
 import { DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Checkbox,
+  Divider,
   Flex,
   FormControl,
   FormLabel,
-  HStack,
+  Heading,
   Input,
   ListItem,
   Switch,
@@ -27,9 +29,6 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import MapEmbed from '../../EmbedMap';
-import TitleSearch from '../../TitleSearch';
-import { getSingleDoc } from '@/firebase/services/getSingleDoc';
-import ReactLoading from 'react-loading';
 
 type ItemsHandlerType = [
   ProductoType[],
@@ -42,7 +41,6 @@ type NumberHandler = [
 ];
 const ModalBodyBottomPart = ({
   estado,
-  productos,
   checkedItemsHandler,
   itemsHandler,
   clienteHandler,
@@ -52,7 +50,6 @@ const ModalBodyBottomPart = ({
   sobrantesHandler,
 }: {
   estado: EstadoType;
-  productos: ProductoType[] | null;
   checkedItemsHandler: [any[], React.Dispatch<React.SetStateAction<any[]>>];
   itemsHandler: ItemsHandlerType;
   clienteHandler: StringHandler;
@@ -153,7 +150,6 @@ const ModalBodyBottomPart = ({
           {/* <Text>
                    <b>Cliente:</b> {cliente}
                  </Text> */}
-
           <FormControl>
             <FormLabel>Cliente</FormLabel>
             <Input
@@ -162,7 +158,6 @@ const ModalBodyBottomPart = ({
               onChange={(e) => setCliente(e.target.value)}
             />
           </FormControl>
-
           <FormControl>
             <FormLabel>Detalle</FormLabel>
             <Textarea
@@ -172,7 +167,6 @@ const ModalBodyBottomPart = ({
               resize='vertical'
             />
           </FormControl>
-
           <FormControl>
             <FormLabel>Tramo</FormLabel>
             <Flex gap={2} align='center'>
@@ -188,7 +182,6 @@ const ModalBodyBottomPart = ({
               <Text>Mts.</Text>
             </Flex>
           </FormControl>
-
           <FormControl>
             <FormLabel>Mapa (embed iframe)</FormLabel>
             {!mapCoords && (
@@ -214,6 +207,7 @@ const ModalBodyBottomPart = ({
             )}
             <MapEmbed clean={() => setMapCoords('')} src={mapCoords} />
           </FormControl>
+
           <Box w='100%'>
             <Text mt={4} mb={2} fontWeight='semibold'>
               Productos del pedido:
@@ -272,35 +266,40 @@ const ModalBodyBottomPart = ({
         </VStack>
       )}
       {estado === 'Preparación' && (
-        <UnorderedList fontSize='lg' w='100%' maxW='400px'>
-          {items.map((i) => {
-            return (
-              <ListItem key={`preparacion-key-${i.id}`} w='100%'>
-                <Flex
-                  justify='space-between'
-                  borderBottom='1px solid #BEBEBE'
-                  w='100%'
-                >
-                  <Flex gap={2}>
-                    <Text noOfLines={1}>
-                      <b>{i.nombre}</b>
-                    </Text>
-                    <Text>
-                      x {i.unidades} {i.medida}
-                    </Text>
-                  </Flex>
-                  <Checkbox
-                    borderColor='#BEBEBE'
-                    isChecked={checkedItems.some(
-                      (it: any) => it.id === i.id && it.checked
-                    )}
-                    onChange={() => checkItem(i.id)}
-                  />
-                </Flex>
-              </ListItem>
-            );
-          })}
-        </UnorderedList>
+        <Flex gap={2} flexDir='column'>
+          <Flex gap={2} p={2} borderRadius={5} flexDir='column'>
+            <Heading fontSize='lg'>Confirmar Productos</Heading>
+            <UnorderedList fontSize='lg' w='100%' maxW='400px'>
+              {items.map((i) => {
+                return (
+                  <ListItem key={`preparacion-key-${i.id}`} w='100%'>
+                    <Flex
+                      justify='space-between'
+                      borderBottom='1px solid #BEBEBE'
+                      w='100%'
+                    >
+                      <Flex gap={2}>
+                        <Text noOfLines={1}>
+                          <b>{i.nombre}</b>
+                        </Text>
+                        <Text>
+                          x {i.unidades} {i.medida}
+                        </Text>
+                      </Flex>
+                      <Checkbox
+                        borderColor='#BEBEBE'
+                        isChecked={checkedItems.some(
+                          (it: any) => it.id === i.id && it.checked
+                        )}
+                        onChange={() => checkItem(i.id)}
+                      />
+                    </Flex>
+                  </ListItem>
+                );
+              })}
+            </UnorderedList>
+          </Flex>
+        </Flex>
       )}
       {estado === 'Pendiente' && (
         <Flex gap={2} flexDir='column'>

@@ -18,23 +18,26 @@ import { useRouter } from 'next/router';
 
 const NotificationButton = () => {
   const { reservas, compras } = useOnCurso();
+  const reservasYCompras = [...(reservas || []), ...(compras || [])];
   const { user } = useUser();
   const notificationsUnseen =
-    reservas?.filter((r) => {
+    reservasYCompras?.filter((r) => {
       const noVisto = !r.vistoPor.some((v) => v === user?.id);
       const puedeVer =
         getEstado(r.movimientos) === 'Pendiente' || CheckAdminRol(user?.rol);
       return noVisto && puedeVer;
     }) || [];
   const notificationsToShow =
-    reservas?.filter((r) => {
+    reservasYCompras?.filter((r) => {
       const puedeVer =
-        getEstado(r.movimientos) === 'Pendiente' || CheckAdminRol(user?.rol);
+        (!r.isPago && getEstado(r.movimientos) === 'Pendiente') ||
+        CheckAdminRol(user?.rol);
       return puedeVer;
     }) || [];
   const { push } = useRouter();
 
   const customImageColor = useColorModeValue('#FFF', 'gray.700');
+  const customImageGray = useColorModeValue('gray.100', 'gray.600');
   const customImageBG = useColorModeValue('gray.700', '#FFF');
   const customSize = useBreakpointValue(['xs', 'sm', 'sm', 'sm', 'sm']) || 'sm';
 
@@ -85,10 +88,14 @@ const NotificationButton = () => {
                 onClick={() => push(`/PedidosID/${n.id}`)}
                 key={`notification-key-${n.id}-${ind}`}
                 fontWeight={noVisto ? 'bold' : 'normal'}
-                bg={noVisto ? 'gray.100' : 'transparent'}
-                _hover={{ bg: noVisto ? 'gray.200' : 'gray.100' }}
+                bg={noVisto ? customImageGray : 'transparent'}
+                _hover={{
+                  color: 'black',
+                  bg: noVisto ? 'gray.200' : 'gray.100',
+                }}
                 display='flex'
                 justifyContent='space-between'
+                my={1}
               >
                 <Box>{`${n.isPago ? 'Compra' : 'Reserva'} - ${n.cliente}`}</Box>
 

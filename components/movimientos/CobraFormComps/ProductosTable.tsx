@@ -55,14 +55,14 @@ const ProductosTable = () => {
                 codigo,
                 cantidadPorPack,
               } = it;
+              const showFaltante =
+                !isPago && (cantidad === 0 || cantidad < (unidades || 0));
               return (
                 <Tr key={`item-${codigo?.join('-')}-${index}`}>
                   <Td maxW='400px'>
                     <Text
-                      fontWeight={
-                        cantidad < (unidades || 0) ? 'bold' : 'normal'
-                      }
-                      color={cantidad === 0 || cantidad < (unidades || 0) ? 'red.500' : undefined}
+                      fontWeight={showFaltante ? 'bold' : 'normal'}
+                      color={showFaltante ? 'red.500' : undefined}
                     >
                       {cantidad} ({medida})
                     </Text>

@@ -1,9 +1,10 @@
-import { Estados, PedidoFechaType } from '@/types/types';
+import { Estados, EstadoType, PedidoFechaType } from '@/types/types';
 
-export const getEstado = (movimientos: PedidoFechaType) => {
-  const { Inicializado, Preparación, Pendiente, Finalizado } = movimientos;
-  const EnCurso = movimientos['En curso'];
-  const estados = [Inicializado, Preparación, Pendiente, EnCurso, Finalizado];
-  if (estados.every((estado) => estado?.fecha !== null)) return 'Finalizado';
-  return Estados[estados.findIndex((estado) => !estado?.fecha) - 1];
+export const getEstado = (movimientos: PedidoFechaType): EstadoType => {
+  const ultimoIndice = Estados.findLastIndex(
+    (estado) => movimientos[estado]?.fecha !== null
+  );
+
+  // Como Inicializado siempre tiene fecha, podemos asumir que ultimoIndice nunca es -1
+  return Estados[ultimoIndice];
 };

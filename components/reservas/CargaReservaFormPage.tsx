@@ -12,6 +12,7 @@ import {
   Flex,
   Heading,
   Input,
+  Switch,
   Text,
   Textarea,
   useColorModeValue,
@@ -36,7 +37,7 @@ const CargaReservaFormPage = () => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-
+  const [hasTramo, setHasTramo] = useState(true);
   const fontColor = useColorModeValue('blue.700', 'blue.400');
   const confirmButtonRef = useRef<HTMLButtonElement | null>(null);
   const [embedValue, setEmbedValue] = useState('');
@@ -80,14 +81,25 @@ const CargaReservaFormPage = () => {
       setLoading(false);
       return;
     }
-    const itemsSinSotck = items.filter(
+    if (hasTramo && !tramo) {
+      toast({
+        title: 'Error',
+        description: 'Debes indicar el tramo',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    const itemsSinStock = items.filter(
       (item) => (item.unidades || 0) > item.cantidad
     );
-    if (itemsSinSotck.length > 0) {
+    if (itemsSinStock.length > 0) {
       setLoading(false);
       return toast({
         title: 'Sin Stock',
-        description: `No hay stock para alguno de los productos: ${itemsSinSotck
+        description: `No hay stock para alguno de los productos: ${itemsSinStock
           .map((i) => i.nombre)
           .join(', ')}`,
         status: 'error',
@@ -119,7 +131,7 @@ const CargaReservaFormPage = () => {
     };
     try {
       const newMovimiento = {
-        detalle,
+        detalle: detalle.split('\n'),
         cliente,
         creadorID: user?.id,
         items: items.map((i) => formatItem(i)),
@@ -127,7 +139,7 @@ const CargaReservaFormPage = () => {
         isPago: false,
         mapCoords: embed,
         vistoPor: [],
-        tramo,
+        tramo: hasTramo ? tramo : null,
       };
       await CargarReserva(newMovimiento);
       toast({
@@ -194,14 +206,32 @@ const CargaReservaFormPage = () => {
       </Flex>
 
       <Flex gap={2} align='center'>
-        <Text fontWeight='bold'>Tramo (mts.):</Text>
+        <Switch
+          isChecked={hasTramo}
+          onChange={() =>
+            setHasTramo((prev) => {
+              if (prev) {
+                setTramo(null);
+              }
+              return !prev;
+            })
+          }
+        />
+        <Text fontWeight='bold'>Tramo (mts):</Text>
         <Input
           borderColor='gray'
           size='sm'
           borderRadius={5}
-          placeholder='Mts.'
+          placeholder='Mts'
           type='number'
-          value={tramo || ''}
+          isDisabled={!hasTramo}
+          onKeyDown={(e) => {
+            if (['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)) {
+              e.preventDefault();
+            }
+          }}
+          onWheel={(e: any) => e.target.blur()}
+          value={!hasTramo ? '' : tramo || ''}
           onChange={(e) => setTramo(Number(e.target.value))}
           maxW='100px'
         />

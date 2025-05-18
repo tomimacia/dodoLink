@@ -1,6 +1,7 @@
-import { useUser } from '@/context/userContext';
 import { getSingleDoc } from '@/firebase/services/getSingleDoc';
+import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
 import { useEnter } from '@/hooks/eventHooks/useEnter';
+import { MovimientosType, PedidoType } from '@/types/types';
 import {
   Button,
   Flex,
@@ -12,15 +13,12 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import { FormEvent, useRef, useState } from 'react';
 import ReactLoading from 'react-loading';
-import ClienteModal from './Editar/ClienteModal';
-import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
-import { MovimientosType, PedidoType } from '@/types/types';
+import PedidoConsultaCard from './PedidoConsultaCard';
 
-const ConsultarPedido = () => {
-  const { user } = useUser();
+const ConsultarPedido = ({ isCompra }: { isCompra: boolean }) => {
   const [consulta, setConsulta] = useState('');
   const [loadingForm, setLoadingForm] = useState<boolean>(false);
-  const [registryUser, setRegistryUser] = useState<any | null>(null);
+  const [registryPedido, setRegistryPedido] = useState<any | null>(null);
   const toast = useToast();
   const valueRef = useRef<HTMLInputElement | null>(null);
 
@@ -62,14 +60,14 @@ const ConsultarPedido = () => {
           },
         };
       }
-      const pedidos = [...movimientos.reservas, ...movimientos.compras];
+      const pedidos = isCompra ? movimientos.compras : movimientos.reservas;
       const selectedMov = pedidos.find((i) => i?.id === consulta) as
         | PedidoType
         | undefined;
       if (!selectedMov) {
         return;
       }
-      setRegistryUser(selectedMov);
+      setRegistryPedido(selectedMov);
     } catch (e) {
       console.log(e);
       toast({
@@ -89,10 +87,13 @@ const ConsultarPedido = () => {
     { bg: 'darkGray', color: 'white' },
     { bg: 'gray.200', color: 'black' }
   );
+
   return (
     <AnimatePresence mode='wait'>
       <motion.div
-        key={loadingForm ? 'Loading' : registryUser ? 'ShowUser' : 'ShowInput'}
+        key={
+          loadingForm ? 'Loading' : registryPedido ? 'ShowUser' : 'ShowInput'
+        }
         initial='initial'
         animate='enter'
         exit='exit'
@@ -105,30 +106,20 @@ const ConsultarPedido = () => {
         layout
       >
         {!loadingForm &&
-          (registryUser ? (
-            <Flex flexDir='column'>
+          (registryPedido ? (
+            <Flex gap={4} flexDir='column'>
               <Button
                 w='fit-content'
                 alignSelf='flex-end'
                 bg={borrarColor.bg}
                 color={borrarColor.color}
                 size='xs'
-                onClick={() => setRegistryUser(null)}
+                onClick={() => setRegistryPedido(null)}
                 _hover={{ opacity: 0.65 }}
               >
                 Borrar Consulta
               </Button>
-              <Flex gap={5}>
-                {user?.rol === 'Superadmin' && (
-                  <Flex my={2}>
-                    <ClienteModal
-                      setNewCliente={setRegistryUser}
-                      size='sm'
-                      cliente={registryUser}
-                    />
-                  </Flex>
-                )}
-              </Flex>
+              <PedidoConsultaCard pedido={registryPedido} isCompra={isCompra} />
             </Flex>
           ) : (
             <Flex p={2} gap={2} flexDir='column'>

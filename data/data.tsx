@@ -59,20 +59,20 @@ export const Routes = [
     ],
   },
   {
-    label: 'Órdenes',
-    route: 'Ordenes',
+    label: 'Compras',
+    route: 'Compras',
     iconFilled: IoCart,
     iconEmpty: IoCartOutline,
     roles: ['Admin', 'Superadmin', 'Supervisor'],
     subRoutes: [
       {
         label: 'Carga',
-        route: 'Ordenes/Carga',
+        route: 'Compras/Carga',
         roles: ['Admin', 'Superadmin', 'Supervisor'],
       },
       {
         label: 'Listado',
-        route: 'Ordenes/Listado',
+        route: 'Compras/Listado',
         roles: ['Superadmin', 'Supervisor'],
       },
     ],

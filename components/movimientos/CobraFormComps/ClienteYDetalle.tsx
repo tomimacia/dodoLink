@@ -13,17 +13,15 @@ const ClienteYDetalle = () => {
       <Flex gap={2} w='100%' flexDir='column'>
         <Flex gap={2} flexDir='column'>
           <Text fontSize='lg' fontWeight='bold'>
-            Cliente
+            {!isPago ? 'Cliente' : 'Nombre de la Compra'}
           </Text>
           <Input
-            placeholder='Datos de Cliente'
+            placeholder={!isPago ? 'Datos de Cliente' : 'Agregar nombre'}
             borderRadius={5}
             borderColor='gray'
             maxW='300px'
             size='sm'
-            isDisabled={isPago}
             value={cliente}
-            disabled={isPago}
             onChange={(e) => setCliente(e.target.value)}
           />
         </Flex>

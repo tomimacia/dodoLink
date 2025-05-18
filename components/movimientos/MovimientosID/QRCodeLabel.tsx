@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { Fragment, useRef } from 'react';
 import dateTexto from '@/helpers/dateTexto';
 import { PedidoType } from '@/types/types';
 import {
@@ -59,8 +59,20 @@ const QRCodeLabel = ({ pedido }: { pedido: PedidoType }) => {
           {detalle && (
             <>
               <Text fontWeight='bold'>Detalle</Text>
-              <Text mb={2} fontStyle='italic'>
-                {detalle}
+              <Text
+                cursor='default'
+                title={detalle.join('\n')}
+                py={1}
+                fontSize='md'
+              >
+                {detalle.map((l) => {
+                  return (
+                    <Fragment key={`${l}-qrlabel-${pedido.id}}`}>
+                      <span>{l}</span>
+                      <br />
+                    </Fragment>
+                  );
+                })}
               </Text>
             </>
           )}

@@ -25,6 +25,7 @@ import DeleteModal from '../DeleteModal';
 import ProductoModal from './Editar/ProductoModal';
 import usePagination from '@/hooks/data/usePagination';
 import PaginationControl from '../reservas/PaginationControl';
+import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 const ListadoProductos = () => {
   const {
     productos,
@@ -61,9 +62,10 @@ const ListadoProductos = () => {
       await deleteSingleDoc('productos', pID);
       const newProductos = productos?.filter((p) => p.id !== pID);
       if (newProductos) setProductos(newProductos);
+      await updateProductosLastStamp();
       toast({
         title: 'Producto eliminado',
-        description: 'El producto ha sido eliminado exitosamente',
+        description: 'Producto eliminado correctamente',
         status: 'success',
         duration: 5000,
         isClosable: true,

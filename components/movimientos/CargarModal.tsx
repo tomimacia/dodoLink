@@ -41,17 +41,6 @@ const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
     resetFilters();
     onClose();
   };
-
-  const Pedido = () => {
-    toast({
-      title: 'No disponbile',
-      description:
-        'Opción no disponible por el momento, estamos trabajando en las actualizaciones',
-      isClosable: true,
-      status: 'info',
-      duration: 5000,
-    });
-  };
   return (
     <Flex>
       {loadingProductos && (
@@ -98,7 +87,7 @@ const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
             w='95%'
             borderRadius={5}
             my={2}
-            onClick={Pedido}
+            onClick={() => handleOpen(true)}
           >
             Compra
           </MenuItem>

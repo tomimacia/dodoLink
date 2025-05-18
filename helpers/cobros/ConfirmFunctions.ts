@@ -62,10 +62,8 @@ export const CargarReserva = async (newMovimiento: any) => {
   });
 };
 export const CargarCompra = async (newMovimiento: any) => {
-  const { fecha } = newMovimiento;
-  const fechaHoy = dateTexto(fecha.getTime() / 1000)
-    .numDate.split('/')
-    .join('-');
+  const { Inicializado } = newMovimiento?.movimientos;
+  const fechaHoy = dateTexto(Inicializado.fecha.seconds).slashDate;
   const id = createID(fechaHoy);
   const finalMov = { ...newMovimiento, id };
   const dayDoc = (await getSingleDoc('movimientos', fechaHoy)) as any;
@@ -88,9 +86,11 @@ export const ActualizarStock = async (
   items: ProductoType[],
   productos: ProductoType[],
   setProductos: (newProductos: ProductoType[]) => void,
+  checkForUpdates: () => Promise<void>,
   isPago: boolean
 ) => {
   if (items.length === 0) return;
+  await checkForUpdates();
   const promises = items.map((i) => {
     // Eliminamos 'unidades' del objeto
     const newCantidad = isPago

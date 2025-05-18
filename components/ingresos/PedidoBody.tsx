@@ -1,8 +1,13 @@
 import { getEstado } from '@/helpers/cobros/getEstado';
-import { EstadoColors, Estados, PedidoType } from '@/types/types';
+import {
+  EstadoColors,
+  Estados,
+  EstadosCompra,
+  PedidoType,
+} from '@/types/types';
 import { Flex, Heading, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 const PedidoBody = ({ pedido }: { pedido: PedidoType }) => {
   const { cliente, detalle, movimientos } = pedido ?? {};
   const estado = getEstado(movimientos);
@@ -11,8 +16,10 @@ const PedidoBody = ({ pedido }: { pedido: PedidoType }) => {
   useEffect(() => {
     hasMounted.current = true;
   }, []);
+  const EstadosSelected = pedido.isPago ? EstadosCompra : Estados;
   const prevColor =
-    EstadoColors[Estados[Estados.indexOf(estado) - 1]] ?? 'gray';
+    EstadoColors[EstadosSelected[EstadosSelected.indexOf(estado) - 1]] ??
+    'gray';
   return (
     <Flex flexDir='column' gap={2}>
       <motion.div
@@ -47,8 +54,22 @@ const PedidoBody = ({ pedido }: { pedido: PedidoType }) => {
         {cliente}
       </Heading>
 
-      <Text cursor='default' title={detalle} noOfLines={1} py={1} fontSize='md'>
-        {detalle}
+      <Text
+        cursor='default'
+        title={detalle.join('\n')}
+        // title={detalle}
+        noOfLines={1}
+        py={1}
+        fontSize='md'
+      >
+        {detalle?.map((l) => {
+          return (
+            <Fragment key={`${l}-detalle-${pedido.id}}`}>
+              <span>{l}</span>
+              <br />
+            </Fragment>
+          );
+        })}
       </Text>
     </Flex>
   );

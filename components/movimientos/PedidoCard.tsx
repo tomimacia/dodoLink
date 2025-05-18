@@ -1,11 +1,11 @@
+import { getEstado } from '@/helpers/cobros/getEstado';
+import dateTexto from '@/helpers/dateTexto';
 import { EstadoColors, PedidoType } from '@/types/types';
 import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { FaUserAlt, FaReceipt } from 'react-icons/fa';
+import Link from 'next/link';
 import { BsCalendar, BsClockHistory } from 'react-icons/bs';
-import { getEstado } from '@/helpers/cobros/getEstado';
-import dateTexto from '@/helpers/dateTexto';
-import { useRouter } from 'next/router';
+import { FaReceipt, FaUserAlt } from 'react-icons/fa';
 
 const MotionBox = motion(Box);
 
@@ -20,12 +20,9 @@ const PedidoCard = ({
   const bgCard = useColorModeValue('white', 'gray.800');
   const borderCard = useColorModeValue('gray.200', 'gray.600');
   const estado = getEstado(pedido.movimientos);
-  const { push } = useRouter();
-  const pushPedido = () => {
-    push(`/PedidosID/${pedido.id}`);
-  };
   return (
     <MotionBox
+      as={Link}
       bg={bgCard}
       borderWidth={1}
       borderColor={borderCard}
@@ -38,7 +35,7 @@ const PedidoCard = ({
       boxShadow='sm'
       cursor='pointer'
       minW='210px'
-      onClick={pushPedido}
+      href={`/PedidosID/${pedido.id}`}
     >
       <Flex direction='column' gap={2}>
         <Flex align='center' gap={2}>

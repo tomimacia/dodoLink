@@ -1,10 +1,10 @@
-import CargaReservaFormPage from '@/components/reservas/CargaReservaFormPage';
+import CargaCompraFormPage from '@/components/compras/CargaCompraFormPage';
 import { FormProvider } from '@/context/useCobrarFormContext';
 
 const Alta = () => {
   return (
     <FormProvider>
-      <CargaReservaFormPage />;
+      <CargaCompraFormPage />
     </FormProvider>
   );
 };

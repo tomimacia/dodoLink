@@ -5,17 +5,19 @@ import { useThemeColors } from '@/hooks/useThemeColors';
 import { Divider, Flex, Heading } from '@chakra-ui/react';
 import ReactLoading from 'react-loading';
 import EntradasSection from './EntradasSection';
+import QrScanner from '../inicio/QrScanner';
 const EntradasTiempoReal = () => {
   const { data, loading } = useOnCurso();
   const { user } = useUser();
   const { loadingColor } = useThemeColors();
   const { reservas, compras } = data ?? {};
-  const devCompras = true;
+  const devCompras = false;
   return (
     <Flex m={2} gap={5} flexDir='column'>
       <Heading as='h2' size='xl' textAlign='center'>
         Pedidos en Curso
       </Heading>
+      <QrScanner title={`Escanear Código de Pedido`} />
       <Flex gap={6} w='100%' flexDir='column'>
         {loading && (
           <Flex maxW='700px' my={10} justify='center'>

@@ -14,6 +14,7 @@ import {
   StepTitle,
   Text,
   useBreakpointValue,
+  useColorModeValue,
   useSteps,
 } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -30,7 +31,7 @@ const steps = Estados.filter((est) => est !== 'Finalizado').map((e) => {
 
 const MotionStepIndicator = motion(StepIndicator);
 
-const EstadoSteps = ({ estado }: { estado: EstadoType }) => {
+const EstadoStepsReserva = ({ estado }: { estado: EstadoType }) => {
   const { activeStep, setActiveStep } = useSteps({
     index: estado === 'Finalizado' ? Estados.length : Estados.indexOf(estado),
     count: steps.length,
@@ -49,6 +50,16 @@ const EstadoSteps = ({ estado }: { estado: EstadoType }) => {
   const { invertedTextColor } = useThemeColors();
   const prevColor =
     EstadoColors[Estados[Estados.indexOf(estado) - 1]] ?? 'gray';
+  const customBlue = useColorModeValue('blue', '#8FCDF4');
+  const customGreen = useColorModeValue('green', '#9AE6B4');
+  const customWhite = useColorModeValue('white', 'gray.50');
+  const stepColor = {
+    Inicializado: 'gray',
+    Preparación: customBlue,
+    Pendiente: customBlue,
+    'En curso': customBlue,
+    Finalizado: customGreen,
+  };
   return (
     <Flex flexDir='column' gap={2}>
       <Flex flexDir='column'>
@@ -68,7 +79,7 @@ const EstadoSteps = ({ estado }: { estado: EstadoType }) => {
           animate={{ backgroundColor: EstadoColors[estado] }}
           transition={{ duration: 1 }}
         >
-          <Flex fontSize='lg' w='fit-content' gap={2}>
+          <Flex color={customWhite} fontSize='lg' w='fit-content' gap={2}>
             <Text>Estado:</Text>
 
             <motion.p
@@ -98,6 +109,7 @@ const EstadoSteps = ({ estado }: { estado: EstadoType }) => {
           transition={{ type: 'tween', duration: 0.5 }}
         >
           <Stepper
+            colorScheme={estado === 'Finalizado' ? 'green' : 'blue'}
             orientation={customOrientation as any}
             index={activeStep}
             size='sm'
@@ -156,7 +168,7 @@ const EstadoSteps = ({ estado }: { estado: EstadoType }) => {
                           position: 'absolute',
                           top: 0,
                           left: 0,
-                          backgroundColor: '#3182CE', // blue.600
+                          backgroundColor: stepColor[estado], // blue.600
                           transformOrigin: 'left',
                         }}
                         animate={{ scaleX: [0.5, 1, 0.5] }}
@@ -171,7 +183,9 @@ const EstadoSteps = ({ estado }: { estado: EstadoType }) => {
                     <Box
                       height='2px'
                       width='100%'
-                      bg={index < activeStep - 1 ? 'blue.600' : 'gray.300'}
+                      bg={
+                        index < activeStep - 1 ? stepColor[estado] : 'gray.300'
+                      }
                     />
                   )}
                 </StepSeparator>
@@ -184,4 +198,4 @@ const EstadoSteps = ({ estado }: { estado: EstadoType }) => {
   );
 };
 
-export default EstadoSteps;
+export default EstadoStepsReserva;

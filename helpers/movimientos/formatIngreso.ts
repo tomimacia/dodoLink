@@ -1,73 +1,62 @@
-import { PedidoType } from '@/types/types';
+import { PedidoType, MovCambioObject } from '@/types/types';
 
-export const formatIngreso = (i: PedidoType) => {
-  const { movimientos } = i ?? {};
-  const { Inicializado, Preparación, Pendiente, Finalizado } =
-    movimientos ?? {};
-  const EnCurso = movimientos['En curso'];
+export const formatIngreso = (i: PedidoType): PedidoType => {
+  const movimientos = i?.movimientos ?? {};
+
+  const parseFecha = (
+    fecha: any
+  ): { seconds: number; nanoseconds: number } | null =>
+    fecha?.seconds !== undefined && fecha?.nanoseconds !== undefined
+      ? { seconds: fecha.seconds, nanoseconds: fecha.nanoseconds }
+      : null;
+
+  const parseCambios = (cambios?: any): MovCambioObject[] | string[] | null => {
+    if (!cambios) return null;
+
+    // Si es un array de strings (["algo", "otro"]), lo devolvemos tal cual
+    if (typeof cambios[0] === 'string') return cambios as string[];
+
+    // Si es un array de objetos, convertimos los Timestamp a serializables
+    return (cambios as MovCambioObject[]).map((cambio) => ({
+      ...cambio,
+      date: parseFecha((cambio as MovCambioObject).date) || {
+        seconds: 0,
+        nanoseconds: 0,
+      },
+    }));
+  };
+
   return {
     ...i,
     movimientos: {
-      Inicializado: Inicializado?.fecha
-        ? {
-            fecha: {
-              seconds: Inicializado?.fecha?.seconds,
-              nanoseconds: Inicializado?.fecha?.nanoseconds,
-            },
-            admin: Inicializado?.admin,
-          }
-        : {
-            fecha: null,
-            admin: null,
-          },
-      Preparación: Preparación?.fecha
-        ? {
-            fecha: {
-              seconds: Preparación?.fecha?.seconds,
-              nanoseconds: Preparación?.fecha?.nanoseconds,
-            },
-            admin: Preparación?.admin,
-          }
-        : {
-            fecha: null,
-            admin: null,
-          },
-      Pendiente: Pendiente?.fecha
-        ? {
-            fecha: {
-              seconds: Pendiente?.fecha?.seconds,
-              nanoseconds: Pendiente?.fecha?.nanoseconds,
-            },
-            admin: Pendiente?.admin,
-          }
-        : {
-            fecha: null,
-            admin: null,
-          },
-      'En curso': EnCurso?.fecha
-        ? {
-            fecha: {
-              seconds: EnCurso?.fecha?.seconds,
-              nanoseconds: EnCurso?.fecha?.nanoseconds,
-            },
-            admin: EnCurso?.admin,
-          }
-        : {
-            fecha: null,
-            admin: null,
-          },
-      Finalizado: Finalizado?.fecha
-        ? {
-            fecha: {
-              seconds: Finalizado?.fecha?.seconds,
-              nanoseconds: Finalizado?.fecha?.nanoseconds,
-            },
-            admin: Finalizado?.admin,
-          }
-        : {
-            fecha: null,
-            admin: null,
-          },
+      Inicializado: {
+        fecha: parseFecha(movimientos.Inicializado?.fecha) ?? {
+          seconds: 0,
+          nanoseconds: 0,
+        },
+        admin: movimientos.Inicializado?.admin ?? '',
+        cambios: parseCambios(movimientos.Inicializado?.cambios) || null,
+      },
+      Preparación: {
+        fecha: parseFecha(movimientos.Preparación?.fecha),
+        admin: movimientos.Preparación?.admin ?? null,
+        cambios: parseCambios(movimientos.Preparación?.cambios) || null,
+      },
+      Pendiente: {
+        fecha: parseFecha(movimientos.Pendiente?.fecha),
+        admin: movimientos.Pendiente?.admin ?? null,
+        cambios: parseCambios(movimientos.Pendiente?.cambios) || null,
+      },
+      'En curso': {
+        fecha: parseFecha(movimientos['En curso']?.fecha),
+        admin: movimientos['En curso']?.admin ?? null,
+        cambios: parseCambios(movimientos['En curso']?.cambios) || null,
+      },
+      Finalizado: {
+        fecha: parseFecha(movimientos.Finalizado?.fecha),
+        admin: movimientos.Finalizado?.admin ?? null,
+        cambios: parseCambios(movimientos.Finalizado?.cambios) || null,
+      },
     },
   };
 };

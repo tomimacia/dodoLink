@@ -39,7 +39,15 @@ const AddProducto = () => {
   const { productos, setProductos } = useGetProductos();
   const onSubmit = async (e: any) => {
     e.preventDefault();
-    const { nombre, target, cantidad, medida, empresa, cantidadPorPack } = form;
+    const {
+      nombre,
+      target,
+      cantidad,
+      medida,
+      empresa,
+      codigo,
+      cantidadPorPack,
+    } = form;
     const test = !nombre || !medida || !cantidad || !empresa;
     if (test)
       return toast({
@@ -51,24 +59,26 @@ const AddProducto = () => {
       });
     setLoading(true);
     try {
-      const checkProducto = (await getMultipleDocs(
-        'productos',
-        'codigo',
-        'array-contains-any',
-        codigos
-      )) as ProductoType[];
-      if (checkProducto.length > 0) {
-        const codigosArr = checkProducto.map((p) => p.codigo).flat();
-        const filterCodigo = codigos.filter((c) =>
-          codigosArr.some((cod) => cod === c)
-        );
-        return toast({
-          title: 'Ya registrado',
-          description: `Código/s: ${filterCodigo.join('-')} ya registrado/s`,
-          status: 'info',
-          duration: 5000,
-          isClosable: true,
-        });
+      if (codigos.length > 0) {
+        const checkProducto = (await getMultipleDocs(
+          'productos',
+          'codigo',
+          'array-contains-any',
+          codigos
+        )) as ProductoType[];
+        if (checkProducto.length > 0) {
+          const codigosArr = checkProducto.map((p) => p.codigo).flat();
+          const filterCodigo = codigos.filter((c) =>
+            codigosArr.some((cod) => cod === c)
+          );
+          return toast({
+            title: 'Ya registrado',
+            description: `Código/s: ${filterCodigo.join('-')} ya registrado/s`,
+            status: 'info',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
       }
       const newProducto = {
         nombre,
@@ -152,6 +162,12 @@ const AddProducto = () => {
           borderColor='gray'
           size='sm'
           borderRadius='5px'
+          onKeyDown={(e) => {
+            if (['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)) {
+              e.preventDefault();
+            }
+          }}
+          onWheel={(e: any) => e.target.blur()}
         />
         <Text>*Medida:</Text>
         <Select
@@ -180,6 +196,12 @@ const AddProducto = () => {
           value={form.cantidadPorPack || ''}
           type='number'
           autoComplete='off'
+          onKeyDown={(e) => {
+            if (['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)) {
+              e.preventDefault();
+            }
+          }}
+          onWheel={(e: any) => e.target.blur()}
           formNoValidate
           borderColor='gray'
           size='sm'
@@ -199,6 +221,12 @@ const AddProducto = () => {
           autoComplete='off'
           formNoValidate
           borderColor='gray'
+          onKeyDown={(e) => {
+            if (['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)) {
+              e.preventDefault();
+            }
+          }}
+          onWheel={(e: any) => e.target.blur()}
           size='sm'
           borderRadius='5px'
         />

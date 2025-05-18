@@ -1,8 +1,7 @@
-import ConsultarReserva from '@/components/reservas/ConsultarPedido';
+import ConsultarReserva from '@/components/movimientos/ConsultarPedido';
 
 const Consultar = () => {
-  return <ConsultarReserva />;
-  return <>Próximamente</>;
+  return <ConsultarReserva isCompra={false} />;
 };
 
 export default Consultar;

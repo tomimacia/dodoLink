@@ -11,6 +11,7 @@ import {
   Button,
   Flex,
   Input,
+  Switch,
   Text,
   useColorModeValue,
   useToast,
@@ -21,12 +22,14 @@ import ClienteYDetalle from './ClienteYDetalle';
 import MapEmbed from '../EmbedMap';
 import TitleSearchYItem from './TitleSearchYItem';
 import ProductosTable from './ProductosTable';
+import CompraDrawer from './CompraDrawer';
 
 const CobrarForm = ({ onClose }: { onClose: () => void }) => {
   const { items, resetFilters, detalle, cliente, isPago } =
     useCobrarFormContext();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
+  const [hasTramo, setHasTramo] = useState(true);
   const toast = useToast();
 
   const fontColor = useColorModeValue('blue.700', 'blue.400');
@@ -72,6 +75,17 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
       setLoading(false);
       return;
     }
+    if (hasTramo && !tramo) {
+      toast({
+        title: 'Error',
+        description: 'Debes indicar el tramo',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
     const itemsSinSotck = items.filter(
       (item) => (item.unidades || 0) > item.cantidad || item.cantidad === 0
     );
@@ -111,7 +125,7 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
     };
     try {
       const newMovimiento = {
-        detalle,
+        detalle: detalle.split('\n'),
         cliente,
         creadorID: user?.id,
         items: items.map((i) => formatItem(i)),
@@ -157,21 +171,42 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
       setLoading(false);
       return;
     }
-    const fecha = new Date();
+    const movimientos = {
+      Inicializado: {
+        fecha: Timestamp.now(),
+        admin: user?.id,
+      },
+      Preparación: {
+        fecha: null,
+        admin: null,
+      },
+      Pendiente: {
+        fecha: null,
+        admin: null,
+      },
+      'En curso': {
+        fecha: null,
+        admin: null,
+      },
+      Finalizado: {
+        fecha: null,
+        admin: null,
+      },
+    };
     try {
       const newMovimiento = {
-        detalle,
+        detalle: detalle.split('\n'),
         cliente,
+        movimientos,
         creadorID: user?.id,
         items: items.map((i) => formatItem(i)),
-        fecha,
         isPago: true,
         vistoPor: [],
       };
       await CargarCompra(newMovimiento);
       toast({
         title: 'Éxito',
-        description: 'Egreso registrado',
+        description: 'Compra registrada',
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -191,7 +226,6 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
       setLoading(false);
     }
   };
-
   const ConfirmarMovimiento = async () => {
     confirmButtonRef.current?.blur();
     isPago ? ConfirmarCompra() : ConfirmarReserva();
@@ -201,21 +235,41 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
     <Flex minH='50vh' gap={3} flexDir='column'>
       <ClienteYDetalle />
 
-      <Flex gap={2} align='center'>
-        <Text fontWeight='bold'>Tramo (mts.):</Text>
-        <Input
-          borderColor='gray'
-          size='sm'
-          borderRadius={5}
-          placeholder='Mts.'
-          type='number'
-          value={tramo || ''}
-          onChange={(e) => setTramo(Number(e.target.value))}
-          maxW='100px'
-        />
-      </Flex>
-
-      {!embed && (
+      {!isPago && (
+        <Flex gap={2} align='center'>
+          <Switch
+            isChecked={hasTramo}
+            onChange={() =>
+              setHasTramo((prev) => {
+                if (prev) {
+                  setTramo(null);
+                }
+                return !prev;
+              })
+            }
+          />
+          <Text fontWeight='bold'>Tramo (mts):</Text>
+          <Input
+            borderColor='gray'
+            size='sm'
+            borderRadius={5}
+            placeholder='Mts'
+            type='number'
+            isDisabled={!hasTramo}
+            value={!hasTramo ? '' : tramo || ''}
+            onChange={(e) => setTramo(Number(e.target.value))}
+            onKeyDown={(e) => {
+              if (['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
+            onWheel={(e: any) => e.target.blur()}
+            maxW='100px'
+          />
+        </Flex>
+      )}
+      {isPago && <CompraDrawer />}
+      {!embed && !isPago && (
         <Flex align='center' gap={2}>
           <Input
             size='sm'
@@ -250,8 +304,9 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
           </Button>
         </Flex>
       )}
-
-      <MapEmbed initialShow clean={() => setEmbed('')} src={embed} />
+      {!isPago && (
+        <MapEmbed initialShow clean={() => setEmbed('')} src={embed} />
+      )}
       <TitleSearchYItem />
       <ProductosTable />
 

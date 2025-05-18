@@ -4,8 +4,10 @@ import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { ActualizarStock } from '@/helpers/cobros/ConfirmFunctions';
 import { getEstado } from '@/helpers/cobros/getEstado';
+import { getUpdatedCompras } from '@/helpers/cobros/getUpdatedCompras';
 import { getUpdatedReservas } from '@/helpers/cobros/getUpdatedReservas';
 import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
+import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import {
   Estados,
   MovimientosType,
@@ -13,26 +15,26 @@ import {
   ProductoType,
 } from '@/types/types';
 import { useToast } from '@chakra-ui/react';
+import { Timestamp } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import useGetProductos from './data/useGetProductos';
-import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 
 const usePedidosForm = (movimiento: PedidoType) => {
-  const { reservas } = useOnCurso();
+  const { reservas, compras } = useOnCurso();
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [currentMov, setCurrentMov] = useState(movimiento);
   const { user, refreshUser } = useUser();
-  const { id, isPago, movimientos } = currentMov;
+  const { id, movimientos } = currentMov;
   const router = useRouter();
-  const { productos, setProductos } = useGetProductos();
+  const { productos, setProductos, checkForUpdates } = useGetProductos();
   const estado = getEstado(movimientos);
   const toast = useToast();
   const fecha = useMemo(() => {
     return formatearFecha(id);
   }, [id]);
-  const fetchNewMov = async () => {
+  const fetchNewReserva = async () => {
     try {
       const mov = (await getSingleDoc('movimientos', fecha)) as MovimientosType;
       const thisMov = mov.reservas.find((r) => r.id === movimiento.id);
@@ -43,7 +45,30 @@ const usePedidosForm = (movimiento: PedidoType) => {
       console.error(e);
     }
   };
+  const fetchNewCompra = async () => {
+    try {
+      const mov = (await getSingleDoc('movimientos', fecha)) as MovimientosType;
+      const thisMov = mov.compras.find((r) => r.id === movimiento.id);
+      if (thisMov) {
+        setCurrentMov(thisMov);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
   useEffect(() => {
+    if (!movimiento.isPago) return;
+    if (movimiento?.movimientos?.Finalizado?.fecha) {
+      setCurrentMov(movimiento);
+      return;
+    }
+    const newMov = compras?.find((r) => r.id === movimiento.id);
+    if (newMov) {
+      setCurrentMov(newMov);
+    } else fetchNewCompra();
+  }, [JSON.stringify(compras)]);
+  useEffect(() => {
+    if (movimiento.isPago) return;
     if (movimiento?.movimientos?.Finalizado?.fecha) {
       setCurrentMov(movimiento);
       return;
@@ -51,9 +76,8 @@ const usePedidosForm = (movimiento: PedidoType) => {
     const newMov = reservas?.find((r) => r.id === movimiento.id);
     if (newMov) {
       setCurrentMov(newMov);
-    } else fetchNewMov();
+    } else fetchNewReserva();
   }, [JSON.stringify(reservas)]);
-
   // Test para actualizar (devuelve true o false)
   const testUpdate = (newItems: ProductoType[]) => {
     if (estado === 'Finalizado' || !reservas) {
@@ -133,17 +157,22 @@ const usePedidosForm = (movimiento: PedidoType) => {
       'movimientos',
       fecha
     )) as MovimientosType;
-    const field = isPago ? 'compras' : 'reservas';
     try {
       if (estado === 'Inicializado') {
-        await ActualizarStock(newItems, productos || [], setProductos, false);
+        await ActualizarStock(
+          newItems,
+          productos || [],
+          setProductos,
+          checkForUpdates,
+          false
+        );
       }
       if (estado === 'En curso' && sobrantes.some((s) => s?.cantidad > 0)) {
         await updateInventario(sobrantes);
         await refreshUser();
       }
       await setSingleDoc('movimientos', fecha, {
-        [field]: getUpdatedReservas(
+        reservas: getUpdatedReservas(
           id,
           movimientoFetched.reservas,
           newEstado,
@@ -154,7 +183,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
       });
       onClose();
       await setSingleDoc('movimientos', 'enCurso', {
-        [field]:
+        reservas:
           newEstado === 'Finalizado'
             ? reservas?.filter((d) => d.id !== id)
             : getUpdatedReservas(
@@ -182,6 +211,118 @@ const usePedidosForm = (movimiento: PedidoType) => {
       }, 50);
     }
   };
+  const updateCompra = async (newPedido: PedidoType, onClose: () => void) => {
+    if (!compras) return;
+    setLoadingUpdate(true);
+    const movimientoFetched = (await getSingleDoc(
+      'movimientos',
+      fecha
+    )) as MovimientosType;
+    const { items, confirmedItems } = newPedido;
+    const toUpdate = items.filter(
+      (i) => i.isChecked && !confirmedItems?.some((ci) => ci.id === i.id)
+    );
+    const newConfirmed = confirmedItems
+      ? [...confirmedItems, ...toUpdate]
+      : toUpdate;
+    const FinalPedido = { ...newPedido, confirmedItems: newConfirmed };
+    const newEstado = items.some((i) => !i.isChecked)
+      ? 'En curso'
+      : 'Finalizado';
+    const { inventario, ...restUser } = user ?? {};
+    const newCambio = {
+      user: restUser,
+      items: toUpdate,
+      date: Timestamp.now(),
+    };
+    const cambios = FinalPedido?.movimientos['En curso']?.cambios
+      ? [...FinalPedido?.movimientos['En curso']?.cambios, newCambio]
+      : [newCambio];
+
+    try {
+      await ActualizarStock(
+        toUpdate,
+        productos || [],
+        setProductos,
+        checkForUpdates,
+        true
+      );
+      await setSingleDoc('movimientos', fecha, {
+        compras: getUpdatedCompras(
+          newPedido.id,
+          movimientoFetched.compras,
+          newEstado,
+          FinalPedido,
+          cambios,
+          user?.id
+        ),
+      });
+      onClose();
+      await setSingleDoc('movimientos', 'enCurso', {
+        compras:
+          newEstado === 'Finalizado'
+            ? compras?.filter((d) => d.id !== id)
+            : getUpdatedCompras(
+                newPedido.id,
+                compras,
+                newEstado,
+                FinalPedido,
+                cambios,
+                user?.id
+              ),
+      });
+      toast({
+        title: 'Éxito',
+        description: 'Pedido actualizado con éxito',
+        isClosable: true,
+        duration: 5000,
+        status: 'success',
+      });
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoadingUpdate(false);
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 50);
+    }
+  };
+  const restoreStockCompra = async () => {
+    if (estado === 'Inicializado') return;
+    const { items } = currentMov;
+    const promisesPRD = items
+      .filter((it) => it.isChecked)
+      .map((i) => getSingleDoc('productos', i.id));
+    const productosUpdated = (await Promise.all(promisesPRD)) as ProductoType[];
+    const promisesUpdate = productosUpdated.map((p) => {
+      const itemFind = items.find((i) => i.id === p?.id);
+      if (itemFind) {
+        console.log({ itemFind, items });
+        console.log({
+          items,
+          p,
+          itemFind,
+          cantidad: p?.cantidad - (itemFind?.unidades || 0),
+        });
+        return setSingleDoc('productos', p?.id || '', {
+          cantidad: p?.cantidad - (itemFind?.unidades || 0),
+        });
+      }
+    });
+    const newProductos = productos?.map((p) => {
+      const pFind = items.find((i) => i.id === p?.id);
+      const puFind = productosUpdated.find((i) => i.id === p?.id);
+      if (pFind && puFind)
+        return {
+          ...puFind,
+          cantidad: puFind?.cantidad - (pFind?.unidades || 0),
+        };
+      return p;
+    });
+    if (newProductos) setProductos(newProductos);
+    await Promise.all(promisesUpdate);
+    await updateProductosLastStamp();
+  };
   const restoreStock = async () => {
     if (estado === 'Inicializado') return;
     const { items } = currentMov;
@@ -195,6 +336,17 @@ const usePedidosForm = (movimiento: PedidoType) => {
         });
       }
     });
+    const newProductos = productos?.map((p) => {
+      const pFind = items.find((i) => i.id === p?.id);
+      const puFind = productosUpdated.find((i) => i.id === p?.id);
+      if (pFind && puFind)
+        return {
+          ...puFind,
+          cantidad: puFind?.cantidad + (pFind?.unidades || 0),
+        };
+      return p;
+    });
+    if (newProductos) setProductos(newProductos);
     await Promise.all(promisesUpdate);
     await updateProductosLastStamp();
   };
@@ -253,6 +405,61 @@ const usePedidosForm = (movimiento: PedidoType) => {
       setLoadingDelete(false);
     }
   };
+  const deleteFuncCompra = async () => {
+    if (estado === 'Finalizado' && user?.rol !== 'Superadmin') {
+      toast({
+        title: 'Finalizado',
+        description: 'No tienes autorización para eliminar compras finalizadas',
+        status: 'info',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+    setLoadingDelete(true);
+    try {
+      const newCompras = compras?.filter((r) => r.id !== id);
+      const movimientoFetched = (await getSingleDoc(
+        'movimientos',
+        fecha
+      )) as MovimientosType;
+      const newDayCompras = movimientoFetched.compras.filter(
+        (r) => r.id !== id
+      );
+
+      if (estado !== 'Inicializado') {
+        await restoreStockCompra();
+      }
+      const promises = [
+        setSingleDoc('movimientos', fecha, {
+          compras: newDayCompras,
+        }),
+        setSingleDoc('movimientos', 'enCurso', {
+          compras: newCompras,
+        }),
+      ];
+      await Promise.all(promises);
+      toast({
+        title: 'Éxito',
+        description: 'Pedido eliminado con éxito',
+        isClosable: true,
+        duration: 5000,
+        status: 'success',
+      });
+      router.push('/');
+    } catch (e) {
+      console.error(e);
+      toast({
+        title: 'Error',
+        description: 'Error al eliminar el pedido',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setLoadingDelete(false);
+    }
+  };
   return {
     loadingUpdate,
     loadingDelete,
@@ -261,6 +468,8 @@ const usePedidosForm = (movimiento: PedidoType) => {
     estado,
     productos,
     updatePedido,
+    updateCompra,
+    deleteFuncCompra,
     deleteFunc,
   };
 };

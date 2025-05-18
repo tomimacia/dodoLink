@@ -124,7 +124,14 @@ const TitleSearchYItem = () => {
                     type='number'
                     ref={valueRefPrecio}
                     borderColor='gray'
-                    onKeyDown={onKeyDownPrecio}
+                    onKeyDown={(e) => {
+                      if (
+                        ['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)
+                      ) {
+                        e.preventDefault();
+                      }
+                      onKeyDownPrecio(e);
+                    }}
                     borderRadius={5}
                     size='sm'
                     maxW='400px'

@@ -5,14 +5,14 @@ export const getCambiosResumen = (
   prev: PedidoType,
   updated: PedidoType,
   sobrantes: ProductoType[]
-): string | null => {
+): string[] | null => {
   const cambios: string[] = [];
 
   // Verificar cambios generales
   if (prev.cliente !== updated.cliente)
     cambios.push(`cliente: ${prev.cliente} → ${updated.cliente}`);
-  if (prev.detalle !== updated.detalle)
-    cambios.push(`detalle: ${prev.detalle} → ${updated.detalle}`);
+  if (JSON.stringify(prev.detalle) !== JSON.stringify(updated.detalle))
+    cambios.push(`detalle: ${updated.detalle.join("\n")}`);
   if (prev.tramo !== updated.tramo)
     cambios.push(`tramo: ${prev?.tramo || 0} → ${updated.tramo}`);
 
@@ -68,5 +68,5 @@ export const getCambiosResumen = (
     );
   }
 
-  return cambios.length ? cambios.join(', ') : null;
+  return cambios.length ? cambios : null;
 };

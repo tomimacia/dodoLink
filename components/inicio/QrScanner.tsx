@@ -8,7 +8,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import { Scanner } from '@yudiel/react-qr-scanner';

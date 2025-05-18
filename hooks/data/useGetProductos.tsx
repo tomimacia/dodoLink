@@ -4,14 +4,14 @@ import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import { ProductoType } from '@/types/types';
 import { Timestamp } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
-import { useSessionStorage } from '../storageHooks/useSessionStorage';
+import { useLocalStorage } from '../storageHooks/useLocalStorage';
 
 const useGetProductos = () => {
-  const [productos, setProductos] = useSessionStorage<ProductoType[] | null>(
+  const [productos, setProductos] = useLocalStorage<ProductoType[] | null>(
     'PRODUCTOS_SESSION_STORAGE',
     null
   );
-  const [lastUpdateProductos, setLastUpdate] = useSessionStorage<number | null>(
+  const [lastUpdateProductos, setLastUpdate] = useLocalStorage<number | null>(
     'PRODUCTOS_LASTUPDATE_SECONDS_SESSION_STORAGE',
     null
   );

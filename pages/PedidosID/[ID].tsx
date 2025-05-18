@@ -1,4 +1,5 @@
-import MovimientoCard from '@/components/movimientos/MovimientosID/MovimientoCard';
+import MovimientoCardCompra from '@/components/movimientos/MovimientosID/MovimientoCardCompra';
+import MovimientoCardReserva from '@/components/movimientos/MovimientosID/MovimientoCardReserva';
 import NotFoundPage from '@/components/NotFoundPage';
 import { useOnCurso } from '@/context/useOnCursoContext';
 import { useUser } from '@/context/userContext';
@@ -87,7 +88,10 @@ const MovimientoID = ({ movimiento }: { movimiento: PedidoType | null }) => {
         title='Movimiento no encontrado'
       />
     );
-  return <MovimientoCard movimiento={movimiento} />;
+  if (movimiento.isPago)
+    return <MovimientoCardCompra movimiento={movimiento} />;
+
+  return <MovimientoCardReserva movimiento={movimiento} />;
 };
 
 export default MovimientoID;

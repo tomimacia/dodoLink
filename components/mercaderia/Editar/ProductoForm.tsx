@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import AgregarCodigo from './AgregarCodigo';
-
+import _ from 'lodash';
 const ProductoForm = ({
   producto,
   onClose,
@@ -54,10 +54,8 @@ const ProductoForm = ({
   };
   const submit = async (e: any) => {
     e.preventDefault();
-    if (
-      JSON.stringify({ ...formData, codigo: codigos.join('-') }) ===
-      JSON.stringify({ ...producto, codigo: producto.codigo.join('-') })
-    )
+    // Compara formData (producto sin codigos) + codigo, contra el producto a ver si hay cambios
+    if (_.isEqual({ ...formData, codigo: codigos }, producto))
       return toast({
         title: 'No hay cambios',
         description: 'No se realizaron cambios en el producto',
@@ -315,25 +313,17 @@ const ProductoForm = ({
           <AgregarCodigo setCodigos={setCodigos} />
         </FormControl>
       </Flex>
-      <Flex my={3} justify='space-around'>
-        <Button
-          _hover={{ opacity: 0.65 }}
-          color='white'
-          bg='green.700'
-          size='sm'
-          onClick={submit}
-          isLoading={loading}
-        >
-          Confirmar
+      <Flex justify='flex-end' mt={4} gap={3}>
+        <Button size='sm' onClick={onClose} variant='ghost'>
+          Cancelar
         </Button>
         <Button
-          _hover={{ opacity: 0.65 }}
-          onClick={onClose}
-          color='white'
-          bg='red.700'
+          isLoading={loading}
           size='sm'
+          onClick={submit}
+          colorScheme='blue'
         >
-          Cancelar
+          Guardar
         </Button>
       </Flex>
     </Flex>

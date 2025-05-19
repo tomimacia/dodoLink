@@ -19,6 +19,9 @@ import {
 import { useState } from 'react';
 import PopoverInfoIcon from '../inicio/PopoverInfoIcon';
 import AddCodigoForm from './AddCodigoForm';
+import { setSingleDoc } from '@/firebase/services/setSingleDoc';
+import { Timestamp } from 'firebase/firestore';
+import { generateFirestoreId } from '@/helpers/generateFirestoreID';
 
 const AddProducto = () => {
   const initialForm = {
@@ -80,6 +83,12 @@ const AddProducto = () => {
           });
         }
       }
+      const newID = generateFirestoreId();
+      const { seconds, nanoseconds } = Timestamp.now();
+      const createdAt = {
+        seconds,
+        nanoseconds,
+      };
       const newProducto = {
         nombre,
         codigo: codigos,
@@ -87,12 +96,14 @@ const AddProducto = () => {
         medida,
         empresa,
         creadorID: user?.id || 'noID',
-        createdAt: new Date(),
+        createdAt,
         cantidadPorPack: Number(cantidadPorPack) || 1,
         target: Number(target) || 1,
         queryArr: nombre.toLowerCase().split(' '),
+        id: newID,
       };
-      const producto = await addSingleDoc('productos', newProducto);
+      console.log(newID);
+      await setSingleDoc('productos', newID, newProducto);
       await updateProductosLastStamp();
       toast({
         status: 'success',
@@ -101,10 +112,7 @@ const AddProducto = () => {
         duration: 5000,
         description: `Producto cargado exitosamente`,
       });
-      const newProductos = [
-        ...(productos || []),
-        { ...newProducto, id: producto.id },
-      ];
+      const newProductos = [...(productos || []), newProducto];
       setProductos(newProductos);
       setForm(initialForm);
       setCodigos([]);

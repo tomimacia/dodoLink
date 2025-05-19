@@ -9,6 +9,10 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
+
+const MotionFlex = motion(Flex);
+const MotionBox = motion.div;
 
 const ProductoCardDrawer = ({
   p,
@@ -26,22 +30,25 @@ const ProductoCardDrawer = ({
   handleChange: (e: any, id: string) => void;
 }) => {
   const isSelected = isSeleccionado(p.id);
-  const borderColor = isSelected ? 'gray.600' : 'gray.200';
+  const borderColor = isSelected ? '#4A5568' : '#E2E8F0';
   const buttonBG = useColorModeValue('gray.700', 'white');
   const buttonColor = useColorModeValue('white', 'gray.900');
+
   return (
-    <Flex
+    <MotionFlex
+      layout
       key={p.id}
-      p={3}
       border='1px solid'
       borderColor={borderColor}
       borderRadius='md'
-      flexDir='column'
+      flexDirection='column'
       gap={3}
     >
+      {/* Cabecera: nombre, checkbox, info básica */}
       <Flex
         cursor='pointer'
         onClick={() => toggleSeleccion(p)}
+        p={3}
         flexDir='column'
       >
         <HStack justify='space-between' align='flex-start'>
@@ -66,58 +73,71 @@ const ProductoCardDrawer = ({
           </Text>
         </HStack>
       </Flex>
-      <Divider w='98%' mx='auto' borderColor='gray' />
-      <Flex fontSize='sm' justify='space-between' align='center'>
-        <Flex align='center' gap={2}>
-          <Text>Packs</Text>
-          <HStack gap={2} maxW='320px'>
-            <Button
-              size='xs'
-              bg={buttonBG}
-              color={buttonColor}
-              _hover={{ opacity: 0.7 }}
-              fontSize='md'
-              isDisabled={!isSelected}
-              onClick={() => handlePacks(p, true)}
-            >
-              +
-            </Button>
-            <Text fontWeight='bold'>
-              {(((getCantidad(p.id) || 0) / p.cantidadPorPack).toFixed(
-                2
-              ) as any) / 1}
-            </Text>
-            <Button
-              size='xs'
-              fontSize='md'
-              bg={buttonBG}
-              color={buttonColor}
-              _hover={{ opacity: 0.7 }}
-              isDisabled={!isSelected}
-              onClick={() => handlePacks(p, false)}
-            >
-              -
-            </Button>
-          </HStack>
+
+      {/* Contenido desplegable animado */}
+      <MotionBox
+        layout
+        initial={false}
+        animate={
+          isSelected
+            ? { opacity: 1, height: 'auto' }
+            : { opacity: 0, height: 0 }
+        }
+        style={{ overflow: 'hidden' }}
+      >
+        <Divider w='95%' mx='auto' borderColor='gray' my={2} />
+        <Flex p={3} fontSize='sm' justify='space-between' align='center'>
+          {/* Selector de Packs */}
+          <Flex align='center' gap={2}>
+            <Text>Packs</Text>
+            <HStack gap={2} maxW='320px'>
+              <Button
+                size='xs'
+                bg={buttonBG}
+                color={buttonColor}
+                _hover={{ opacity: 0.7 }}
+                fontSize='md'
+                onClick={() => handlePacks(p, true)}
+              >
+                +
+              </Button>
+              <Text fontWeight='bold'>
+                {(((getCantidad(p.id) || 0) / p.cantidadPorPack).toFixed(
+                  2
+                ) as any) / 1}
+              </Text>
+              <Button
+                size='xs'
+                fontSize='md'
+                bg={buttonBG}
+                color={buttonColor}
+                _hover={{ opacity: 0.7 }}
+                onClick={() => handlePacks(p, false)}
+              >
+                -
+              </Button>
+            </HStack>
+          </Flex>
+
+          {/* Total */}
+          <Flex align='center' gap={1}>
+            <Text>Total</Text>
+            <HStack gap={5} maxW='320px'>
+              <Input
+                borderColor='gray'
+                size='sm'
+                borderRadius={5}
+                type='number'
+                placeholder={p.medida}
+                value={getCantidad(p.id)}
+                onChange={(e) => handleChange(e, p.id)}
+                w='80px'
+              />
+            </HStack>
+          </Flex>
         </Flex>
-        <Flex align='center' gap={1}>
-          <Text>Total</Text>
-          <HStack gap={5} maxW='320px'>
-            <Input
-              borderColor='gray'
-              size='sm'
-              borderRadius={5}
-              type='cantidad'
-              placeholder={p.medida}
-              value={getCantidad(p.id)}
-              onChange={(e) => handleChange(e, p.id)}
-              w='80px'
-              isDisabled={!isSelected}
-            />
-          </HStack>
-        </Flex>
-      </Flex>
-    </Flex>
+      </MotionBox>
+    </MotionFlex>
   );
 };
 

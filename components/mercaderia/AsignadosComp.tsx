@@ -21,6 +21,7 @@ import { useUser } from '@/context/userContext';
 
 const AsignadosComp = () => {
   const { user } = useUser();
+  const [loading, setLoading] = useState(false);
   const { users, loadingUserList, getUsers } = useGetUsers();
   useEffect(() => {
     getUsers();
@@ -39,79 +40,86 @@ const AsignadosComp = () => {
     newInventario: ProductoType[],
     ajustarStock: boolean
   ) => {
-    const finalInventario = newInventario.filter((p) => p.cantidad > 0);
-    await setSingleDoc('users', user.id, { inventario: finalInventario });
+    setLoading(true);
+    try {
+      const finalInventario = newInventario.filter((p) => p.cantidad > 0);
+      await setSingleDoc('users', user.id, { inventario: finalInventario });
 
-    // RESTAR stock por aumento o producto nuevo
-    const addPromises = newInventario
-      .map((p) => {
-        const oldItem = user.inventario.find((i) => i.id === p.id);
-        const DBItem = productos?.find((db) => db.id === p.id);
-        if (!DBItem) return null;
+      // RESTAR stock por aumento o producto nuevo
+      const addPromises = newInventario
+        .map((p) => {
+          const oldItem = user.inventario.find((i) => i.id === p.id);
+          const DBItem = productos?.find((db) => db.id === p.id);
+          if (!DBItem) return null;
 
-        const oldCant = oldItem?.cantidad ?? 0;
-        const diff = p.cantidad - oldCant;
-        if (diff > 0) {
-          return setSingleDoc('productos', p.id, {
-            cantidad: DBItem.cantidad - diff,
-          });
+          const oldCant = oldItem?.cantidad ?? 0;
+          const diff = p.cantidad - oldCant;
+          if (diff > 0) {
+            return setSingleDoc('productos', p.id, {
+              cantidad: DBItem.cantidad - diff,
+            });
+          }
+          return null;
+        })
+        .filter(Boolean);
+      // SUMAR stock si se redujo cantidad o se eliminó un producto
+
+      const subPromises = ajustarStock
+        ? user.inventario
+            .map((oldP) => {
+              const newP = newInventario.find((p) => p.id === oldP.id);
+              const newCant = newP?.cantidad ?? 0;
+              const diff = oldP.cantidad - newCant;
+              if (diff > 0) {
+                const DBItem = productos?.find((pDB) => pDB.id === oldP.id);
+                if (!DBItem) return null;
+                return setSingleDoc('productos', oldP.id, {
+                  cantidad: DBItem.cantidad + diff,
+                });
+              }
+              return null;
+            })
+            .filter(Boolean)
+        : [];
+
+      // Actualización local
+      const productosActualizados = productos?.map((p) => {
+        const oldItem = user.inventario.find((oldP) => oldP.id === p.id);
+        const newItem = newInventario.find((newP) => newP.id === p.id);
+
+        if (oldItem && !newItem) {
+          return ajustarStock
+            ? { ...p, cantidad: p.cantidad + oldItem.cantidad }
+            : p;
         }
-        return null;
-      })
-      .filter(Boolean);
 
-    // SUMAR stock si se redujo cantidad o se eliminó un producto
-    const subPromises = ajustarStock
-      ? user.inventario
-          .map((oldP) => {
-            const newP = newInventario.find((p) => p.id === oldP.id);
-            const newCant = newP?.cantidad ?? 0;
-            const diff = oldP.cantidad - newCant;
-            if (diff > 0) {
-              const DBItem = productos?.find((pDB) => pDB.id === oldP.id);
-              if (!DBItem) return null;
-              return setSingleDoc('productos', oldP.id, {
-                cantidad: DBItem.cantidad + diff,
-              });
-            }
-            return null;
-          })
-          .filter(Boolean)
-      : [];
+        if (!oldItem && newItem) {
+          return { ...p, cantidad: p.cantidad - newItem.cantidad };
+        }
 
-    // Actualización local
-    const productosActualizados = productos?.map((p) => {
-      const oldItem = user.inventario.find((oldP) => oldP.id === p.id);
-      const newItem = newInventario.find((newP) => newP.id === p.id);
+        if (oldItem && newItem) {
+          const diff = newItem.cantidad - oldItem.cantidad;
+          if (diff > 0) return { ...p, cantidad: p.cantidad - diff };
+          if (diff < 0 && ajustarStock)
+            return { ...p, cantidad: p.cantidad + Math.abs(diff) };
+        }
 
-      if (oldItem && !newItem) {
-        return ajustarStock
-          ? { ...p, cantidad: p.cantidad + oldItem.cantidad }
-          : p;
-      }
+        return p;
+      });
 
-      if (!oldItem && newItem) {
-        return { ...p, cantidad: p.cantidad - newItem.cantidad };
-      }
+      const promisesFinal = [...addPromises, ...subPromises];
+      await Promise.all(promisesFinal);
 
-      if (oldItem && newItem) {
-        const diff = newItem.cantidad - oldItem.cantidad;
-        if (diff > 0) return { ...p, cantidad: p.cantidad - diff };
-        if (diff < 0 && ajustarStock)
-          return { ...p, cantidad: p.cantidad + Math.abs(diff) };
-      }
+      if (promisesFinal.length > 0) updateProductosLastStamp();
 
-      return p;
-    });
+      if (productosActualizados) setProductos(productosActualizados);
 
-    const promisesFinal = [...addPromises, ...subPromises];
-    await Promise.all(promisesFinal);
-
-    if (promisesFinal.length > 0) updateProductosLastStamp();
-
-    if (productosActualizados) setProductos(productosActualizados);
-
-    await getUsers();
+      await getUsers();
+    } catch (e: any) {
+      console.error(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -193,6 +201,7 @@ const AsignadosComp = () => {
                   allProductos={productos || []}
                   user={u}
                   updateInventario={updateInventario}
+                  loading={loading}
                 />
               )}
             </Box>

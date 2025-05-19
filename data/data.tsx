@@ -173,4 +173,5 @@ export const mailsForNotification = [
   'mdoval@dodolink.com.ar',
   'lperez@dodolink.com.ar',
   'arian.f@dodolink.com.ar',
+  'acarvalho@dodolink.com.ar',
 ];

@@ -33,6 +33,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
     currentMov,
     updatePedido,
     deleteFunc,
+    volverAInicializado,
   } = usePedidosForm(movimiento);
   const { detalle, items, cliente, id, isPago, mapCoords, movimientos, tramo } =
     currentMov;
@@ -184,6 +185,8 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
 
       <Flex justifyContent='center' my={10} gap={4}>
         <ConfirmarReservaModal
+          volverAInicializado={volverAInicializado}
+          productos={productos || []}
           loading={loadingUpdate}
           update={(
             newPedido: PedidoType,

@@ -3,7 +3,6 @@ import { extractSrcFromIframe } from '@/helpers/extractSrcFromIframe';
 import { EstadoType, ProductoType } from '@/types/types';
 import { DeleteIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Button,
   Checkbox,
   Divider,
@@ -24,11 +23,13 @@ import {
   Thead,
   Tr,
   UnorderedList,
+  useColorModeValue,
   useToast,
   VStack,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import MapEmbed from '../../EmbedMap';
+import TitleSearch from '../../TitleSearch';
 
 type ItemsHandlerType = [
   ProductoType[],
@@ -48,6 +49,9 @@ const ModalBodyBottomPart = ({
   tramoHandler,
   mapCoordsHandler,
   sobrantesHandler,
+  productos,
+  volverAInicializado,
+  loading,
 }: {
   estado: EstadoType;
   checkedItemsHandler: [any[], React.Dispatch<React.SetStateAction<any[]>>];
@@ -60,6 +64,9 @@ const ModalBodyBottomPart = ({
     ProductoType[],
     React.Dispatch<React.SetStateAction<ProductoType[]>>
   ];
+  productos: ProductoType[];
+  volverAInicializado: () => Promise<void>;
+  loading: boolean;
 }) => {
   const [items, setItems] = itemsHandler;
   const [cliente, setCliente] = clienteHandler;
@@ -69,6 +76,7 @@ const ModalBodyBottomPart = ({
   const [embedValue, setEmbedValue] = useState('');
   const [mapCoords, setMapCoords] = mapCoordsHandler;
   const [sobrantes, setSobrantes] = sobrantesHandler;
+  const customGrayBG = useColorModeValue('gray.700', 'gray.500');
   const toast = useToast();
   const [loadingNew, setLoadingNew] = useState(false);
   const checkItem = (id: string) => {
@@ -207,8 +215,15 @@ const ModalBodyBottomPart = ({
             )}
             <MapEmbed clean={() => setMapCoords('')} src={mapCoords} />
           </FormControl>
-
-          <Box w='100%'>
+          <Divider borderColor='gray' />
+          <Flex gap={3} flexDir='column' w='100%'>
+            <Text fontWeight='bold'>Agregar Producto</Text>
+            <Flex pos='relative' gap={2} flexDir='column'>
+              <TitleSearch
+                productos={productos || []}
+                addProducto={addProducto}
+              />
+            </Flex>
             <Text mt={4} mb={2} fontWeight='semibold'>
               Productos del pedido:
             </Text>
@@ -225,7 +240,15 @@ const ModalBodyBottomPart = ({
                   {items.map((item) => (
                     <Tr key={item.id}>
                       {/* Nombre del producto */}
-                      <Td>{item.nombre}</Td>
+                      <Td
+                        maxW='300px'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                        title={item.nombre}
+                      >
+                        {item.nombre}
+                      </Td>
                       {/* Stock disponible */}
                       <Td
                         color={
@@ -245,6 +268,16 @@ const ModalBodyBottomPart = ({
                           onChange={onChange}
                           w='60px'
                           defaultValue={item.unidades}
+                          onKeyDown={(e) => {
+                            if (
+                              ['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(
+                                e.key
+                              )
+                            ) {
+                              e.preventDefault();
+                            }
+                          }}
+                          onWheel={(e: any) => e.target.blur()}
                           // onChange={(e) => handleCantidadChange(item.id, e.target.value)}
                         />
                       </Td>
@@ -262,7 +295,7 @@ const ModalBodyBottomPart = ({
                 </Tbody>
               </Table>
             </TableContainer>
-          </Box>
+          </Flex>
         </VStack>
       )}
       {estado === 'Preparación' && (
@@ -298,6 +331,20 @@ const ModalBodyBottomPart = ({
                 );
               })}
             </UnorderedList>
+          </Flex>
+          <Flex gap={1} flexDir='column'>
+            <Text>¿Debes realizar cambios?</Text>
+            <Button
+              _hover={{ opacity: 0.65 }}
+              color='white'
+              bg={customGrayBG}
+              w='fit-content'
+              size='sm'
+              disabled={loading}
+              onClick={volverAInicializado}
+            >
+              Volver a Inicializado
+            </Button>
           </Flex>
         </Flex>
       )}

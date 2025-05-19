@@ -23,6 +23,8 @@ const ConfirmarReservaModal = ({
   loading,
   update,
   pedido,
+  productos,
+  volverAInicializado,
 }: {
   loading: boolean;
   update: (
@@ -32,6 +34,8 @@ const ConfirmarReservaModal = ({
     onClose: () => void
   ) => Promise<void>;
   pedido: PedidoType;
+  productos: ProductoType[];
+  volverAInicializado: (onClose: () => void) => Promise<void>;
 }) => {
   const { id, movimientos } = pedido;
   const estado = getEstado(movimientos);
@@ -114,6 +118,7 @@ const ConfirmarReservaModal = ({
     }
     onOpen();
   };
+
   return (
     <Flex>
       <Button
@@ -141,13 +146,14 @@ const ConfirmarReservaModal = ({
             bg='blackAlpha.200'
           />
           <ModalHeader p={4} fontWeight='bold'>
-            Confirmar actualización del pedido #{id}
+            Actualización de Pedido #{id}
           </ModalHeader>
           <Divider />
           <ModalBody py={4}>
             <ModalBodyTopPart estado={estado} />
             <Divider my={3} />
             <ModalBodyBottomPart
+              productos={productos}
               estado={estado}
               checkedItemsHandler={[checkedItems, setCheckedItems]}
               itemsHandler={[items, setItems]}
@@ -156,6 +162,8 @@ const ConfirmarReservaModal = ({
               tramoHandler={[tramo, setTramo]}
               mapCoordsHandler={[mapCoords, setMapCoords]}
               sobrantesHandler={[sobrantes, setSobrantes]}
+              volverAInicializado={() => volverAInicializado(handleClose)}
+              loading={loading}
             />
           </ModalBody>
           <ModalFooter>

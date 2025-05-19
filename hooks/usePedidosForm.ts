@@ -158,7 +158,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
       fecha
     )) as MovimientosType;
     try {
-      if (estado === 'Inicializado') {
+      if (estado === 'Preparación') {
         await ActualizarStock(
           newItems,
           productos || [],
@@ -372,7 +372,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
         (r) => r.id !== id
       );
 
-      if (estado !== 'Inicializado') {
+      if (estado !== 'Inicializado' && estado !== 'Preparación') {
         await restoreStock();
       }
       const promises = [
@@ -460,6 +460,75 @@ const usePedidosForm = (movimiento: PedidoType) => {
       setLoadingDelete(false);
     }
   };
+  const volverAInicializado = async (onClose: () => void) => {
+    setLoadingUpdate(true);
+    try {
+      const movimientoFetched = (await getSingleDoc(
+        'movimientos',
+        fecha
+      )) as MovimientosType;
+      const newMovReservas = movimientoFetched.reservas.map((r) => {
+        if (r.id === id) {
+          return {
+            ...r,
+            movimientos: {
+              ...r.movimientos,
+              Preparación: {
+                fecha: null,
+                admin: null,
+                cambios: null,
+              },
+            },
+          };
+        }
+        return r;
+      });
+      const newEnCursoReservas = reservas?.map((r) => {
+        if (r.id === id) {
+          return {
+            ...r,
+            movimientos: {
+              ...r.movimientos,
+              Preparación: {
+                fecha: null,
+                admin: null,
+                cambios: null,
+              },
+            },
+          };
+        }
+        return r;
+      });
+      await setSingleDoc('movimientos', fecha, {
+        reservas: newMovReservas,
+      });
+      await setSingleDoc('movimientos', 'enCurso', {
+        reservas: newEnCursoReservas,
+      });
+      toast({
+        title: 'Actualizado',
+        description: 'Estado actualizado a Inicializado',
+        isClosable: true,
+        duration: 5000,
+        status: 'success',
+      });
+      onClose();
+    } catch (e: any) {
+      toast({
+        title: 'Error',
+        description: 'Error actualizando pedido, intenta nuevamente',
+        isClosable: true,
+        duration: 5000,
+        status: 'error',
+      });
+      console.error(e.message);
+    } finally {
+      setLoadingUpdate(false);
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 50);
+    }
+  };
   return {
     loadingUpdate,
     loadingDelete,
@@ -470,6 +539,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
     updatePedido,
     updateCompra,
     deleteFuncCompra,
+    volverAInicializado,
     deleteFunc,
   };
 };

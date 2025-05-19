@@ -136,7 +136,6 @@ const PedidoConsultaCard = ({
         <Button
           as={Link}
           href={`/PedidosID/${pedido.id}`}
-          target='_blank'
           bg={brandColorLigth}
           color={brandColorDark}
           size='sm'

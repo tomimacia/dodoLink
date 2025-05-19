@@ -44,7 +44,6 @@ const PedidosRealTimeCard = ({
         <Button
           as={Link}
           href={`/PedidosID/${id}`}
-          target='_blank'
           bg={brandColorLigth}
           color={brandColorDark}
           size='sm'

@@ -302,24 +302,41 @@ const ModalBodyBottomPart = ({
         <Flex gap={2} flexDir='column'>
           <Flex gap={2} p={2} borderRadius={5} flexDir='column'>
             <Heading fontSize='lg'>Confirmar Productos</Heading>
-            <UnorderedList fontSize='lg' w='100%' maxW='400px'>
+            <UnorderedList fontSize='lg' w='100%'>
               {items.map((i) => {
                 return (
                   <ListItem key={`preparacion-key-${i.id}`} w='100%'>
                     <Flex
                       justify='space-between'
+                      align='center'
                       borderBottom='1px solid #BEBEBE'
                       w='100%'
+                      gap={4}
+                      py={2}
                     >
-                      <Flex gap={2}>
-                        <Text noOfLines={1}>
-                          <b>{i.nombre}</b>
+                      {/* Contenedor de texto (nombre y unidades) */}
+                      <Flex flex='1' minW='0' justify='space-between' gap={2}>
+                        {/* Nombre truncado */}
+                        <Text
+                          title={i.nombre}
+                          fontWeight='bold'
+                          whiteSpace='nowrap'
+                          overflow='hidden'
+                          textOverflow='ellipsis'
+                          maxW='100%'
+                        >
+                          {i.nombre}
                         </Text>
-                        <Text>
+
+                        {/* Unidades y medida */}
+                        <Text flexShrink={0}>
                           x {i.unidades} {i.medida}
                         </Text>
                       </Flex>
+
+                      {/* Checkbox */}
                       <Checkbox
+                        flexShrink={0}
                         borderColor='#BEBEBE'
                         isChecked={checkedItems.some(
                           (it: any) => it.id === i.id && it.checked

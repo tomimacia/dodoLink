@@ -35,14 +35,29 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
     deleteFunc,
     volverAInicializado,
   } = usePedidosForm(movimiento);
-  const { detalle, items, cliente, id, isPago, mapCoords, movimientos, tramo } =
-    currentMov;
+  const {
+    detalle,
+    items,
+    cliente,
+    isRetiro,
+    id,
+    isPago,
+    mapCoords,
+    movimientos,
+    tramo,
+  } = currentMov;
   const customGrayBG = useColorModeValue('gray.50', 'gray.700');
   const customGray = useColorModeValue('gray.600', 'gray.200');
   // Check si el usuario tiene el pedido en curso para Cuadrilla
   const hasReserva = movimientos?.['En curso'].admin === user?.id;
-  if (!CheckAdminRol(user?.rol) && estado !== 'Pendiente' && !hasReserva)
+  const isCuadrilla = !CheckAdminRol(user?.rol);
+  if (
+    isCuadrilla &&
+    (isRetiro || // caso 2
+      (estado !== 'Pendiente' && !hasReserva)) // caso 1
+  ) {
     return <NotAuthorized />;
+  }
   const showDelete =
     user?.rol === 'Superadmin' ||
     ['En curso', 'Finalizado'].every((e) => e !== estado);
@@ -52,7 +67,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
         <Flex align='center' justify='space-between'>
           <Flex gap={3} align='center'>
             <Text fontSize='sm' color={customGray}>
-              Reserva -{' '}
+              {isRetiro ? 'Retiro' : 'Reserva'} -{' '}
               <Text as='span' fontWeight='medium' fontFamily='mono'>
                 {id}
               </Text>

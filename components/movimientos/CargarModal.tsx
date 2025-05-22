@@ -30,7 +30,6 @@ const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
     { bg: 'gray.700', color: 'white' },
     { bg: 'white', color: 'gray.700' }
   );
-  const toast = useToast();
   if (!CheckAdminRol(user?.rol)) return <></>;
   const handleOpen = async (initialIsCompra?: boolean) => {
     await checkForUpdates();
@@ -115,7 +114,7 @@ const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
             _hover={{ bg: 'blackAlpha.400' }}
             bg='blackAlpha.200'
           />
-          <ModalHeader p={3}>
+          <ModalHeader textAlign='center' p={3}>
             Nueva {isPago ? 'Orden de Compra' : 'Reserva de Pedido'}
           </ModalHeader>
           <ModalBody>

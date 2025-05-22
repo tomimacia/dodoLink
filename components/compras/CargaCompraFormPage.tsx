@@ -8,6 +8,8 @@ import { ProductoType } from '@/types/types';
 import {
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Heading,
   Input,
   Text,
@@ -120,12 +122,10 @@ const CargaCompraFormPage = () => {
   return (
     <Flex p={[1, 2, 2, 3, 3]} minH='50vh' maxW='700px' gap={5} flexDir='column'>
       <Heading as='h2' fontSize={24}>
-        Carga de Reserva
+        Carga de Compra
       </Heading>
-      <Flex gap={2} flexDir='column'>
-        <Text fontSize='lg' fontWeight='bold'>
-          Nombre de la Compra
-        </Text>
+      <FormControl isRequired>
+        <FormLabel>Nombre de la Compra</FormLabel>
         <Input
           placeholder='Agregar nombre'
           borderRadius={5}
@@ -134,11 +134,9 @@ const CargaCompraFormPage = () => {
           value={cliente}
           onChange={(e) => setCliente(e.target.value)}
         />
-      </Flex>
-      <Flex w='100%' gap={2} flexDir='column'>
-        <Text fontSize='lg' fontWeight='bold'>
-          Detalle
-        </Text>
+      </FormControl>
+      <FormControl isRequired>
+        <FormLabel>Detalle</FormLabel>
         <Textarea
           placeholder='Agregar detalle'
           borderRadius={5}
@@ -147,7 +145,7 @@ const CargaCompraFormPage = () => {
           value={detalle}
           onChange={(e) => setDetalle(e.target.value as string)}
         />
-      </Flex>
+      </FormControl>
       <CompraDrawer />
       <TitleSearchYItem />
       <ProductosTable />

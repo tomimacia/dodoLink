@@ -33,6 +33,8 @@ const TitleSearchYItem = () => {
     cantidadPorPack: 1,
     target: 999999,
     queryArr: [],
+    categoria: 'insumos',
+    packs: [],
   };
   const [newItem, setNewItem] = useState<ProductoType>(initialItem);
   const toast = useToast();

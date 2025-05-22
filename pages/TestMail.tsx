@@ -12,6 +12,8 @@ const productosPrueba: ProductoType[] = [
     cantidadPorPack: 1,
     target: 3,
     queryArr: [],
+    categoria: 'insumos',
+    packs: [],
   },
   {
     nombre: 'Switch HP ProCurve 24p',
@@ -23,6 +25,8 @@ const productosPrueba: ProductoType[] = [
     cantidadPorPack: 1,
     target: 6,
     queryArr: [],
+    categoria: 'insumos',
+    packs: [],
   },
   {
     nombre: 'Cable de Fibra Óptica LC-LC 10m',
@@ -34,10 +38,12 @@ const productosPrueba: ProductoType[] = [
     cantidadPorPack: 10,
     target: 50,
     queryArr: [],
+    categoria: 'insumos',
+    packs: [],
   },
   {
     nombre: 'Fibra Óptica Monomodo LC/UPC 9/125µm',
-    cantidad: 120, // cantidad actual
+    cantidad: 80, // cantidad actual
     id: 'dc-prod-005',
     medida: 'Mt.',
     codigo: [1005, 2005],
@@ -45,6 +51,8 @@ const productosPrueba: ProductoType[] = [
     cantidadPorPack: 100,
     target: 200, // stock mínimo requerido
     queryArr: [],
+    categoria: 'insumos',
+    packs: [],
   },
 ];
 

@@ -30,7 +30,7 @@ const ProductoCard = ({
 }) => {
   const { user } = useUser();
   const { nombre, cantidad, medida, codigo } = producto;
-  const { updateProducto } = useGetProductos();
+  const { updateProducto, allPacks } = useGetProductos();
   const bg = useColorModeValue('gray.100', 'gray.700');
   const borderColor = useColorModeValue('gray.300', 'gray.500');
   const variants = {
@@ -120,6 +120,7 @@ const ProductoCard = ({
 
         {user?.rol === 'Superadmin' && (
           <ProductoModal
+            allPacks={allPacks || []}
             setNewProducto={setProductoFront}
             updateProducto={updateProducto}
             size='sm'

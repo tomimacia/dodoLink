@@ -1,8 +1,10 @@
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { ProductoType } from '@/types/types';
-import { MinusIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, ChevronUpIcon, MinusIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
+  Collapse,
   Divider,
   Flex,
   FormControl,
@@ -16,25 +18,31 @@ import {
   Select,
   Text,
   useColorModeValue,
+  useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import AgregarCodigo from './AgregarCodigo';
 import _ from 'lodash';
+import React, { useEffect, useState } from 'react';
 const ProductoForm = ({
   producto,
   onClose,
   updateProducto,
   setNewProducto,
+  allPacks,
 }: {
   producto: ProductoType;
   onClose: () => void;
   updateProducto: (productID: string, producto: ProductoType) => Promise<void>;
   setNewProducto?: (newProducto: ProductoType) => void;
+  allPacks: string[];
 }) => {
-  const { codigo, ...rest } = producto;
+  const { codigo, packs: packsFirst, ...rest } = producto;
+  const { isOpen: isOpenCodigos, onToggle: onToggleCodigos } = useDisclosure();
+  const { isOpen, onToggle } = useDisclosure();
   const [formData, setFormData] = useState({ ...rest });
   const [codigos, setCodigos] = useState(codigo);
+  const [packs, setPacks] = useState<string[]>(packsFirst);
+  const [manualPack, setManualPack] = useState('');
   const [loading, setLoading] = useState(false);
   const [cantidadEnPacks, setCantidaEnPacks] = useState(
     formData.cantidad / formData.cantidadPorPack
@@ -55,7 +63,7 @@ const ProductoForm = ({
   const submit = async (e: any) => {
     e.preventDefault();
     // Compara formData (producto sin codigos) + codigo, contra el producto a ver si hay cambios
-    if (_.isEqual({ ...formData, codigo: codigos }, producto))
+    if (_.isEqual({ ...formData, codigo: codigos, packs }, producto))
       return toast({
         title: 'No hay cambios',
         description: 'No se realizaron cambios en el producto',
@@ -67,6 +75,7 @@ const ProductoForm = ({
     try {
       const newProducto = {
         ...formData,
+        packs,
         codigo: codigos,
       };
       await setSingleDoc('productos', producto.id, newProducto);
@@ -97,6 +106,10 @@ const ProductoForm = ({
     const newCodigos = codigos.filter((_, i) => i !== ind);
     setCodigos(newCodigos);
   };
+  const deletePack = (ind: number) => {
+    const newPacks = packs.filter((_, i) => i !== ind);
+    setPacks(newPacks);
+  };
   const handlePacks = (isSum: boolean) => {
     setCantidaEnPacks((prev) => prev + (isSum ? 1 : -1));
     setFormData((prev) => ({
@@ -107,6 +120,15 @@ const ProductoForm = ({
   };
   const buttonBG = useColorModeValue('gray.700', 'white');
   const buttonColor = useColorModeValue('white', 'gray.900');
+  const addManualPack = () => {
+    if (manualPack && !packs.includes(manualPack)) {
+      setPacks((prev) => [...prev, manualPack]);
+      setManualPack(''); // Limpiar campo después de agregar
+    }
+  };
+  const addCodigo = (newCodigo: number) => {
+    setCodigos((prev: any) => [...prev, newCodigo]);
+  };
   return (
     <Flex flexDir='column' gap={4}>
       <Heading textAlign='center' size='md'>
@@ -133,7 +155,6 @@ const ProductoForm = ({
             onChange={handleChange}
           />
         </FormControl>
-
         <Divider borderColor='gray' />
         <FormControl
           display='flex'
@@ -274,44 +295,126 @@ const ProductoForm = ({
             <option value='Grupo IN'>Grupo IN</option>
           </Select>
         </FormControl>
+        <Divider borderColor='gray' />
+        <Box>
+          <Flex justify='space-between' align='center' mb={2}>
+            <Text fontWeight='bold'>Packs</Text>
+            <IconButton
+              size='sm'
+              variant='solid'
+              icon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+              onClick={onToggle}
+              aria-label='Toggle Packs'
+            />
+          </Flex>
 
+          <Collapse in={isOpen}>
+            <Flex direction='column' gap={2}>
+              <Select
+                size='sm'
+                placeholder='Agregar pack'
+                onChange={(e) => {
+                  const selected = e.target.value;
+                  if (selected && !packs.includes(selected)) {
+                    setPacks((prev) => [...prev, selected]);
+                  }
+                }}
+              >
+                {allPacks?.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </Select>
+
+              <Input
+                size='sm'
+                placeholder='Pack personalizado'
+                value={manualPack}
+                onChange={(e) => setManualPack(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addManualPack()}
+              />
+              <Button size='sm' onClick={addManualPack}>
+                Agregar pack manual
+              </Button>
+            </Flex>
+          </Collapse>
+          {packs.length > 0 && (
+            <>
+              <Divider mt={3} mb={2} />
+              <Text fontSize='sm'>Packs seleccionados:</Text>
+              <Flex direction='column' gap={1}>
+                {packs.map((pack, index) => (
+                  <Flex key={index} justify='space-between' align='center'>
+                    <Text>{pack}</Text>
+                    <IconButton
+                      icon={<MinusIcon />}
+                      size='xs'
+                      onClick={() => deletePack(index)}
+                      aria-label='Eliminar pack'
+                    />
+                  </Flex>
+                ))}
+              </Flex>
+            </>
+          )}
+        </Box>
         {/* Código */}
         <Divider borderColor='gray' />
-        <FormControl
-          display='flex'
-          flexDir='column'
-          justifyContent='space-between'
-          gap={1}
-        >
-          <FormLabel>Códigos {!producto.codigo && '(No definido)'}</FormLabel>
-          <Flex maxW='400px' gap={2} flexDir='column'>
-            {codigos?.map((n, ind) => {
-              return (
-                <Flex
-                  justify='space-between'
-                  align='center'
-                  key={`key-codigo-${ind}-${n}`}
-                  gap={1}
-                >
-                  <Text>{codigos[ind]}</Text>
-                  <IconButton
-                    w='fit-content'
-                    p={0}
-                    color='white'
-                    bg='gray.700'
-                    size='xs'
-                    onClick={() => deleteCodigo(ind)}
-                    alignSelf='center'
-                    _hover={{ opacity: 0.65 }}
-                    aria-label='minus-codigo'
-                    icon={<MinusIcon />}
-                  />
-                </Flex>
-              );
-            })}
+        <Box>
+          <Flex justify='space-between' align='center' mb={2}>
+            <Text fontWeight='bold'>Códigos</Text>
+            <IconButton
+              size='sm'
+              variant='solid'
+              icon={isOpenCodigos ? <ChevronUpIcon /> : <ChevronDownIcon />}
+              onClick={onToggleCodigos}
+              aria-label='Toggle Códigos'
+            />
           </Flex>
-          <AgregarCodigo setCodigos={setCodigos} />
-        </FormControl>
+
+          <Collapse in={isOpenCodigos}>
+            <Flex direction='column' gap={2}>
+              <Input
+                size='sm'
+                placeholder='Ingresar código'
+                type='number'
+                onKeyDown={(e) => {
+                  if (['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key))
+                    e.preventDefault();
+                  if (e.key === 'Enter') {
+                    const val = parseInt(e.currentTarget.value);
+                    if (val && !codigos.includes(val)) {
+                      addCodigo(val);
+                      e.currentTarget.value = '';
+                    }
+                  }
+                }}
+                onWheel={(e: any) => e.target.blur()}
+              />
+            </Flex>
+          </Collapse>
+
+          {codigos.length > 0 && (
+            <>
+              <Divider mt={3} mb={2} />
+              <Text fontSize='sm'>Códigos escaneados o ingresados:</Text>
+              <Flex direction='column' gap={1}>
+                {codigos.map((codigo, index) => (
+                  <Flex key={index} justify='space-between' align='center'>
+                    <Text>{codigo}</Text>
+                    <IconButton
+                      icon={<MinusIcon />}
+                      size='xs'
+                      onClick={() => deleteCodigo(index)}
+                      aria-label='Eliminar código'
+                    />
+                  </Flex>
+                ))}
+              </Flex>
+            </>
+          )}
+        </Box>
       </Flex>
       <Flex justify='flex-end' mt={4} gap={3}>
         <Button size='sm' onClick={onClose} variant='ghost'>

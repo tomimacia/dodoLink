@@ -59,6 +59,9 @@ export function parseProductosFaltantes(products: ProductoType[]): string {
     const sufijo = isCritico ? ' <b>[CRÍTICO]</b>' : '';
 
     mensaje += `${prefijo}<b>${product.nombre}</b>${sufijo}\n`;
+    if (product.packs && product.packs.length > 0) {
+      mensaje += `📦 Packs: <b>${product.packs.join(', ')}</b>\n`;
+    }
     mensaje += `Cantidad: <i>${product.cantidad}</i>\n`;
     mensaje += `Target: <i>${product.target}</i>\n\n`;
   });

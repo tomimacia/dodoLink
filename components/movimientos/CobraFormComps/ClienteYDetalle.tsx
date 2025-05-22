@@ -1,5 +1,12 @@
 import { useCobrarFormContext } from '@/context/useCobrarFormContext';
-import { Flex, Input, Text, Textarea } from '@chakra-ui/react';
+import {
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  Text,
+  Textarea,
+} from '@chakra-ui/react';
 const ClienteYDetalle = () => {
   const { setDetalle, cliente, setCliente, detalle, isPago } =
     useCobrarFormContext();
@@ -10,11 +17,9 @@ const ClienteYDetalle = () => {
       flexDir={['column', 'column', 'row', 'row']}
       justify='space-between'
     >
-      <Flex gap={2} w='100%' flexDir='column'>
-        <Flex gap={2} flexDir='column'>
-          <Text fontSize='lg' fontWeight='bold'>
-            {!isPago ? 'Cliente' : 'Nombre de la Compra'}
-          </Text>
+      <Flex w='100%' gap={2} flexDir='column'>
+        <FormControl isRequired>
+          <FormLabel> {!isPago ? 'Cliente' : 'Nombre de la Compra'}</FormLabel>
           <Input
             placeholder={!isPago ? 'Datos de Cliente' : 'Agregar nombre'}
             borderRadius={5}
@@ -24,21 +29,22 @@ const ClienteYDetalle = () => {
             value={cliente}
             onChange={(e) => setCliente(e.target.value)}
           />
-        </Flex>
+        </FormControl>
       </Flex>
+
       <Flex w='100%' gap={2} flexDir='column'>
-        <Text fontSize='lg' fontWeight='bold'>
-          Detalle
-        </Text>
-        <Textarea
-          placeholder='Agregar detalle'
-          borderRadius={5}
-          borderColor='gray'
-          maxW='300px'
-          size='sm'
-          value={detalle}
-          onChange={(e) => setDetalle(e.target.value as string)}
-        />
+        <FormControl isRequired>
+          <FormLabel> Detalle</FormLabel>
+          <Textarea
+            placeholder='Agregar detalle'
+            borderRadius={5}
+            borderColor='gray'
+            maxW='300px'
+            size='sm'
+            value={detalle}
+            onChange={(e) => setDetalle(e.target.value as string)}
+          />
+        </FormControl>
       </Flex>
     </Flex>
   );

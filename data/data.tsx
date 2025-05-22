@@ -24,7 +24,7 @@ export const Routes = [
     route: 'Inventario',
     iconFilled: FaBoxes,
     iconEmpty: CiBoxes,
-    roles: ['Admin', 'Superadmin'],
+    roles: ['Admin', 'Superadmin', 'Supervisor'],
     subRoutes: [
       {
         label: 'Carga',
@@ -53,9 +53,13 @@ export const Routes = [
       {
         label: 'Carga',
         route: 'Reservas/Carga',
-        roles: ['Admin', 'Superadmin'],
+        roles: ['Admin', 'Superadmin', 'Supervisor'],
       },
-      { label: 'Listado', route: 'Reservas/Listado', roles: ['Superadmin'] },
+      {
+        label: 'Listado',
+        route: 'Reservas/Listado',
+        roles: ['Superadmin', 'Supervisor'],
+      },
     ],
   },
   {
@@ -82,9 +86,13 @@ export const Routes = [
     route: 'Usuarios',
     iconFilled: FaUser,
     iconEmpty: FaRegUser,
-    roles: ['Superadmin'],
+    roles: ['Superadmin', 'Supervisor'],
     subRoutes: [
-      { label: 'Alta', route: 'Usuarios/Alta', roles: ['Superadmin'] },
+      {
+        label: 'Alta',
+        route: 'Usuarios/Alta',
+        roles: ['Superadmin', 'Supervisor'],
+      },
     ],
   },
   {

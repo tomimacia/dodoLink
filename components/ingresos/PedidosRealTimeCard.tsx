@@ -6,11 +6,9 @@ import PedidoBody from './PedidoBody';
 import { useThemeColors } from '@/hooks/useThemeColors';
 const PedidosRealTimeCard = ({
   pedido,
-  loading,
   delay,
 }: {
-  pedido: PedidoType;
-  loading: boolean;
+  pedido: PedidoType; 
   delay: number;
 }) => {
   const { brandColorLigth, brandColorDark } = useThemeColors();
@@ -36,6 +34,7 @@ const PedidosRealTimeCard = ({
         <Text fontSize='sm' color='gray.500' fontStyle='italic'>
           ID: {id}
         </Text>
+        {pedido?.isRetiro && <Text textDecor='underline' fontSize='sm'>Retiro</Text>}
       </Flex>
 
       <PedidoBody pedido={pedido} />

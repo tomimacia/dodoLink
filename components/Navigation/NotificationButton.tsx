@@ -24,13 +24,15 @@ const NotificationButton = () => {
     reservasYCompras?.filter((r) => {
       const noVisto = !r.vistoPor.some((v) => v === user?.id);
       const puedeVer =
-        getEstado(r.movimientos) === 'Pendiente' || CheckAdminRol(user?.rol);
+        (getEstado(r.movimientos) === 'Pendiente' && !r.isRetiro) ||
+        CheckAdminRol(user?.rol);
+
       return noVisto && puedeVer;
     }) || [];
   const notificationsToShow =
     reservasYCompras?.filter((r) => {
       const puedeVer =
-        (!r.isPago && getEstado(r.movimientos) === 'Pendiente') ||
+        (getEstado(r.movimientos) === 'Pendiente' && !r.isRetiro) ||
         CheckAdminRol(user?.rol);
       return puedeVer;
     }) || [];

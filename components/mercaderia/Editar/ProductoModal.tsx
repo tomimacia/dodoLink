@@ -9,7 +9,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
 } from '@chakra-ui/react';
 import ProductoForm from './ProductoForm';
 
@@ -19,12 +19,14 @@ const ProductoModal = ({
   updateProducto,
   isIcon,
   setNewProducto,
+  allPacks,
 }: {
   producto: ProductoType;
   size: any;
   updateProducto: (productID: string, producto: ProductoType) => Promise<void>;
   isIcon?: boolean;
   setNewProducto?: (newProducto: ProductoType) => void;
+  allPacks: string[];
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
@@ -75,6 +77,7 @@ const ProductoModal = ({
           <ModalHeader>Editar Producto</ModalHeader>
           <ModalBody p={5}>
             <ProductoForm
+              allPacks={allPacks}
               updateProducto={updateProducto}
               onClose={onClose}
               producto={producto}

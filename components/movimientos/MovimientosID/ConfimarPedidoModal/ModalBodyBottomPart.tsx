@@ -52,6 +52,7 @@ const ModalBodyBottomPart = ({
   productos,
   volverAInicializado,
   loading,
+  isRetiro,
 }: {
   estado: EstadoType;
   checkedItemsHandler: [any[], React.Dispatch<React.SetStateAction<any[]>>];
@@ -67,6 +68,7 @@ const ModalBodyBottomPart = ({
   productos: ProductoType[];
   volverAInicializado: () => Promise<void>;
   loading: boolean;
+  isRetiro: boolean;
 }) => {
   const [items, setItems] = itemsHandler;
   const [cliente, setCliente] = clienteHandler;
@@ -386,101 +388,106 @@ const ModalBodyBottomPart = ({
           </UnorderedList>
         </Flex>
       )}
-      {estado === 'En curso' && (
-        <Flex gap={2} flexDir='column'>
-          <Text fontWeight='medium'>Confirmar sobrante de materiales:</Text>
-          <UnorderedList spacing={2} fontSize='md'>
-            {items.map((i) => {
-              const sobrante = sobrantes.find((s) => s.id === i.id);
-              const isChecked = !!sobrante;
+      {estado === 'En curso' &&
+        (isRetiro ? (
+          <Flex gap={2} flexDir='column'>
+            <Text fontWeight='medium'>Confirmar pedido finalizado</Text>
+          </Flex>
+        ) : (
+          <Flex gap={2} flexDir='column'>
+            <Text fontWeight='medium'>Confirmar sobrante de materiales:</Text>
+            <UnorderedList spacing={2} fontSize='md'>
+              {items.map((i) => {
+                const sobrante = sobrantes.find((s) => s.id === i.id);
+                const isChecked = !!sobrante;
 
-              const toggleSobrante = () => {
-                if (isChecked) {
-                  setSobrantes((prev) => prev.filter((s) => s.id !== i.id));
-                } else {
-                  setSobrantes((prev) => [...prev, { ...i, cantidad: 0 }]);
-                }
-              };
+                const toggleSobrante = () => {
+                  if (isChecked) {
+                    setSobrantes((prev) => prev.filter((s) => s.id !== i.id));
+                  } else {
+                    setSobrantes((prev) => [...prev, { ...i, cantidad: 0 }]);
+                  }
+                };
 
-              const updateCantidad = (value: number) => {
-                setSobrantes((prev) =>
-                  prev.map((s) =>
-                    s.id === i.id ? { ...s, cantidad: value } : s
-                  )
+                const updateCantidad = (value: number) => {
+                  setSobrantes((prev) =>
+                    prev.map((s) =>
+                      s.id === i.id ? { ...s, cantidad: value } : s
+                    )
+                  );
+                };
+
+                return (
+                  <ListItem key={`${i.id}-sobrantes`} w='100%'>
+                    <Flex
+                      gap={2}
+                      align='center'
+                      p={3}
+                      borderRadius='lg'
+                      boxShadow='sm'
+                      bg='white'
+                      _dark={{ bg: 'gray.800' }}
+                      border='1px solid'
+                      borderColor='gray.200'
+                      transition='all 0.2s'
+                      _hover={{ boxShadow: 'md' }}
+                    >
+                      <Text
+                        fontSize='sm'
+                        color={
+                          sobrante &&
+                          i?.unidades &&
+                          sobrante?.cantidad > i?.unidades
+                            ? 'red.500'
+                            : 'gray.500'
+                        }
+                      >
+                        {i.unidades} {i.medida}
+                      </Text>
+
+                      <Switch
+                        isChecked={isChecked}
+                        onChange={toggleSobrante}
+                        size='md'
+                        colorScheme='blue'
+                      />
+
+                      <Text
+                        onClick={toggleSobrante}
+                        fontWeight='medium'
+                        flex={1}
+                        fontSize='md'
+                        cursor='pointer'
+                      >
+                        {i.nombre}
+                      </Text>
+
+                      <Input
+                        placeholder='Cantidad'
+                        type='number'
+                        size='sm'
+                        maxW='100px'
+                        borderRadius='md'
+                        borderColor='gray.300'
+                        isDisabled={!isChecked}
+                        value={
+                          sobrante?.cantidad && sobrante?.cantidad > 0
+                            ? sobrante?.cantidad
+                            : ''
+                        }
+                        onChange={(e) => updateCantidad(Number(e.target.value))}
+                      />
+
+                      <Text fontSize='sm' color='gray.500' textAlign='right'>
+                        {i.medida}
+                      </Text>
+                    </Flex>
+                  </ListItem>
                 );
-              };
-
-              return (
-                <ListItem key={`${i.id}-sobrantes`} w='100%'>
-                  <Flex
-                    gap={2}
-                    align='center'
-                    p={3}
-                    borderRadius='lg'
-                    boxShadow='sm'
-                    bg='white'
-                    _dark={{ bg: 'gray.800' }}
-                    border='1px solid'
-                    borderColor='gray.200'
-                    transition='all 0.2s'
-                    _hover={{ boxShadow: 'md' }}
-                  >
-                    <Text
-                      fontSize='sm'
-                      color={
-                        sobrante &&
-                        i?.unidades &&
-                        sobrante?.cantidad > i?.unidades
-                          ? 'red.500'
-                          : 'gray.500'
-                      }
-                    >
-                      {i.unidades} {i.medida}
-                    </Text>
-
-                    <Switch
-                      isChecked={isChecked}
-                      onChange={toggleSobrante}
-                      size='md'
-                      colorScheme='blue'
-                    />
-
-                    <Text
-                      onClick={toggleSobrante}
-                      fontWeight='medium'
-                      flex={1}
-                      fontSize='md'
-                      cursor='pointer'
-                    >
-                      {i.nombre}
-                    </Text>
-
-                    <Input
-                      placeholder='Cantidad'
-                      type='number'
-                      size='sm'
-                      maxW='100px'
-                      borderRadius='md'
-                      borderColor='gray.300'
-                      isDisabled={!isChecked}
-                      value={
-                        sobrante?.cantidad && sobrante?.cantidad > 0
-                          ? sobrante?.cantidad
-                          : ''
-                      }
-                      onChange={(e) => updateCantidad(Number(e.target.value))}
-                    />
-
-                    <Text fontSize='sm' color='gray.500' textAlign='right'>
-                      {i.medida}
-                    </Text>
-                  </Flex>
-                </ListItem>
-              );
-            })}
-          </UnorderedList>
-        </Flex>
-      )}
+              })}
+            </UnorderedList>
+          </Flex>
+        ))}
     </>
   );
 };

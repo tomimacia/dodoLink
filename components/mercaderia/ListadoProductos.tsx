@@ -1,10 +1,11 @@
 import { useUser } from '@/context/userContext';
 import { deleteSingleDoc } from '@/firebase/services/deleteSingleDoc';
+import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import useGetProductos from '@/hooks/data/useGetProductos';
+import usePagination from '@/hooks/data/usePagination';
 import { useThemeColors } from '@/hooks/useThemeColors';
 import { ProductoType } from '@/types/types';
 import {
-  Button,
   Flex,
   Input,
   Select,
@@ -16,30 +17,26 @@ import {
   Th,
   Thead,
   Tr,
-  useToast,
+  useToast
 } from '@chakra-ui/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { MdCancel, MdCheckBox, MdDelete } from 'react-icons/md';
 import ReactLoading from 'react-loading';
 import DeleteModal from '../DeleteModal';
-import ProductoModal from './Editar/ProductoModal';
-import usePagination from '@/hooks/data/usePagination';
 import PaginationControl from '../reservas/PaginationControl';
-import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
+import ProductoModal from './Editar/ProductoModal';
 const ListadoProductos = () => {
   const {
     productos,
     loadingProductos,
+    allPacks,
     setProductos,
-    getProductos,
     updateProducto,
   } = useGetProductos();
-  useEffect(() => {
-    if (productos?.length === 0) getProductos();
-  }, []);
   const { loadingColor } = useThemeColors();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
+  const [categoria, setCategoria] = useState('');
   const toast = useToast();
 
   const [filterInput, setFilterInput] = useState('');
@@ -56,6 +53,7 @@ const ListadoProductos = () => {
     if (newProductos) setProductos(newProductos);
   };
   const [empresa, setEmpresa] = useState('dodoLink');
+  const [pack, setPack] = useState('');
   const deleteProducto = async (pID: string) => {
     setLoading(true);
     try {
@@ -76,56 +74,109 @@ const ListadoProductos = () => {
       setLoading(false);
     }
   };
-  const itemsPerPage = 12;
+  const itemsPerPage = 10;
   const filteredProductos = useMemo(() => {
     if (!productos) return [];
     return productos
       .filter((p) => {
         const isEmpresa = p.empresa === empresa;
+        const matchPack = !pack || p.packs.includes(pack);
+        const matchCategoria = !categoria || p.categoria === categoria;
         const matchesFilter =
           filterInput.length < 3 ||
           p?.nombre?.toLowerCase().includes(filterInput.toLowerCase());
-        return isEmpresa && matchesFilter;
+
+        return isEmpresa && matchesFilter && matchPack && matchCategoria;
       })
       .sort((a, b) => a.nombre.localeCompare(b.nombre));
-  }, [productos, empresa, filterInput]);
+  }, [productos, empresa, filterInput, pack, categoria]);
   const {
     paginatedArr: paginatedProductos,
     page,
     totalPages,
     handlePageChange,
   } = usePagination(filteredProductos, itemsPerPage, true);
-
   return (
     <Flex flexDir='column' gap={3} mt={3}>
-      {user?.rol === 'Superadmin' && (
+      <Flex
+        direction={{ base: 'column', md: 'row' }}
+        align={{ base: 'flex-start', md: 'center' }}
+        gap={4}
+        wrap='wrap'
+        mb={4}
+      >
+        {user?.rol === 'Superadmin' && (
+          <Flex align='center' gap={2}>
+            <Text fontWeight='medium'>Empresa:</Text>
+            <Select
+              onChange={(e) => setEmpresa(e.target.value)}
+              name='empresa'
+              size='sm'
+              borderRadius='md'
+              value={empresa}
+              cursor='pointer'
+              w='fit-content'
+              borderColor='gray.300'       
+            >
+              <option value='dodoLink'>dodoLink</option>
+              <option value='Grupo IN'>Grupo IN</option>
+            </Select>
+          </Flex>
+        )}
+
         <Flex align='center' gap={2}>
-          <Text>Empresa:</Text>
+          <Text fontWeight='medium'>Pack:</Text>
           <Select
-            onChange={(e) => setEmpresa(e.target.value)}
-            name='tipo'
-            required
-            borderColor='gray'
+            onChange={(e) => setPack(e.target.value)}
+            name='pack'
             size='sm'
-            borderRadius='5px'
-            value={empresa}
+            borderRadius='md'
+            placeholder='Seleccionar pack'
+            value={pack}
             cursor='pointer'
             w='fit-content'
+            borderColor='gray.300'          
           >
-            <option value='dodoLink'>dodoLink</option>
-            <option value='Grupo IN'>Grupo IN</option>
+            {allPacks?.map((g) => (
+              <option key={g} value={g}>
+                {g}
+              </option>
+            ))}
           </Select>
         </Flex>
-      )}
-      <Text>Total: {filteredProductos.length}</Text>
-      <Input
-        borderColor='gray'
-        size='sm'
-        maxW='250px'
-        onChange={(e) => setFilterInput(e.target.value)}
-        borderRadius={5}
-        placeholder='Ingresar nombre'
-      />
+        <Flex align='center' gap={2}>
+          <Text fontWeight='medium'>Categoría:</Text>
+
+          <Select
+            placeholder='Todas'
+            value={categoria}
+            onChange={(e) => setCategoria(e.target.value)}
+            size='sm'
+            w='auto'
+          >
+            <option value='insumos'>Insumos</option>
+            <option value='herramientas'>Herramientas</option>
+          </Select>
+        </Flex>
+
+        <Flex align='center' gap={2}>
+          <Text fontWeight='medium'>Buscar:</Text>
+          <Input
+            size='sm'
+            maxW='200px'
+            value={filterInput}
+            onChange={(e) => setFilterInput(e.target.value)}
+            placeholder='Ingresar nombre'
+            borderRadius='md'
+            borderColor='gray.300'         
+          />
+        </Flex>
+
+        <Text fontSize='sm' alignSelf='center'>
+          Resultados: <b>{filteredProductos.length}</b>
+        </Text>
+      </Flex>
+
       <PaginationControl
         page={page}
         totalPages={totalPages}
@@ -141,7 +192,7 @@ const ListadoProductos = () => {
             width='50px'
           />
         </Flex>
-      ) : (
+      ) : paginatedProductos.length > 0 ? (
         <TableContainer p={[1, 2, 3, 4, 5]}>
           <Table
             fontSize='sm'
@@ -211,6 +262,7 @@ const ListadoProductos = () => {
                               updateProducto={updateProductoAndFront}
                               size='2xs'
                               producto={p}
+                              allPacks={allPacks || []}
                               // setNewProducto={}
                             />
                             <DeleteModal
@@ -247,6 +299,10 @@ const ListadoProductos = () => {
             </Tbody>
           </Table>
         </TableContainer>
+      ) : (
+        <Text fontStyle='italic' p={[1, 2, 3, 4, 5]}>
+          No se encontraron productos
+        </Text>
       )}
     </Flex>
   );

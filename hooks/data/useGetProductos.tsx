@@ -3,7 +3,7 @@ import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import { ProductoType } from '@/types/types';
 import { Timestamp } from 'firebase/firestore';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalStorage } from '../storageHooks/useLocalStorage';
 
 const useGetProductos = () => {
@@ -66,6 +66,14 @@ const useGetProductos = () => {
       console.log(e);
     }
   };
+  const allPacks = useMemo(() => {
+    return productos
+      ?.reduce((acc, p) => {
+        if (Array.isArray(p?.packs)) return acc.concat(p.packs);
+        return acc;
+      }, [] as string[])
+      .filter((p, i, arr) => arr.indexOf(p) === i);
+  }, [productos]);
   // const availableProducts =
   //   productos?.filter((p) => p.cantidad > 0 && p.stock) || null;
   useEffect(() => {
@@ -85,6 +93,7 @@ const useGetProductos = () => {
     productos,
     checkForUpdates,
     updateProducto,
+    allPacks,
   };
 };
 

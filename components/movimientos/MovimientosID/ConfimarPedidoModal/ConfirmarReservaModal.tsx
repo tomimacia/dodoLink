@@ -164,6 +164,7 @@ const ConfirmarReservaModal = ({
               sobrantesHandler={[sobrantes, setSobrantes]}
               volverAInicializado={() => volverAInicializado(handleClose)}
               loading={loading}
+              isRetiro={pedido?.isRetiro}
             />
           </ModalBody>
           <ModalFooter>

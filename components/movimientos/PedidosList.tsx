@@ -195,7 +195,7 @@ const PedidosList = ({ isCompra }: { isCompra: boolean }) => {
                   onSelect={setDate} // Maneja el estado
                   captionLayout='dropdown'
                   disabled={{
-                    before: new Date('2025-05-17'),
+                    before: new Date('2025-05-19'),
                     after: new Date(),
                   }}
                 />

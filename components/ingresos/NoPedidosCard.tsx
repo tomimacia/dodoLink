@@ -1,7 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heading } from '@chakra-ui/react';
+import { useUser } from '@/context/userContext';
+import { CheckAdminRol } from '@/data/data';
 const NoPedidosCard = ({ title }: { title: string }) => {
+  const { user } = useUser();
   return (
     <motion.div
       key={'no-client'}
@@ -17,7 +20,9 @@ const NoPedidosCard = ({ title }: { title: string }) => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: 'tween' }}
     >
-      <Heading size='sm'>No hay {title} en curso</Heading>
+      <Heading size='sm'>
+        No hay {title} {CheckAdminRol(user?.rol) ? 'en curso' : 'pendientes'}
+      </Heading>
     </motion.div>
   );
 };

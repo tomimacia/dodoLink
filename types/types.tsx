@@ -112,6 +112,7 @@ export type PedidoType = {
   items: ProductoType[];
   tramo: number | null;
   confirmedItems?: ProductoType[];
+  isRetiro: boolean;
 };
 export type MedidaType = 'Un.' | 'Kg.' | 'Mt.';
 export type ProductoType = {
@@ -128,6 +129,8 @@ export type ProductoType = {
   target: number;
   queryArr: string[];
   isChecked?: boolean;
+  categoria: string;
+  packs: string[];
 };
 export type DestinatarioType = 'Cliente' | 'Consumidor Final';
 export type TipoDePagoType = 'Efectivo' | 'Mercadopago';

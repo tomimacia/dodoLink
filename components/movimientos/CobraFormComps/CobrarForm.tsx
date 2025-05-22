@@ -10,6 +10,8 @@ import { ProductoType } from '@/types/types';
 import {
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Input,
   Switch,
   Text,
@@ -23,6 +25,7 @@ import MapEmbed from '../EmbedMap';
 import TitleSearchYItem from './TitleSearchYItem';
 import ProductosTable from './ProductosTable';
 import CompraDrawer from './CompraDrawer';
+import PopoverInfoIcon from '@/components/inicio/PopoverInfoIcon';
 
 const CobrarForm = ({ onClose }: { onClose: () => void }) => {
   const { items, resetFilters, detalle, cliente, isPago } =
@@ -30,6 +33,7 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [hasTramo, setHasTramo] = useState(true);
+  const [isRetiro, setIsRetiro] = useState(false);
   const toast = useToast();
 
   const fontColor = useColorModeValue('blue.700', 'blue.400');
@@ -134,6 +138,7 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
         mapCoords: embed,
         vistoPor: [],
         tramo,
+        isRetiro,
       };
       await CargarReserva(newMovimiento);
       toast({
@@ -236,7 +241,13 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
       <ClienteYDetalle />
 
       {!isPago && (
-        <Flex gap={2} align='center'>
+        <FormControl
+          gap={2}
+          display='flex'
+          flexDir='row'
+          alignItems='center'
+          isRequired={hasTramo}
+        >
           <Switch
             isChecked={hasTramo}
             onChange={() =>
@@ -248,7 +259,7 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
               })
             }
           />
-          <Text fontWeight='bold'>Tramo (mts):</Text>
+          <FormLabel margin={0}>Tramo (mts)</FormLabel>
           <Input
             borderColor='gray'
             size='sm'
@@ -266,6 +277,19 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
             onWheel={(e: any) => e.target.blur()}
             maxW='100px'
           />
+        </FormControl>
+      )}
+      {!isPago && (
+        <Flex gap={2} align='center'>
+          <Switch
+            isChecked={isRetiro}
+            onChange={() => setIsRetiro((prev) => !prev)}
+          />
+          <Text fontWeight='bold'>Retiro de materiales</Text>
+          <PopoverInfoIcon>
+            Marcar cuando los materiales <b>NO</b> los retira cuadrilla (ejemplo
+            otra empresa)
+          </PopoverInfoIcon>
         </Flex>
       )}
       {isPago && <CompraDrawer />}

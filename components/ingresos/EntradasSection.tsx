@@ -1,27 +1,27 @@
+import { useUser } from '@/context/userContext';
+import { CheckAdminRol } from '@/data/data';
+import { getEstado } from '@/helpers/cobros/getEstado';
 import { PedidoType } from '@/types/types';
 import { Flex, Heading } from '@chakra-ui/react';
 import { AnimatePresence } from 'framer-motion';
-import PedidosRealTimeCard from './PedidosRealTimeCard';
-import { useUser } from '@/context/userContext';
-import { CheckAdminRol } from '@/data/data';
 import NoPedidosCard from './NoPedidosCard';
-import QrScanner from '../inicio/QrScanner';
-import capitalizeFirst from '@/helpers/capitalizeFirst';
-import { getEstado } from '@/helpers/cobros/getEstado';
+import PedidosRealTimeCard from './PedidosRealTimeCard';
 const EntradasSection = ({
   grupo,
-  loading,
   title,
 }: {
   grupo: PedidoType[];
-  loading: boolean;
   title: string;
 }) => {
   const { user } = useUser();
   const filtered = grupo.filter((r) => {
     const estado = getEstado(r.movimientos);
     const hasReserva = r.movimientos?.['En curso'].admin === user?.id;
-    return CheckAdminRol(user?.rol) || estado === 'Pendiente' || hasReserva;
+    return (
+      CheckAdminRol(user?.rol) ||
+      (estado === 'Pendiente' && !r.isRetiro) ||
+      hasReserva
+    );
   });
   const arrangeItems = (pedidos: PedidoType[]) => {
     return pedidos.sort((a, b) => {
@@ -46,7 +46,6 @@ const EntradasSection = ({
               return (
                 <PedidosRealTimeCard
                   key={r.id + 'pedidoskey'}
-                  loading={loading}
                   pedido={r}
                   delay={index * 0.2}
                 />

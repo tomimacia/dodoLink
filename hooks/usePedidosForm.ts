@@ -79,6 +79,10 @@ const usePedidosForm = (movimiento: PedidoType) => {
     } else fetchNewReserva();
   }, [JSON.stringify(reservas)]);
   // Test para actualizar (devuelve true o false)
+  const pendienteValidation =
+    (['Cuadrilla', 'Superadmin'].every((r) => r !== user?.rol) &&
+      !movimiento.isRetiro) ||
+    (movimiento.isRetiro && user?.rol === 'Cuadrilla');
   const testUpdate = (newItems: ProductoType[]) => {
     if (estado === 'Finalizado' || !reservas) {
       toast({
@@ -90,13 +94,12 @@ const usePedidosForm = (movimiento: PedidoType) => {
       });
       return false;
     }
-    if (
-      estado === 'Pendiente' &&
-      ['Cuadrilla', 'Superadmin'].every((r) => r !== user?.rol)
-    ) {
+    if (estado === 'Pendiente' && pendienteValidation) {
       toast({
         title: 'No autorizado',
-        description: 'No tienes permisos para actualizar un pedido pendiente',
+        description: `No tienes permisos para actualizar ${
+          movimiento?.isRetiro ? 'un retiro' : 'una reserva'
+        } pendiente`,
         status: 'info',
         duration: 5000,
         isClosable: true,

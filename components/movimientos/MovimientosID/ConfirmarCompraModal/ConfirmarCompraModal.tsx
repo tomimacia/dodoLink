@@ -109,7 +109,7 @@ const ConfirmarCompraModal = ({
             bg='blackAlpha.200'
           />
           <ModalHeader p={4} fontWeight='bold'>
-            Confirmar actualización del pedido #{id}
+            Confirmar pedido #{id}
           </ModalHeader>
           <Divider />
           <ModalBody py={4}>

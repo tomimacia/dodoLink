@@ -10,6 +10,8 @@ import { ProductoType } from '@/types/types';
 import {
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Heading,
   Input,
   Switch,
@@ -176,25 +178,19 @@ const CargaReservaFormPage = () => {
       <Heading as='h2' fontSize={24}>
         Carga de Reserva
       </Heading>
-      <Flex gap={2} flexDir='column'>
-        <Text fontSize='lg' fontWeight='bold'>
-          Cliente
-        </Text>
+      <FormControl isRequired>
+        <FormLabel>Cliente</FormLabel>
         <Input
-          placeholder='Datos de Cliente'
+          placeholder='Agregar nombre'
           borderRadius={5}
           borderColor='gray'
           size='sm'
-          isDisabled={isPago}
           value={cliente}
-          disabled={isPago}
           onChange={(e) => setCliente(e.target.value)}
         />
-      </Flex>
-      <Flex w='100%' gap={2} flexDir='column'>
-        <Text fontSize='lg' fontWeight='bold'>
-          Detalle
-        </Text>
+      </FormControl>
+      <FormControl isRequired>
+        <FormLabel>Detalle</FormLabel>
         <Textarea
           placeholder='Agregar detalle'
           borderRadius={5}
@@ -203,7 +199,7 @@ const CargaReservaFormPage = () => {
           value={detalle}
           onChange={(e) => setDetalle(e.target.value as string)}
         />
-      </Flex>
+      </FormControl>
 
       <Flex gap={2} align='center'>
         <Switch

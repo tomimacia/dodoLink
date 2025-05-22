@@ -59,7 +59,7 @@ export default function Navbar({
               )}
             </Flex>
 
-            <Link href='/'>
+            <NextLink href='/'>
               <Image
                 alt='dodolink-logo'
                 objectFit='contain'
@@ -68,7 +68,7 @@ export default function Navbar({
                 height={imageNavbarSize}
                 src={navBarImage}
               />
-            </Link>
+            </NextLink>
 
             <Flex mx={2} align='center' gap={[1, 1, 2, 3, 3]}>
               <NotificationButton />

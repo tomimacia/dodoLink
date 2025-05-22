@@ -25,6 +25,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [currentMov, setCurrentMov] = useState(movimiento);
+  const [showDeleted, setShowDeleted] = useState(false);
   const { user, refreshUser } = useUser();
   const { id, movimientos } = currentMov;
   const router = useRouter();
@@ -40,7 +41,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
       const thisMov = mov.reservas.find((r) => r.id === movimiento.id);
       if (thisMov) {
         setCurrentMov(thisMov);
-      }
+      } else setShowDeleted(true);
     } catch (e) {
       console.error(e);
     }
@@ -51,7 +52,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
       const thisMov = mov.compras.find((r) => r.id === movimiento.id);
       if (thisMov) {
         setCurrentMov(thisMov);
-      }
+      } else setShowDeleted(true);
     } catch (e) {
       console.error(e);
     }
@@ -539,6 +540,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
     user,
     estado,
     productos,
+    showDeleted,
     updatePedido,
     updateCompra,
     deleteFuncCompra,

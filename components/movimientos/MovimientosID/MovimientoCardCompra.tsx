@@ -23,6 +23,7 @@ import { TiWarning } from 'react-icons/ti';
 import ConfirmarCompraModal from './ConfirmarCompraModal/ConfirmarCompraModal';
 import EstadoStepsCompra from './EstadoStepsCompra';
 import VerMovimientosModal from './VerMovimientosModal';
+import NotFoundPage from '@/components/NotFoundPage';
 
 const MovimientoCardCompra = ({ movimiento }: { movimiento: PedidoType }) => {
   const {
@@ -31,6 +32,7 @@ const MovimientoCardCompra = ({ movimiento }: { movimiento: PedidoType }) => {
     loadingUpdate,
     loadingDelete,
     currentMov,
+    showDeleted,
     updateCompra,
     deleteFuncCompra,
   } = usePedidosForm(movimiento);
@@ -41,6 +43,14 @@ const MovimientoCardCompra = ({ movimiento }: { movimiento: PedidoType }) => {
   const pendienteColor = useColorModeValue('#DD6B20', '#FBD38D');
 
   // Check si el usuario tiene el pedido en curso para Cuadrilla
+  if (showDeleted) {
+    return (
+      <NotFoundPage
+        content='El movimiento que buscás no existe o fue eliminado.'
+        title='Movimiento no encontrado'
+      />
+    );
+  }
   if (!CheckAdminRol(user?.rol)) return <NotAuthorized />;
   const showDelete =
     user?.rol === 'Superadmin' ||

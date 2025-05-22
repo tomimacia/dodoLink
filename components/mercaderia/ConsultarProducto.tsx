@@ -140,7 +140,6 @@ const ConsultarProducto = () => {
                 producto={regProd}
                 delay={0}
                 setNewProductos={setRegistryProductos}
-                allPacks={allPacks || []}
               />
             ))}
           </Flex>

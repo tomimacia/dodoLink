@@ -22,6 +22,7 @@ import ConfirmarReservaModal from './ConfimarPedidoModal/ConfirmarReservaModal';
 import QRCodeLabel from './QRCodeLabel';
 import VerMovimientosModal from './VerMovimientosModal';
 import { Fragment } from 'react';
+import NotFoundPage from '@/components/NotFoundPage';
 
 const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
   const {
@@ -32,6 +33,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
     loadingDelete,
     currentMov,
     updatePedido,
+    showDeleted,
     deleteFunc,
     volverAInicializado,
   } = usePedidosForm(movimiento);
@@ -51,6 +53,14 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
   // Check si el usuario tiene el pedido en curso para Cuadrilla
   const hasReserva = movimientos?.['En curso'].admin === user?.id;
   const isCuadrilla = !CheckAdminRol(user?.rol);
+  if (showDeleted) {
+    return (
+      <NotFoundPage
+        content='El movimiento que buscás no existe o fue eliminado.'
+        title='Movimiento no encontrado'
+      />
+    );
+  }
   if (
     isCuadrilla &&
     (isRetiro || // caso 2
@@ -58,6 +68,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
   ) {
     return <NotAuthorized />;
   }
+
   const showDelete =
     user?.rol === 'Superadmin' ||
     ['En curso', 'Finalizado'].every((e) => e !== estado);

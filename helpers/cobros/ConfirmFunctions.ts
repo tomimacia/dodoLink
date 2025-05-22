@@ -119,7 +119,6 @@ export const ActualizarStock = async (
   setProductos(newProductos as any);
   try {
     await Promise.all(promises);
-
     await updateProductosLastStamp();
   } catch (e) {
     console.log(e);

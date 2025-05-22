@@ -126,31 +126,6 @@ export const allRoutesWithRoles = Routes.flatMap((route) => [
   })),
 ]);
 
-export const ProductosCargados = {
-  ctacte: {
-    nombre: 'Carga Cta/Cte',
-    precio: 0,
-    stock: true,
-    id: 'noID',
-    medida: 'Un.' as MedidaType,
-    codigo: [1122344556],
-    cantidad: 1,
-    unidades: 1,
-    acumulable: false,
-  },
-};
-export const codigos = {
-  CUOTAGYM: 793288805789,
-  CUOTAGYMFT: 144036631405,
-};
-export const tiposDePagoArr: TipoDePagoType[] = ['Efectivo', 'Mercadopago'];
-
-export const DiasParaInhabilitacion = 7;
-
-export const limiteCtaCte = 20000;
-
-export const MinutosPermisoDelete = 60;
-
 export const TimeData = {
   meses: [
     'Enero',

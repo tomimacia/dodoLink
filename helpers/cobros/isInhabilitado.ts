@@ -1,6 +1,6 @@
-import { DiasParaInhabilitacion } from '@/data/data';
 
 export const isInhabilitado = (c: any | null): boolean => {
+  const DiasParaInhabilitacion = 7
   const ahora = c?.horarioIngreso
     ? c?.horarioIngreso?.seconds
     : new Date().getTime() / 1000;

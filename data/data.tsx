@@ -1,4 +1,4 @@
-import { MedidaType, RolType, TipoDePagoType } from '@/types/types';
+import { RolType } from '@/types/types';
 import { CiBoxes } from 'react-icons/ci';
 import { FaBoxes, FaClipboardList, FaRegUser, FaUser } from 'react-icons/fa';
 import {

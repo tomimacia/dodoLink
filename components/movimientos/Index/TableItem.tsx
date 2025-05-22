@@ -1,7 +1,6 @@
 // Para eliminar esto
-import { useMovimientos } from '@/context/useMovimientosContext';
 import { useUser } from '@/context/userContext';
-import { MinutosPermisoDelete } from '@/data/data';
+
 import { addDots } from '@/helpers/addDots';
 import dateTexto from '@/helpers/dateTexto';
 import { IngresoType } from '@/types/types';
@@ -35,9 +34,9 @@ const TableItem = ({
   cliente: any | null;
   deleteMovimiento: () => Promise<void>;
 }) => {
+  const MinutosPermisoDelete = 60;
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-  const { getMovimientos } = useMovimientos();
   const handleDelete = async () => {
     setLoading(true);
     try {

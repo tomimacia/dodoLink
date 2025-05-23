@@ -24,22 +24,11 @@ import ProductosTable from '../movimientos/CobraFormComps/ProductosTable';
 import TitleSearchYItem from '../movimientos/CobraFormComps/TitleSearchYItem';
 
 const CargaCompraFormPage = () => {
-  const {
-    items,
-    resetFilters,
-    setCliente,
-    setDetalle,
-    setIsPago,
-    detalle,
-    cliente,
-    isPago,
-  } = useCobrarFormContext();
+  const { items, resetFilters, setCliente, setDetalle, detalle, cliente } =
+    useCobrarFormContext();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-  useEffect(() => {
-    setIsPago(true);
-  }, []);
   const fontColor = useColorModeValue('blue.700', 'blue.400');
   const confirmButtonRef = useRef<HTMLButtonElement | null>(null);
   const formatItem = (item: ProductoType) => {

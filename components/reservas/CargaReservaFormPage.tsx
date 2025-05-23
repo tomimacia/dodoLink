@@ -27,15 +27,8 @@ import TitleSearchYItem from '../movimientos/CobraFormComps/TitleSearchYItem';
 import MapEmbed from '../movimientos/EmbedMap';
 
 const CargaReservaFormPage = () => {
-  const {
-    items,
-    resetFilters,
-    setCliente,
-    setDetalle,
-    detalle,
-    cliente,
-    isPago,
-  } = useCobrarFormContext();
+  const { items, resetFilters, setCliente, setDetalle, detalle, cliente } =
+    useCobrarFormContext();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const toast = useToast();

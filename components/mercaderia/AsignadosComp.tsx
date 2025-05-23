@@ -26,7 +26,7 @@ const AsignadosComp = () => {
   useEffect(() => {
     getUsers();
   }, []);
-  const { productos, setProductos } = useGetProductos();
+  const { productos, setProductos, checkUpdates } = useGetProductos();
   const [cuadrilla, setCuadrilla] = useState(false);
   // Filtramos solo los usuarios que tienen inventario
   const usersForMapping = users
@@ -202,6 +202,7 @@ const AsignadosComp = () => {
                   user={u}
                   updateInventario={updateInventario}
                   loading={loading}
+                  checkUpdates={checkUpdates}
                 />
               )}
             </Box>

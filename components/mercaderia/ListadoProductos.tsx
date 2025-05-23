@@ -33,7 +33,7 @@ const ListadoProductos = () => {
     allPacks,
     setProductos,
     updateProducto,
-  } = useGetProductos();
+  } = useGetProductos(true);
   const { loadingColor } = useThemeColors();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);

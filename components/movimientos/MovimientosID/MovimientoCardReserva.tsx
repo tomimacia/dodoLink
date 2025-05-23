@@ -35,6 +35,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
     updatePedido,
     showDeleted,
     deleteFunc,
+    disclosure,
     volverAInicializado,
   } = usePedidosForm(movimiento);
   const {
@@ -214,12 +215,12 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
           volverAInicializado={volverAInicializado}
           productos={productos || []}
           loading={loadingUpdate}
+          disclosure={disclosure}
           update={(
             newPedido: PedidoType,
             newItems: ProductoType[],
-            sobrantes: ProductoType[],
-            onClose: () => void
-          ) => updatePedido(id, newPedido, newItems, sobrantes, onClose)}
+            sobrantes: ProductoType[]
+          ) => updatePedido(id, newPedido, newItems, sobrantes)}
           pedido={currentMov}
         />
         {showDelete && CheckAdminRol(user?.rol) && (

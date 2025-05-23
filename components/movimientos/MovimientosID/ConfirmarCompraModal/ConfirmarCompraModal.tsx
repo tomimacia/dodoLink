@@ -23,21 +23,27 @@ const ConfirmarCompraModal = ({
   loading,
   update,
   pedido,
+  disclosure,
 }: {
   loading: boolean;
   update: (newPedido: PedidoType, onClose: () => void) => Promise<void>;
   pedido: PedidoType;
+  disclosure: any;
 }) => {
   const { id, movimientos, confirmedItems } = pedido;
   const estado = getEstado(movimientos);
   const [items, setItems] = useState<ProductoType[]>(
     pedido.items.map((p) => {
-      return { ...p, isChecked: pedido?.confirmedItems?.some((cI)=>cI.id === p.id) || false };
+      return {
+        ...p,
+        isChecked:
+          pedido?.confirmedItems?.some((cI) => cI.id === p.id) || false,
+      };
     })
   );
   const [cliente, setCliente] = useState(pedido.cliente);
   const [detalle, setDetalle] = useState(pedido.detalle);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = disclosure;
 
   const handleUpdate = async () => {
     const toUpdate = items.filter(

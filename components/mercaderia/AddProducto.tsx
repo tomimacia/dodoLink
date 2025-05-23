@@ -48,7 +48,7 @@ const AddProducto = () => {
   const [loading, setLoading] = useState(false);
   const [manualpack, setManualPack] = useState('');
   const toast = useToast();
-  const { productos, allPacks, setProductos } = useGetProductos();
+  const { productos, allPacks, checkUpdates, setProductos } = useGetProductos();
   const onSubmit = async () => {
     const {
       nombre,
@@ -91,6 +91,22 @@ const AddProducto = () => {
           });
         }
       }
+      const checName = (await getMultipleDocs(
+        'productos',
+        'nombre',
+        '==',
+        nombre
+      )) as ProductoType[];
+      if (checName.length > 0) {
+        return toast({
+          title: 'Ya registrado',
+          description: `Producto con el nombre "${nombre}" ya registrado`,
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      await checkUpdates();
       const newID = generateFirestoreId();
       const { seconds, nanoseconds } = Timestamp.now();
       const createdAt = {

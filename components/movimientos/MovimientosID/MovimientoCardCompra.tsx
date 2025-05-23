@@ -35,6 +35,7 @@ const MovimientoCardCompra = ({ movimiento }: { movimiento: PedidoType }) => {
     showDeleted,
     updateCompra,
     deleteFuncCompra,
+    disclosure,
   } = usePedidosForm(movimiento);
   const { detalle, items, cliente, id, isPago, movimientos, tramo } =
     currentMov;
@@ -217,6 +218,7 @@ const MovimientoCardCompra = ({ movimiento }: { movimiento: PedidoType }) => {
           loading={loadingUpdate}
           update={updateCompra}
           pedido={currentMov}
+          disclosure={disclosure}
         />
         {showDelete && CheckAdminRol(user?.rol) && (
           <DeleteModal

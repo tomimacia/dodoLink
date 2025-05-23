@@ -33,6 +33,7 @@ const EditarInventarioModal = ({
   allProductos,
   updateInventario,
   loading,
+  checkUpdates,
 }: {
   user: UserType;
   allProductos: ProductoType[];
@@ -42,6 +43,7 @@ const EditarInventarioModal = ({
     ajustarStock: boolean
   ) => Promise<void>;
   loading: boolean;
+  checkUpdates: () => Promise<void>;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [inventario, setInventario] = useState<ProductoType[]>(
@@ -84,10 +86,14 @@ const EditarInventarioModal = ({
     if (next < 0) return;
     handleCantidadChange(id, next);
   };
+  const handleOpen = async () => {
+    checkUpdates();
+    onOpen();
+  };
   return (
     <Flex>
       <Button
-        onClick={onOpen}
+        onClick={handleOpen}
         size='sm'
         colorScheme='blue'
         leftIcon={<EditIcon />}

@@ -1,16 +1,15 @@
 import { getCollection } from '@/firebase/services/getCollection';
-import { getSingleDoc } from '@/firebase/services/getSingleDoc';
+import useOnSnapshot from '@/firebase/services/useOnSnapshot';
 import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import { ProductoType } from '@/types/types';
 import { Timestamp } from 'firebase/firestore';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalStorage } from '../storageHooks/useLocalStorage';
-import useOnSnapshot from '@/firebase/services/useOnSnapshot';
 
 const productosKEY = 'PRODUCTOS_SESSION_STORAGE';
 const lastUpdateProductosKEY = 'PRODUCTOS_LASTUPDATE_SECONDS_SESSION_STORAGE';
 
-const useGetProductos = () => {
+const useGetProductos = (shouldUpdate: boolean = false) => {
   const [productos, setProductos] = useLocalStorage<ProductoType[] | null>(
     productosKEY,
     null
@@ -90,7 +89,7 @@ const useGetProductos = () => {
     // }
   }, [productos, lastUpdateProductos]);
   const { data: metadata, loading } = useOnSnapshot('productos', 'metadata');
-  const handleUpdate = async () => {
+  const checkUpdates = async () => {
     setTimeout(async () => {
       const lastUpdateUpdated = window.localStorage.getItem(
         lastUpdateProductosKEY
@@ -104,14 +103,15 @@ const useGetProductos = () => {
     }, 50);
   };
   useEffect(() => {
-    if (!loading && metadata) {
-      handleUpdate();
+    if (!loading && metadata?.lastUpdate && shouldUpdate) {
+      checkUpdates();
     }
   }, [metadata]);
   return {
     loadingProductos,
     setProductos,
     getProductos,
+    checkUpdates,
     productos,
     updateProducto,
     allPacks,

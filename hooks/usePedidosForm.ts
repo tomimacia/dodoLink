@@ -14,7 +14,7 @@ import {
   PedidoType,
   ProductoType,
 } from '@/types/types';
-import { useToast } from '@chakra-ui/react';
+import { useDisclosure, useToast } from '@chakra-ui/react';
 import { Timestamp } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
@@ -22,6 +22,7 @@ import useGetProductos from './data/useGetProductos';
 
 const usePedidosForm = (movimiento: PedidoType) => {
   const { reservas, compras } = useOnCurso();
+  const { onOpen, onClose, isOpen } = useDisclosure();
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [currentMov, setCurrentMov] = useState(movimiento);
@@ -29,7 +30,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
   const { user, refreshUser } = useUser();
   const { id, movimientos } = currentMov;
   const router = useRouter();
-  const { productos, setProductos } = useGetProductos();
+  const { productos, setProductos, checkUpdates } = useGetProductos();
   const estado = getEstado(movimientos);
   const toast = useToast();
   const fecha = useMemo(() => {
@@ -149,8 +150,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
     id: string,
     updatedPedido: PedidoType | null,
     newItems: ProductoType[],
-    sobrantes: ProductoType[],
-    onClose: () => void
+    sobrantes: ProductoType[]
   ) => {
     const canUpdate = testUpdate(newItems);
     if (!canUpdate || !reservas) return;
@@ -163,12 +163,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
     )) as MovimientosType;
     try {
       if (estado === 'Preparación') {
-        await ActualizarStock(
-          newItems,
-          productos || [],
-          setProductos,     
-          false
-        );
+        await ActualizarStock(newItems, productos || [], setProductos, false);
       }
       if (estado === 'En curso' && sobrantes.some((s) => s?.cantidad > 0)) {
         await updateInventario(sobrantes);
@@ -184,7 +179,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
           user?.id
         ),
       });
-      onClose();
+      disclosure.onClose();
       await setSingleDoc('movimientos', 'enCurso', {
         reservas:
           newEstado === 'Finalizado'
@@ -214,7 +209,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
       }, 50);
     }
   };
-  const updateCompra = async (newPedido: PedidoType, onClose: () => void) => {
+  const updateCompra = async (newPedido: PedidoType) => {
     if (!compras) return;
     setLoadingUpdate(true);
     const movimientoFetched = (await getSingleDoc(
@@ -243,12 +238,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
       ? [...FinalPedido?.movimientos['En curso']?.cambios, newCambio]
       : [newCambio];
     try {
-      await ActualizarStock(
-        toUpdate,
-        productos || [],
-        setProductos,   
-        true
-      );
+      await ActualizarStock(toUpdate, productos || [], setProductos, true);
       await setSingleDoc('movimientos', fecha, {
         compras: getUpdatedCompras(
           newPedido.id,
@@ -259,7 +249,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
           user?.id
         ),
       });
-      onClose();
+      disclosure.onClose();
       await setSingleDoc('movimientos', 'enCurso', {
         compras:
           newEstado === 'Finalizado'
@@ -524,6 +514,11 @@ const usePedidosForm = (movimiento: PedidoType) => {
       }, 50);
     }
   };
+  const handleOpen = () => {
+    checkUpdates();
+    onOpen();
+  };
+  const disclosure = { isOpen, onClose, onOpen: handleOpen };
   return {
     loadingUpdate,
     loadingDelete,
@@ -537,6 +532,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
     deleteFuncCompra,
     volverAInicializado,
     deleteFunc,
+    disclosure,
   };
 };
 

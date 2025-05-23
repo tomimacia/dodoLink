@@ -25,18 +25,20 @@ const ConfirmarReservaModal = ({
   pedido,
   productos,
   volverAInicializado,
+  disclosure,
 }: {
   loading: boolean;
   update: (
     newPedido: PedidoType,
     newItems: ProductoType[],
-    sobrantes: ProductoType[],
-    onClose: () => void
+    sobrantes: ProductoType[]
   ) => Promise<void>;
   pedido: PedidoType;
+  disclosure: any;
   productos: ProductoType[];
   volverAInicializado: (onClose: () => void) => Promise<void>;
 }) => {
+  const { onOpen, isOpen, onClose } = disclosure;
   const { id, movimientos } = pedido;
   const estado = getEstado(movimientos);
   const [items, setItems] = useState<ProductoType[]>(pedido.items);
@@ -45,7 +47,7 @@ const ConfirmarReservaModal = ({
   const [detalle, setDetalle] = useState(pedido.detalle.join('\n'));
   const [tramo, setTramo] = useState(pedido.tramo);
   const [mapCoords, setMapCoords] = useState(pedido.mapCoords);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [checkedItems, setCheckedItems] = useState(
     pedido.items.map((p) => {
       return { ...p, checked: false };
@@ -94,7 +96,7 @@ const ConfirmarReservaModal = ({
       mapCoords,
     };
 
-    await update(newPedido, items, sobrantes, onClose);
+    await update(newPedido, items, sobrantes);
   };
   const toast = useToast();
   const handleClose = () => {
@@ -118,7 +120,9 @@ const ConfirmarReservaModal = ({
     }
     onOpen();
   };
-
+  const volverAInicializadoFInal = async () => {
+    await volverAInicializado(handleClose);
+  };
   return (
     <Flex>
       <Button
@@ -162,7 +166,7 @@ const ConfirmarReservaModal = ({
               tramoHandler={[tramo, setTramo]}
               mapCoordsHandler={[mapCoords, setMapCoords]}
               sobrantesHandler={[sobrantes, setSobrantes]}
-              volverAInicializado={() => volverAInicializado(handleClose)}
+              volverAInicializado={volverAInicializadoFInal}
               loading={loading}
               isRetiro={pedido?.isRetiro}
             />

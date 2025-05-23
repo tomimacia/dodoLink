@@ -25,7 +25,7 @@ interface FormContextProps {
 const FormContext = createContext<FormContextProps | undefined>(undefined);
 
 export const FormProvider = ({ children }: { children: React.ReactNode }) => {
-  const { productos, loadingProductos, setProductos } = useGetProductos();
+  const { productos, loadingProductos, setProductos } = useGetProductos(true);
   const [items, setItems] = useState<ProductoType[]>([]);
   const [cliente, setCliente] = useState('');
   const [detalle, setDetalle] = useState('');

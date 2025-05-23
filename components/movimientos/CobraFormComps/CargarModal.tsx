@@ -1,4 +1,6 @@
-import { useCobrarFormContext } from '@/context/useCobrarFormContext';
+import { FormProvider } from '@/context/useCobrarFormContext';
+import { useUser } from '@/context/userContext';
+import { CheckAdminRol } from '@/data/data';
 import {
   Button,
   Flex,
@@ -12,18 +14,14 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Progress,
   useColorModeValue,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
-import { CheckAdminRol } from '@/data/data';
-import { useUser } from '@/context/userContext';
-import CobrarForm from './CobraFormComps/CobrarForm';
+import { useState } from 'react';
+import CobrarForm from './CobrarForm';
 
-const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
-  const { resetFilters, setIsPago, isPago, loadingProductos } =
-    useCobrarFormContext();
+const CargarModal = ({ size }: { size: string }) => {
+  const [isPago, setIsPago] = useState(false);
   const { user } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const customHover = useColorModeValue(
@@ -31,27 +29,17 @@ const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
     { bg: 'white', color: 'gray.700' }
   );
   if (!CheckAdminRol(user?.rol)) return <></>;
-  const handleOpen = async (initialIsCompra?: boolean) => {   
+  const handleOpen = async (initialIsCompra?: boolean) => {
     setIsPago(initialIsCompra ? true : false);
-    onOpen();
+    setTimeout(() => {
+      onOpen();
+    }, 100);
   };
   const handleClose = () => {
-    resetFilters();
     onClose();
   };
   return (
     <Flex>
-      {loadingProductos && (
-        <Flex pos='absolute' top={2} left={0} w='100vw' h='5px' zIndex={20000}>
-          <Progress
-            h='100%'
-            colorScheme='blue'
-            bg='transparent'
-            w='100%'
-            isIndeterminate
-          />
-        </Flex>
-      )}
       <Menu isLazy>
         <MenuButton
           as={Button}
@@ -100,26 +88,28 @@ const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
         onClose={handleClose}
       >
         <ModalOverlay />
-        <ModalContent
-          position='fixed'
-          top='5vh' // Mantiene el modal anclado en esta posición
-          minH='60vh'
-          maxH='90vh' // Limita la altura máxima antes de activar el scroll interno
-          overflow='hidden' // Evita que el modal se agrande más de lo deseado
-          overflowY='auto'
-        >
-          <ModalCloseButton
-            zIndex={10}
-            _hover={{ bg: 'blackAlpha.400' }}
-            bg='blackAlpha.200'
-          />
-          <ModalHeader textAlign='center' p={3}>
-            Nueva {isPago ? 'Orden de Compra' : 'Reserva de Pedido'}
-          </ModalHeader>
-          <ModalBody>
-            <CobrarForm onClose={onClose} />
-          </ModalBody>
-        </ModalContent>
+        <FormProvider>
+          <ModalContent
+            position='fixed'
+            top='5vh' // Mantiene el modal anclado en esta posición
+            minH='60vh'
+            maxH='90vh' // Limita la altura máxima antes de activar el scroll interno
+            overflow='hidden' // Evita que el modal se agrande más de lo deseado
+            overflowY='auto'
+          >
+            <ModalCloseButton
+              zIndex={10}
+              _hover={{ bg: 'blackAlpha.400' }}
+              bg='blackAlpha.200'
+            />
+            <ModalHeader textAlign='center' p={3}>
+              Nueva {isPago ? 'Orden de Compra' : 'Reserva de Pedido'}
+            </ModalHeader>
+            <ModalBody>
+              <CobrarForm isPago={isPago} onClose={onClose} />
+            </ModalBody>
+          </ModalContent>
+        </FormProvider>
       </Modal>
     </Flex>
   );

@@ -1,3 +1,4 @@
+import PopoverInfoIcon from '@/components/inicio/PopoverInfoIcon';
 import { useCobrarFormContext } from '@/context/useCobrarFormContext';
 import { useUser } from '@/context/userContext';
 import {
@@ -20,22 +21,25 @@ import {
 } from '@chakra-ui/react';
 import { Timestamp } from 'firebase/firestore';
 import { useRef, useState } from 'react';
-import ClienteYDetalle from './ClienteYDetalle';
 import MapEmbed from '../EmbedMap';
-import TitleSearchYItem from './TitleSearchYItem';
-import ProductosTable from './ProductosTable';
+import ClienteYDetalle from './ClienteYDetalle';
 import CompraDrawer from './CompraDrawer';
-import PopoverInfoIcon from '@/components/inicio/PopoverInfoIcon';
+import ProductosTable from './ProductosTable';
+import TitleSearchYItem from './TitleSearchYItem';
 
-const CobrarForm = ({ onClose }: { onClose: () => void }) => {
-  const { items, resetFilters, detalle, cliente, isPago } =
-    useCobrarFormContext();
+const CobrarForm = ({
+  onClose,
+  isPago,
+}: {
+  onClose: () => void;
+  isPago: boolean;
+}) => {
+  const { items, resetFilters, detalle, cliente } = useCobrarFormContext();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [hasTramo, setHasTramo] = useState(true);
   const [isRetiro, setIsRetiro] = useState(false);
   const toast = useToast();
-
   const fontColor = useColorModeValue('blue.700', 'blue.400');
   const confirmButtonRef = useRef<HTMLButtonElement | null>(null);
   const [embedValue, setEmbedValue] = useState('');
@@ -61,12 +65,10 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
       }
     }
   };
-
   const formatItem = (item: ProductoType) => {
     const { creadorID, createdAt, ...rest } = item;
     return rest;
   };
-
   const ConfirmarReserva = async () => {
     setLoading(true);
     const isValidated = ConfirmValidation(
@@ -164,7 +166,6 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
       setLoading(false);
     }
   };
-
   const ConfirmarCompra = async () => {
     setLoading(true);
     const isValidated = ConfirmValidation(
@@ -208,7 +209,7 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
         items: items.map((i) => formatItem(i)),
         isPago: true,
         vistoPor: [],
-      };   
+      };
       await CargarCompra(newMovimiento);
       toast({
         title: 'Éxito',
@@ -236,7 +237,6 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
     confirmButtonRef.current?.blur();
     isPago ? ConfirmarCompra() : ConfirmarReserva();
   };
-
   return (
     <Flex minH='50vh' gap={3} flexDir='column'>
       <ClienteYDetalle />

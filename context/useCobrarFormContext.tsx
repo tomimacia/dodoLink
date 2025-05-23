@@ -1,5 +1,6 @@
 import useGetProductos from '@/hooks/data/useGetProductos';
 import { ProductoType } from '@/types/types';
+import { Flex, Progress } from '@chakra-ui/react';
 import {
   createContext,
   Dispatch,
@@ -15,20 +16,16 @@ interface FormContextProps {
   setCliente: Dispatch<SetStateAction<string>>;
   detalle: string;
   setDetalle: Dispatch<SetStateAction<string>>;
-  isPago?: boolean;
   productos: ProductoType[] | null;
   resetFilters: () => void;
-  setIsPago: (newIsPago: boolean) => void;
-  setProductos: (newProductos: ProductoType[]) => void; 
+  setProductos: (newProductos: ProductoType[]) => void;
   loadingProductos: boolean;
 }
 
 const FormContext = createContext<FormContextProps | undefined>(undefined);
 
 export const FormProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isPago, setIsPago] = useState(false);
-  const { productos, loadingProductos, setProductos } =
-    useGetProductos();
+  const { productos, loadingProductos, setProductos } = useGetProductos();
   const [items, setItems] = useState<ProductoType[]>([]);
   const [cliente, setCliente] = useState('');
   const [detalle, setDetalle] = useState('');
@@ -42,19 +39,28 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         items,
         setItems,
-        loadingProductos,  
+        loadingProductos,
         // availableProducts,
         resetFilters,
         cliente,
         setCliente,
         detalle,
         setDetalle,
-        isPago,
         productos,
         setProductos,
-        setIsPago,
       }}
     >
+      {loadingProductos && (
+        <Flex pos='absolute' top={2} left={0} w='100vw' h='5px' zIndex={20000}>
+          <Progress
+            h='100%'
+            colorScheme='blue'
+            bg='transparent'
+            w='100%'
+            isIndeterminate
+          />
+        </Flex>
+      )}
       {children}
     </FormContext.Provider>
   );

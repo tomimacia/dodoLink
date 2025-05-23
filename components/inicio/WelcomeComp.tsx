@@ -1,10 +1,10 @@
 import { useUser } from '@/context/userContext';
 import dateTexto from '@/helpers/dateTexto';
 import { Flex, Text } from '@chakra-ui/react';
-import ClockComp from '../Clock';
-import CargarModal from '../../movimientos/CargarModal';
+import CargarModal from '../movimientos/CobraFormComps/CargarModal';
+import ClockComp from './Clock';
 
-const WelcomeCuadrilla = () => {
+const WelcomeComp = () => {
   const { user } = useUser();
 
   return (
@@ -34,10 +34,12 @@ const WelcomeCuadrilla = () => {
           </Text>
           <Text>{user?.rol}</Text>
         </Flex>
-        <Flex gap={3} />
+        <Flex gap={3}>
+          <CargarModal size='sm' />
+        </Flex>
       </Flex>
     </Flex>
   );
 };
 
-export default WelcomeCuadrilla;
+export default WelcomeComp;

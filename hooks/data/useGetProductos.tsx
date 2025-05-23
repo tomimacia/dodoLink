@@ -98,6 +98,11 @@ const useGetProductos = (shouldUpdate: boolean = false) => {
         await getProductos();
         setLastUpdate(metadata.lastUpdate.seconds);
       } else {
+        const newProductos = window.localStorage.getItem(productosKEY);
+        if (newProductos) {
+          const parsed = JSON.parse(newProductos);
+          setProductos(parsed);
+        }
         console.log('Products up to date');
       }
     }, 50);

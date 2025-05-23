@@ -2,10 +2,9 @@ import dateTexto from '@/helpers/dateTexto';
 import useGetUsers from '@/hooks/users/useGetUsers';
 import { Estados, EstadosCompra, EstadoType, PedidoType } from '@/types/types';
 import {
-  ArrowDownIcon,
   CheckCircleIcon,
   InfoOutlineIcon,
-  WarningIcon,
+  WarningIcon
 } from '@chakra-ui/icons';
 import {
   Box,
@@ -24,7 +23,6 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
 import HistorialCambiosEnCurso from './HistorialCambiosEnCurso';
 
 const VerMovimientosModal = ({

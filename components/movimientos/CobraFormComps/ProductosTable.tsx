@@ -18,8 +18,8 @@ import {
   Tr,
 } from '@chakra-ui/react';
 
-const ProductosTable = () => {
-  const { items, setItems, isPago } = useCobrarFormContext();
+const ProductosTable = ({ isPago }: { isPago: boolean }) => {
+  const { items, setItems } = useCobrarFormContext();
 
   if (items.length <= 0) return;
   const actualizarUnidades = (index: number, nuevasUnidades: string) => {

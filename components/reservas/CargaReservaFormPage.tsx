@@ -264,7 +264,7 @@ const CargaReservaFormPage = () => {
 
       <MapEmbed initialShow clean={() => setEmbed('')} src={embed} />
       <TitleSearchYItem />
-      <ProductosTable />
+      <ProductosTable isPago={false} />
 
       <Flex mt='auto' p={5} flexDir='column' gap={3}>
         <Button

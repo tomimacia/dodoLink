@@ -239,7 +239,7 @@ const CobrarForm = ({
   };
   return (
     <Flex minH='50vh' gap={3} flexDir='column'>
-      <ClienteYDetalle />
+      <ClienteYDetalle isPago={isPago} />
 
       {!isPago && (
         <FormControl
@@ -333,7 +333,7 @@ const CobrarForm = ({
         <MapEmbed initialShow clean={() => setEmbed('')} src={embed} />
       )}
       <TitleSearchYItem />
-      <ProductosTable />
+      <ProductosTable isPago={isPago} />
 
       <Flex mt='auto' p={5} flexDir='column' gap={3}>
         <Button

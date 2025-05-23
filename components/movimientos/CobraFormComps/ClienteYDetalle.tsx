@@ -4,12 +4,10 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Text,
   Textarea,
 } from '@chakra-ui/react';
-const ClienteYDetalle = () => {
-  const { setDetalle, cliente, setCliente, detalle, isPago } =
-    useCobrarFormContext();
+const ClienteYDetalle = ({ isPago }: { isPago: boolean }) => {
+  const { setDetalle, cliente, setCliente, detalle } = useCobrarFormContext();
 
   return (
     <Flex

@@ -12,13 +12,12 @@ import {
   FormLabel,
   Heading,
   Input,
-  Text,
   Textarea,
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
 import { Timestamp } from 'firebase/firestore';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import CompraDrawer from '../movimientos/CobraFormComps/CompraDrawer';
 import ProductosTable from '../movimientos/CobraFormComps/ProductosTable';
 import TitleSearchYItem from '../movimientos/CobraFormComps/TitleSearchYItem';
@@ -136,7 +135,7 @@ const CargaCompraFormPage = () => {
       </FormControl>
       <CompraDrawer />
       <TitleSearchYItem />
-      <ProductosTable />
+      <ProductosTable isPago />
 
       <Flex mt='auto' p={5} flexDir='column' gap={3}>
         <Button

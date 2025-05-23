@@ -131,7 +131,6 @@ const ModalBodyBottomPart = ({
   };
   useEffect(() => {
     if (estado !== 'Inicializado') return;
-    console.log('fetchingNew');
     const updateItems = async () => {
       const newItemsPromise = items.map((i) => getSingleDoc('productos', i.id));
       setLoadingNew(true);

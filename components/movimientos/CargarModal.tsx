@@ -22,7 +22,7 @@ import { useUser } from '@/context/userContext';
 import CobrarForm from './CobraFormComps/CobrarForm';
 
 const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
-  const { resetFilters, setIsPago, isPago, checkForUpdates, loadingProductos } =
+  const { resetFilters, setIsPago, isPago, loadingProductos } =
     useCobrarFormContext();
   const { user } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -31,8 +31,7 @@ const CargarModal = ({ size }: { initialIsPago?: boolean; size: string }) => {
     { bg: 'white', color: 'gray.700' }
   );
   if (!CheckAdminRol(user?.rol)) return <></>;
-  const handleOpen = async (initialIsCompra?: boolean) => {
-    await checkForUpdates();
+  const handleOpen = async (initialIsCompra?: boolean) => {   
     setIsPago(initialIsCompra ? true : false);
     onOpen();
   };

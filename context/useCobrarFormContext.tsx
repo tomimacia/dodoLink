@@ -19,8 +19,7 @@ interface FormContextProps {
   productos: ProductoType[] | null;
   resetFilters: () => void;
   setIsPago: (newIsPago: boolean) => void;
-  setProductos: (newProductos: ProductoType[]) => void;
-  checkForUpdates: () => Promise<void>;
+  setProductos: (newProductos: ProductoType[]) => void; 
   loadingProductos: boolean;
 }
 
@@ -28,7 +27,7 @@ const FormContext = createContext<FormContextProps | undefined>(undefined);
 
 export const FormProvider = ({ children }: { children: React.ReactNode }) => {
   const [isPago, setIsPago] = useState(false);
-  const { productos, loadingProductos, checkForUpdates, setProductos } =
+  const { productos, loadingProductos, setProductos } =
     useGetProductos();
   const [items, setItems] = useState<ProductoType[]>([]);
   const [cliente, setCliente] = useState('');
@@ -43,8 +42,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         items,
         setItems,
-        loadingProductos,
-        checkForUpdates,
+        loadingProductos,  
         // availableProducts,
         resetFilters,
         cliente,

@@ -17,7 +17,7 @@ import {
   Th,
   Thead,
   Tr,
-  useToast
+  useToast,
 } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
 import { MdCancel, MdCheckBox, MdDelete } from 'react-icons/md';
@@ -25,6 +25,7 @@ import ReactLoading from 'react-loading';
 import DeleteModal from '../DeleteModal';
 import PaginationControl from '../reservas/PaginationControl';
 import ProductoModal from './Editar/ProductoModal';
+import { AnimatePresence, motion } from 'framer-motion';
 const ListadoProductos = () => {
   const {
     productos,
@@ -116,7 +117,7 @@ const ListadoProductos = () => {
               value={empresa}
               cursor='pointer'
               w='fit-content'
-              borderColor='gray.300'       
+              borderColor='gray.300'
             >
               <option value='dodoLink'>dodoLink</option>
               <option value='Grupo IN'>Grupo IN</option>
@@ -135,7 +136,7 @@ const ListadoProductos = () => {
             value={pack}
             cursor='pointer'
             w='fit-content'
-            borderColor='gray.300'          
+            borderColor='gray.300'
           >
             {allPacks?.map((g) => (
               <option key={g} value={g}>
@@ -168,7 +169,7 @@ const ListadoProductos = () => {
             onChange={(e) => setFilterInput(e.target.value)}
             placeholder='Ingresar nombre'
             borderRadius='md'
-            borderColor='gray.300'         
+            borderColor='gray.300'
           />
         </Flex>
 
@@ -183,7 +184,7 @@ const ListadoProductos = () => {
         handlePageChange={handlePageChange}
         show={filteredProductos.length > itemsPerPage}
       />
-      {loadingProductos ? (
+      {loadingProductos && !productos ? (
         <Flex w='100%' my={10} justify='center'>
           <ReactLoading
             type='bars'
@@ -236,7 +237,17 @@ const ListadoProductos = () => {
                         </Text>
                       </Td>
                       <Td fontSize='md'>
-                        <b>{cantidad}</b> ({medida})
+                        <AnimatePresence mode='wait' initial={false}>
+                          <motion.div
+                            key={cantidad}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ dutaion: 0.25 }}
+                          >
+                            <b>{cantidad}</b> ({medida})
+                          </motion.div>
+                        </AnimatePresence>
                       </Td>
                       <Td>
                         {cantidadPorPack > 1
@@ -274,22 +285,6 @@ const ListadoProductos = () => {
                               DeleteProp={() => deleteProducto(id)}
                               isIcon
                             />
-                            {/* <Button
-                              isLoading={loadingMail}
-                              _hover={{ opacity: 0.65 }}
-                              mt={2}
-                              size='sm'
-                              bg='blue.300'
-                              onClick={() =>
-                                test({
-                                  name: p.nombre,
-                                  quantity: p.cantidad,
-                                  target,
-                                })
-                              }
-                            >
-                              Test Email
-                            </Button> */}
                           </Flex>
                         </Td>
                       )}

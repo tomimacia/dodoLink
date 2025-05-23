@@ -40,7 +40,6 @@ const CargaCompraFormPage = () => {
   useEffect(() => {
     setIsPago(true);
   }, []);
-  console.log(isPago);
   const fontColor = useColorModeValue('blue.700', 'blue.400');
   const confirmButtonRef = useRef<HTMLButtonElement | null>(null);
   const formatItem = (item: ProductoType) => {

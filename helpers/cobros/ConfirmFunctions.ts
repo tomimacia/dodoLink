@@ -85,12 +85,10 @@ export const CargarCompra = async (newMovimiento: any) => {
 export const ActualizarStock = async (
   items: ProductoType[],
   productos: ProductoType[],
-  setProductos: (newProductos: ProductoType[]) => void,
-  checkForUpdates: () => Promise<void>,
+  setProductos: (newProductos: ProductoType[]) => void, 
   isPago: boolean
 ) => {
-  if (items.length === 0) return;
-  await checkForUpdates();
+  if (items.length === 0) return; 
   const promises = items.map((i) => {
     // Eliminamos 'unidades' del objeto
     const newCantidad = isPago

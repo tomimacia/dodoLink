@@ -6,17 +6,16 @@ import {
   Box,
   Button,
   Flex,
+  Heading,
   Input,
   Text,
   useColorModeValue,
   useToast,
-  Heading,
 } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FormEvent, useRef, useState } from 'react';
 import ReactLoading from 'react-loading';
 import ProductoCard from './ProductoCard';
-import useGetProductos from '@/hooks/data/useGetProductos';
 
 const MotionBox = motion(Box);
 
@@ -26,7 +25,6 @@ const ConsultarProducto = () => {
   const [registryProductos, setRegistryProductos] = useState<ProductoType[]>(
     []
   );
-  const { allPacks } = useGetProductos();
 
   const toast = useToast();
   const valueRef = useRef<HTMLInputElement | null>(null);

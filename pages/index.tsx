@@ -1,13 +1,10 @@
 import EntradasTiempoReal from '@/components/ingresos/EntradasTiempoReal';
-import WelcomeComp from '@/components/inicio/WelcomeComp';
-import { FormProvider } from '@/context/useCobrarFormContext';
+import WelcomeCompContext from '@/components/inicio/WelcomeComponentes/WelcomeCompContext';
 import { Divider, Flex } from '@chakra-ui/react';
 export default function Home() {
   return (
     <Flex gap={5} flexDir='column' w='100%'>
-      <FormProvider>
-        <WelcomeComp />
-      </FormProvider>
+      <WelcomeCompContext />
       <Divider borderColor='gray' w='98%' mx='auto' />
       <EntradasTiempoReal />
     </Flex>

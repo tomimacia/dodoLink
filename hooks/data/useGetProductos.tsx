@@ -5,20 +5,24 @@ import { ProductoType } from '@/types/types';
 import { Timestamp } from 'firebase/firestore';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalStorage } from '../storageHooks/useLocalStorage';
+import useOnSnapshot from '@/firebase/services/useOnSnapshot';
+
+const productosKEY = 'PRODUCTOS_SESSION_STORAGE';
+const lastUpdateProductosKEY = 'PRODUCTOS_LASTUPDATE_SECONDS_SESSION_STORAGE';
 
 const useGetProductos = () => {
   const [productos, setProductos] = useLocalStorage<ProductoType[] | null>(
-    'PRODUCTOS_SESSION_STORAGE',
+    productosKEY,
     null
   );
   const [lastUpdateProductos, setLastUpdate] = useLocalStorage<number | null>(
-    'PRODUCTOS_LASTUPDATE_SECONDS_SESSION_STORAGE',
+    lastUpdateProductosKEY,
     null
   );
   const hasFetched = useRef(false);
   const [loadingProductos, setLoadingProductos] = useState(false);
   const getProductos = async () => {
-    console.log('Getting products');
+    console.log('updating productos');
     setLoadingProductos(true);
     try {
       const productsFetched = await getCollection('productos');
@@ -34,23 +38,23 @@ const useGetProductos = () => {
       setLoadingProductos(false);
     }
   };
-  const checkForUpdates = async () => {
-    try {
-      const metadata = await getSingleDoc('productos', 'metadata');
-      const lastUpdateFirestore = (metadata as any)?.lastUpdate?.seconds;
-      if (!lastUpdateProductos || lastUpdateProductos < lastUpdateFirestore) {
-        // console.log('Datos desactualizados, obteniendo productos...');
-        getProductos();
-        setLastUpdate(lastUpdateFirestore);
-      } else {
-        console.log('Products already updated');
-      }
-    } catch (err) {
-      console.log('Error verificando actualización de productos', err);
-    } finally {
-      setLoadingProductos(false);
-    }
-  };
+  // const checkForUpdates = async () => {
+  //   try {
+  //     const metadata = await getSingleDoc('productos', 'metadata');
+  //     const lastUpdateFirestore = (metadata as any)?.lastUpdate?.seconds;
+  //     if (!lastUpdateProductos || lastUpdateProductos < lastUpdateFirestore) {
+  //       // console.log('Datos desactualizados, obteniendo productos...');
+  //       getProductos();
+  //       setLastUpdate(lastUpdateFirestore);
+  //     } else {
+  //       console.log('Products already updated');
+  //     }
+  //   } catch (err) {
+  //     console.log('Error verificando actualización de productos', err);
+  //   } finally {
+  //     setLoadingProductos(false);
+  //   }
+  // };
   const updateProducto = async (
     productID: string,
     newProduct: ProductoType
@@ -74,24 +78,41 @@ const useGetProductos = () => {
       }, [] as string[])
       .filter((p, i, arr) => arr.indexOf(p) === i);
   }, [productos]);
-  // const availableProducts =
-  //   productos?.filter((p) => p.cantidad > 0 && p.stock) || null;
   useEffect(() => {
     if (hasFetched.current) return;
     hasFetched.current = true;
 
     if (productos === null) {
       getProductos();
-    } else {
-      checkForUpdates();
     }
+    // else {
+    //   checkForUpdates();
+    // }
   }, [productos, lastUpdateProductos]);
+  const { data: metadata, loading } = useOnSnapshot('productos', 'metadata');
+  const handleUpdate = async () => {
+    setTimeout(async () => {
+      const lastUpdateUpdated = window.localStorage.getItem(
+        lastUpdateProductosKEY
+      );
+      if (metadata.lastUpdate.seconds !== Number(lastUpdateUpdated)) {
+        await getProductos();
+        setLastUpdate(metadata.lastUpdate.seconds);
+      } else {
+        console.log('Products up to date');
+      }
+    }, 50);
+  };
+  useEffect(() => {
+    if (!loading && metadata) {
+      handleUpdate();
+    }
+  }, [metadata]);
   return {
     loadingProductos,
     setProductos,
     getProductos,
     productos,
-    checkForUpdates,
     updateProducto,
     allPacks,
   };

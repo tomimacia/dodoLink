@@ -68,12 +68,12 @@ const EditUserRol = ({
             bg='blackAlpha.200'
           />
           <ModalHeader>
-            <Heading p={3} fontSize='xl'>
+            <Heading fontSize='xl'>
               Editar Rol
             </Heading>
           </ModalHeader>
           <ModalBody>
-            <Flex flexDir='column' gap={5}>
+            <Flex py={5} gap={3} flexDir='column'>
               <Select
                 onChange={(e) => setSelectedRol(e.target.value as RolType)}
                 name='rol'

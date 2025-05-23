@@ -28,7 +28,7 @@ import CompraDrawer from './CompraDrawer';
 import PopoverInfoIcon from '@/components/inicio/PopoverInfoIcon';
 
 const CobrarForm = ({ onClose }: { onClose: () => void }) => {
-  const { items, resetFilters, checkForUpdates, detalle, cliente, isPago } =
+  const { items, resetFilters, detalle, cliente, isPago } =
     useCobrarFormContext();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
@@ -140,7 +140,7 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
         tramo,
         isRetiro,
       };
-      await checkForUpdates();
+
       await CargarReserva(newMovimiento);
       toast({
         title: 'Éxito',
@@ -208,8 +208,7 @@ const CobrarForm = ({ onClose }: { onClose: () => void }) => {
         items: items.map((i) => formatItem(i)),
         isPago: true,
         vistoPor: [],
-      };
-      await checkForUpdates();
+      };   
       await CargarCompra(newMovimiento);
       toast({
         title: 'Éxito',

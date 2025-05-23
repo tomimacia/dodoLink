@@ -32,7 +32,7 @@ const ConfirmarCompraModal = ({
   const estado = getEstado(movimientos);
   const [items, setItems] = useState<ProductoType[]>(
     pedido.items.map((p) => {
-      return { ...p, isChecked: false };
+      return { ...p, isChecked: pedido?.confirmedItems?.some((cI)=>cI.id === p.id) || false };
     })
   );
   const [cliente, setCliente] = useState(pedido.cliente);

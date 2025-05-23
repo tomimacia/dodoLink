@@ -29,7 +29,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
   const { user, refreshUser } = useUser();
   const { id, movimientos } = currentMov;
   const router = useRouter();
-  const { productos, setProductos, checkForUpdates } = useGetProductos();
+  const { productos, setProductos } = useGetProductos();
   const estado = getEstado(movimientos);
   const toast = useToast();
   const fecha = useMemo(() => {
@@ -166,8 +166,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
         await ActualizarStock(
           newItems,
           productos || [],
-          setProductos,
-          checkForUpdates,
+          setProductos,     
           false
         );
       }
@@ -229,6 +228,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
     const newConfirmed = confirmedItems
       ? [...confirmedItems, ...toUpdate]
       : toUpdate;
+    // const isFinished = newConfirmed.length === items.length
     const FinalPedido = { ...newPedido, confirmedItems: newConfirmed };
     const newEstado = items.some((i) => !i.isChecked)
       ? 'En curso'
@@ -242,13 +242,11 @@ const usePedidosForm = (movimiento: PedidoType) => {
     const cambios = FinalPedido?.movimientos['En curso']?.cambios
       ? [...FinalPedido?.movimientos['En curso']?.cambios, newCambio]
       : [newCambio];
-
     try {
       await ActualizarStock(
         toUpdate,
         productos || [],
-        setProductos,
-        checkForUpdates,
+        setProductos,   
         true
       );
       await setSingleDoc('movimientos', fecha, {
@@ -301,13 +299,6 @@ const usePedidosForm = (movimiento: PedidoType) => {
     const promisesUpdate = productosUpdated.map((p) => {
       const itemFind = items.find((i) => i.id === p?.id);
       if (itemFind) {
-        console.log({ itemFind, items });
-        console.log({
-          items,
-          p,
-          itemFind,
-          cantidad: p?.cantidad - (itemFind?.unidades || 0),
-        });
         return setSingleDoc('productos', p?.id || '', {
           cantidad: p?.cantidad - (itemFind?.unidades || 0),
         });

@@ -1,9 +1,16 @@
 import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { obtenerFechasEntreTimestamps } from '@/helpers/cobros/obtenerFechasEntreTimestamps';
-import { MovimientosType } from '@/types/types';
-import { endOfMonth, getUnixTime, startOfMonth } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { MovimientosType, PedidoType } from '@/types/types';
+import {
+  addMonths,
+  endOfMonth,
+  getUnixTime,
+  startOfMonth,
+  subMonths,
+} from 'date-fns';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useSessionStorage } from '../storageHooks/useSessionStorage';
+import { useToast } from '@chakra-ui/react';
 
 const useGetMovMonthData = (month: number, year: number) => {
   const [monthData, setMonthData] = useSessionStorage<any | null>(
@@ -11,6 +18,7 @@ const useGetMovMonthData = (month: number, year: number) => {
     null
   );
   const [loadingMonthData, setLoadingMonthData] = useState(false);
+  const toast = useToast();
   const getMonthData = async () => {
     setLoadingMonthData(true);
 
@@ -27,47 +35,6 @@ const useGetMovMonthData = (month: number, year: number) => {
       const dayIngresosFetched = (await Promise.all(promises)).filter(
         (t) => t
       ) as MovimientosType[];
-      // let promisesUpdate = [];
-      // const reduced = dayIngresosFetched.reduce((acc: any, it, ind) => {
-      //   const todaySlahDate = dateTexto(new Date().getTime() / 1000).slashDate;
-      //   const isToday = todaySlahDate === it?.id;
-
-      //   let data = it?.metadata;
-      //   if (!data) {
-      //     console.log(it);
-      //     const newData = {
-      //       Total: {
-      //         Habilitado: 0,
-      //         Vencido: 0,
-      //         Inhabilitado: 0,
-      //       },
-      //       PorHora: {
-      //         '7': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '8': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '9': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '10': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '11': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '12': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '13': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '14': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '15': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '16': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '17': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '18': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '19': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '20': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '21': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //         '22': { Habilitado: 0, Vencido: 0, Inhabilitado: 0 },
-      //       },
-      //     };
-      //     data = newData;
-      //     if (!isToday) {
-      //       // console.log('updating data');
-      //     }
-      //   }
-      //   acc[it.id] = it;
-      //   return acc;
-      // }, {});
       setMonthData(dayIngresosFetched);
     } catch (e) {
       console.log(e);
@@ -87,8 +54,38 @@ const useGetMovMonthData = (month: number, year: number) => {
     const final = monthData.map((d: MovimientosType) => d[field]);
     return final.flat();
   };
-  const monthReservas = getSectionData('reservas');
-  const monthCompras = getSectionData('compras');
+  const monthReservas: PedidoType[] = getSectionData('reservas');
+  const monthCompras: PedidoType[] = getSectionData('compras');
+
+  const minusMonth = (date: Date, setDate: Dispatch<SetStateAction<Date>>) => {
+    if (month <= 4)
+      return toast({
+        title: 'No puedes retroceder',
+        description: 'El mes seleccionado es el primero.',
+        status: 'info',
+        duration: 5000,
+        isClosable: true,
+      });
+    setDate(subMonths(date, 1));
+  };
+  const plusMonth = (date: Date, setDate: Dispatch<SetStateAction<Date>>) => {
+    if (
+      month >= new Date().getMonth() &&
+      new Date().getFullYear() === date.getFullYear()
+    )
+      return toast({
+        title: 'No puedes avanzar',
+        description: 'El mes seleccionado es el actual.',
+        status: 'info',
+        duration: 5000,
+        isClosable: true,
+      });
+    setDate(addMonths(date, 1));
+  };
+  const monthHandler = {
+    minusMonth,
+    plusMonth,
+  };
   return {
     monthData,
     monthReservas,
@@ -96,6 +93,7 @@ const useGetMovMonthData = (month: number, year: number) => {
     loadingMonthData,
     getMonthData,
     setMonthData,
+    monthHandler,
   };
 };
 

@@ -15,9 +15,9 @@
     "@fontsource/montserrat": "^5.0.16",
     "@fontsource/raleway": "^5.0.16",
     "@fontsource/roboto-mono": "^5.1.1",
-    "@lottiefiles/dotlottie-react": "^0.12.3",
     "@yudiel/react-qr-scanner": "^2.3.0",
     "axios": "^1.9.0",
+    "d3-scale": "^4.0.2",
     "date-fns": "^3.3.1",
     "firebase": "^10.7.2",
     "framer-motion": "^10.18.0",
@@ -25,7 +25,6 @@
     "nodemailer": "^6.10.1",
     "react": "^18",
     "react-barcode": "^1.6.1",
-    "react-calendar": "^4.8.0",
     "react-day-picker": "^9.5.1",
     "react-dom": "^18",
     "react-firebase-hooks": "^5.1.1",
@@ -35,11 +34,9 @@
     "react-qr-code": "^2.0.15",
     "react-scroll-to-top": "^3.0.0",
     "react-to-print": "^3.1.0",
-    "recharts": "^2.11.0",
-    "zustand": "^5.0.3"
+    "recharts": "^2.11.0"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^18",

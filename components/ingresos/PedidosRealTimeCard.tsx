@@ -1,5 +1,5 @@
 import { PedidoType } from '@/types/types';
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Badge, Button, Flex, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import PedidoBody from './PedidoBody';
@@ -8,7 +8,7 @@ const PedidosRealTimeCard = ({
   pedido,
   delay,
 }: {
-  pedido: PedidoType; 
+  pedido: PedidoType;
   delay: number;
 }) => {
   const { brandColorLigth, brandColorDark } = useThemeColors();
@@ -23,7 +23,7 @@ const PedidosRealTimeCard = ({
         width: '500px',
         maxWidth: '100%',
         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        border: '1px solid #E2E8F0',
+        border: `1px solid #${pedido?.isRetiro ? 'BEBEBE' : 'E2E8F0'}`,
       }}
       initial={{ opacity: 0, x: 20 }}
       exit={{ opacity: 0, x: -20 }}
@@ -34,7 +34,11 @@ const PedidosRealTimeCard = ({
         <Text fontSize='sm' color='gray.500' fontStyle='italic'>
           ID: {id}
         </Text>
-        {pedido?.isRetiro && <Text textDecor='underline' fontSize='sm'>Retiro</Text>}
+        {pedido?.isRetiro && (
+          <Badge alignContent='center' borderRadius={3}>
+            Retiro
+          </Badge>
+        )}
       </Flex>
 
       <PedidoBody pedido={pedido} />

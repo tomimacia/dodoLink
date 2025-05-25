@@ -1,12 +1,7 @@
-import { Flex } from '@chakra-ui/react';
+import IndexDashboard from '@/components/dashboard/Index/IndexDashboard';
 
 const Index = () => {
-  // return <IndexGraphs />;
-  return (
-    <Flex my={3} gap={4} flexDir='column'>
-      Proximamente
-    </Flex>
-  );
+  return <IndexDashboard />;
 };
 
 export default Index;

@@ -26,7 +26,7 @@ const StatCard = ({
       borderRadius='xl'
       shadow='md'
       bg={bg}
-      borderLeft='6px solid'
+      borderLeft='5px solid'
       borderColor={color}
       {...props}
     >

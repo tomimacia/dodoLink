@@ -1,5 +1,5 @@
 import { ProductoType } from '@/types/types';
-import { Flex } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { scaleOrdinal } from 'd3-scale'; // Para asignar colores
 import { Cell, ResponsiveContainer, Tooltip, Treemap } from 'recharts';
 
@@ -37,6 +37,7 @@ export default function TreeMapProductos({
         return {
           name: formatName(item.nombre, customSize), // Aplicamos la truncación según las unidades
           realName: item.nombre,
+          medida: item.medida,
           size: customSize, // Aplicamos la escala logarítmica para el tamaño visual
           realSize: item.unidades || 0, // Guardamos el tamaño real para mostrar en el tooltip
           color: colorScale(index.toString()), // Asignamos un color único
@@ -46,7 +47,18 @@ export default function TreeMapProductos({
   };
 
   return (
-    <Flex w='100%' h={500} p={1}>
+    <Flex
+      flexDir='column'
+      w='100%'
+      h={500}
+      p={4}
+      shadow='md'
+      borderRadius='xl'
+      overflow='visible'
+    >
+      <Text mb={3} fontWeight='bold'>
+        Productos utilizados
+      </Text>
       <ResponsiveContainer>
         <Treemap
           width={400}
@@ -67,13 +79,25 @@ export default function TreeMapProductos({
                     padding: '10px',
                     borderRadius: '5px',
                     color: '#fff',
+                    maxWidth: '350px',
                   }}
                 >
                   <h5 style={{ margin: '0 0 10px' }}>{item?.realName}</h5>
                   {item?.size === item?.realSize ? (
-                    <p style={{ margin: 0 }}>Unidades: {item?.realSize}</p>
+                    <Text>
+                      <b>
+                        {item?.realSize} {item?.medida}
+                      </b>
+                    </Text>
                   ) : (
-                    <p style={{ margin: 0 }}>Packs: {item?.size}</p>
+                    <div>
+                      <Text fontSize='md'>
+                        <b>{item?.size} Pack/s</b>
+                      </Text>
+                      <Text fontSize='sm'>
+                        {item?.realSize} {item?.medida}
+                      </Text>
+                    </div>
                   )}
                   {/* Mostrar el valor real en el Tooltip */}
                 </div>

@@ -36,7 +36,7 @@ const DuracionesChart = ({
   return (
     <Box
       w='100%'
-      maxW='700px'
+      minW='250px'
       p={4}
       shadow='md'
       borderRadius='xl'

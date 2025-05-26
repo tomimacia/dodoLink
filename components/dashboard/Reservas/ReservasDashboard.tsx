@@ -105,7 +105,11 @@ const ReservasDashboard = () => {
         goNext={() => plusMonth(date, setDate)}
         title={`${TimeData.meses[date.getMonth()]} - ${date.getFullYear()}`}
       />
-      <Flex flexWrap='wrap' gap={3}>
+      <Flex
+        w='100%'
+        flexDir={['column', 'column', 'column', 'row', 'row']}
+        gap={3}
+      >
         <DuracionesChart
           max={200}
           barData={barData}
@@ -119,12 +123,7 @@ const ReservasDashboard = () => {
           colores={colores}
         />
       </Flex>
-      <Flex gap={2} flexDir='column'>
-        <Text mb={3} fontWeight='bold'>
-          Duraciones relevantes (Top 20)
-        </Text>
-        <TreeMapProductos productos={reducedItems} />
-      </Flex>
+      <TreeMapProductos productos={reducedItems} />
     </Flex>
   );
 };

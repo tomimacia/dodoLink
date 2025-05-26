@@ -71,16 +71,7 @@ const CobrarForm = ({
   };
   const ConfirmarReserva = async () => {
     setLoading(true);
-    const isValidated = ConfirmValidation(
-      detalle,
-      cliente,
-      items.length === 0,
-      toast
-    );
-    if (!isValidated) {
-      setLoading(false);
-      return;
-    }
+
     if (hasTramo && !tramo) {
       toast({
         title: 'Error',
@@ -168,16 +159,6 @@ const CobrarForm = ({
   };
   const ConfirmarCompra = async () => {
     setLoading(true);
-    const isValidated = ConfirmValidation(
-      detalle,
-      cliente,
-      items.length === 0,
-      toast
-    );
-    if (!isValidated) {
-      setLoading(false);
-      return;
-    }
     const movimientos = {
       Inicializado: {
         fecha: Timestamp.now(),
@@ -235,6 +216,15 @@ const CobrarForm = ({
   };
   const ConfirmarMovimiento = async () => {
     confirmButtonRef.current?.blur();
+    const isValidated = ConfirmValidation(
+      detalle,
+      cliente,
+      items.length === 0 || items.every((i) => i.unidades === 0),
+      toast
+    );
+    if (!isValidated) {
+      return;
+    }
     isPago ? ConfirmarCompra() : ConfirmarReserva();
   };
   return (

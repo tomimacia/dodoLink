@@ -30,7 +30,7 @@ export const ConfirmValidation = (
   if (itemsZero) {
     toast({
       title: 'Error',
-      description: 'Debe agregar al menos un producto',
+      description: 'Debes agregar al menos un producto',
       status: 'error',
       duration: 3000,
       isClosable: true,

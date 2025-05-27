@@ -114,7 +114,7 @@ const AddProducto = () => {
         nanoseconds,
       };
       const newProducto = {
-        nombre,
+        nombre: nombre.toUpperCase(),
         codigo: codigos,
         cantidad: Number(cantidad) || 0,
         medida,

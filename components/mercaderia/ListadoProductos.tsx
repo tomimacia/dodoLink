@@ -19,13 +19,13 @@ import {
   Tr,
   useToast,
 } from '@chakra-ui/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { MdCancel, MdCheckBox, MdDelete } from 'react-icons/md';
 import ReactLoading from 'react-loading';
 import DeleteModal from '../DeleteModal';
 import PaginationControl from '../reservas/PaginationControl';
 import ProductoModal from './Editar/ProductoModal';
-import { AnimatePresence, motion } from 'framer-motion';
 const ListadoProductos = () => {
   const {
     productos,
@@ -97,6 +97,7 @@ const ListadoProductos = () => {
     totalPages,
     handlePageChange,
   } = usePagination(filteredProductos, itemsPerPage, true);
+
   return (
     <Flex flexDir='column' gap={3} mt={3}>
       <Flex

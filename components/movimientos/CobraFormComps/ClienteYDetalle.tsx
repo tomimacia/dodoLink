@@ -17,9 +17,9 @@ const ClienteYDetalle = ({ isPago }: { isPago: boolean }) => {
     >
       <Flex w='100%' gap={2} flexDir='column'>
         <FormControl isRequired>
-          <FormLabel> {!isPago ? 'Cliente' : 'Nombre de la Compra'}</FormLabel>
+          <FormLabel> {!isPago ? 'Servicio' : 'Nombre de la Compra'}</FormLabel>
           <Input
-            placeholder={!isPago ? 'Datos de Cliente' : 'Agregar nombre'}
+            placeholder={!isPago ? 'Datos de Servicio' : 'Agregar nombre'}
             borderRadius={5}
             borderColor='gray'
             maxW='300px'

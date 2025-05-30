@@ -14,21 +14,19 @@ import {
   useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
+import NextLink from 'next/link';
 
 const NotificationButton = () => {
-  const { reservas, compras } = useOnCurso();
+  const { reservas, compras, notas } = useOnCurso();
   const reservasYCompras = [...(reservas || []), ...(compras || [])];
   const { user } = useUser();
-  const notificationsUnseen =
-    reservasYCompras?.filter((r) => {
-      const noVisto = !r.vistoPor.some((v) => v === user?.id);
-      const puedeVer =
-        (getEstado(r.movimientos) === 'Pendiente' && !r.isRetiro) ||
-        CheckAdminRol(user?.rol);
-
-      return noVisto && puedeVer;
+  const notasToShow =
+    notas?.filter((r) => {
+      const puedeVer = CheckAdminRol(user?.rol);
+      return puedeVer;
     }) || [];
+  const notasUnseen =
+    notasToShow?.filter((r) => !r.vistoPor.some((v) => v === user?.id)) || [];
   const notificationsToShow =
     reservasYCompras?.filter((r) => {
       const puedeVer =
@@ -36,8 +34,13 @@ const NotificationButton = () => {
         CheckAdminRol(user?.rol);
       return puedeVer;
     }) || [];
-  const { push } = useRouter();
-
+  const notificationsUnseen =
+    notificationsToShow?.filter((r) => {
+      const noVisto = !r.vistoPor.some((v) => v === user?.id);
+      return noVisto;
+    }) || [];
+  const toShow = [...notificationsToShow, ...notasToShow];
+  const unseen = [...notasUnseen, ...notificationsUnseen];
   const customImageColor = useColorModeValue('#FFF', 'gray.700');
   const customImageGray = useColorModeValue('gray.100', 'gray.600');
   const customImageBG = useColorModeValue('gray.700', '#FFF');
@@ -45,7 +48,7 @@ const NotificationButton = () => {
 
   return (
     <Flex pos='relative'>
-      {notificationsUnseen.length > 0 && (
+      {unseen.length > 0 && (
         <Box
           pos='absolute'
           top={-1}
@@ -62,7 +65,7 @@ const NotificationButton = () => {
           zIndex={1}
           pointerEvents='none'
         >
-          {notificationsUnseen.length}
+          {unseen.length}
         </Box>
       )}
       <Menu>
@@ -83,23 +86,27 @@ const NotificationButton = () => {
           fontSize='sm'
           boxShadow='rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 5px 10px, rgba(0, 0, 0, 0.4) 0px 5px 40px'
         >
-          {notificationsToShow.map((n, ind) => {
+          {toShow.map((n, ind) => {
             const noVisto = !n.vistoPor?.includes(user?.id || '');
             return (
               <MenuItem
-                onClick={() => push(`/PedidosID/${n.id}`)}
+                as={NextLink}
+                href={`/PedidosID/${n.id}`}
                 key={`notification-key-${n.id}-${ind}`}
                 fontWeight={noVisto ? 'bold' : 'normal'}
                 bg={noVisto ? customImageGray : 'transparent'}
                 _hover={{
                   color: 'black',
                   bg: noVisto ? 'gray.200' : 'gray.100',
+                  textDecor: 'none',
                 }}
                 display='flex'
                 justifyContent='space-between'
                 my={1}
               >
-                <Box>{`${n.isPago ? 'Compra' : 'Reserva'} - ${n.cliente}`}</Box>
+                <Box>{`${
+                  n.isNota ? 'Nota' : n.isPago ? 'Compra' : 'Reserva'
+                } - ${n.cliente}`}</Box>
 
                 {noVisto && (
                   <Box
@@ -114,7 +121,7 @@ const NotificationButton = () => {
               </MenuItem>
             );
           })}
-          {notificationsToShow.length === 0 && (
+          {toShow.length === 0 && (
             <MenuItem bg='transparent' cursor='default'>
               No tienes notificaciones
             </MenuItem>

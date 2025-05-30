@@ -1,7 +1,7 @@
 import { useCobrarFormContext } from '@/context/useCobrarFormContext';
 import { useUser } from '@/context/userContext';
+import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import {
-  CargarCompra,
   CargarReserva,
   ConfirmValidation,
 } from '@/helpers/cobros/ConfirmFunctions';
@@ -21,14 +21,27 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { Timestamp } from 'firebase/firestore';
-import { useRef, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
 import ProductosTable from '../movimientos/CobraFormComps/ProductosTable';
 import TitleSearchYItem from '../movimientos/CobraFormComps/TitleSearchYItem';
 import MapEmbed from '../movimientos/EmbedMap';
 
 const CargaReservaFormPage = () => {
+  const { query } = useRouter();
+  const { id, servicio, nota, mapCoords } = query ?? {};
   const { items, resetFilters, setCliente, setDetalle, detalle, cliente } =
     useCobrarFormContext();
+  useEffect(() => {
+    if (id && servicio && nota) {
+      setCliente(`AJUSTE: ${servicio}`);
+      const parsedNota = JSON.parse(nota as string);
+      setDetalle(['NOTA:', ...parsedNota].join('\n'));
+    }
+    if (mapCoords) {
+      setEmbed(mapCoords as string);
+    }
+  }, []);
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -136,7 +149,13 @@ const CargaReservaFormPage = () => {
         vistoPor: [],
         tramo: hasTramo ? tramo : null,
       };
-      await CargarReserva(newMovimiento);
+      let newNotas = null;
+      if (id) {
+        const enCurso = (await getSingleDoc('movimientos', 'enCurso')) as any;
+        newNotas = (enCurso?.notas || []).filter((n: any) => n.id !== id);
+      }
+      await CargarReserva(newMovimiento, newNotas);
+
       toast({
         title: 'Éxito',
         description: 'Reserva cargada exitosamente',
@@ -168,11 +187,18 @@ const CargaReservaFormPage = () => {
 
   return (
     <Flex p={[1, 2, 2, 3, 3]} minH='50vh' maxW='700px' gap={5} flexDir='column'>
-      <Heading as='h2' fontSize={24}>
-        Carga de Reserva
-      </Heading>
+      <Flex flexDir='column'>
+        <Heading as='h2' fontSize={24}>
+          Carga de Reserva
+        </Heading>
+        {servicio && (
+          <Text fontSize='sm' fontStyle='italic'>
+            Enmienda de reserva "{servicio}"
+          </Text>
+        )}
+      </Flex>
       <FormControl isRequired>
-        <FormLabel>Cliente</FormLabel>
+        <FormLabel>Servicio</FormLabel>
         <Input
           placeholder='Agregar nombre'
           borderRadius={5}

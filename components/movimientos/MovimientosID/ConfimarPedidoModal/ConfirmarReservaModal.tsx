@@ -43,6 +43,7 @@ const ConfirmarReservaModal = ({
   const estado = getEstado(movimientos);
   const [items, setItems] = useState<ProductoType[]>(pedido.items);
   const [sobrantes, setSobrantes] = useState<ProductoType[]>([]);
+  const [nota, setNota] = useState('');
   const [cliente, setCliente] = useState(pedido.cliente);
   const [detalle, setDetalle] = useState(pedido.detalle.join('\n'));
   const [tramo, setTramo] = useState(pedido.tramo);
@@ -94,6 +95,7 @@ const ConfirmarReservaModal = ({
       tramo,
       items,
       mapCoords,
+      nota: nota ? nota.split('\n') : [],
     };
 
     await update(newPedido, items, sobrantes);
@@ -166,6 +168,7 @@ const ConfirmarReservaModal = ({
               tramoHandler={[tramo, setTramo]}
               mapCoordsHandler={[mapCoords, setMapCoords]}
               sobrantesHandler={[sobrantes, setSobrantes]}
+              notaHandler={[nota, setNota]}
               volverAInicializado={volverAInicializadoFInal}
               loading={loading}
               isRetiro={pedido?.isRetiro}

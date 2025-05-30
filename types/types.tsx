@@ -1,14 +1,7 @@
-import { Timestamp } from 'firebase/firestore';
 import { ReactNode } from 'react';
 
 export type MainLayoutType = {
   children: ReactNode;
-};
-
-export type NavLinkType = {
-  title: string;
-  href: string;
-  onClick?: () => void;
 };
 export type TextAndInputType = {
   name: string;
@@ -109,10 +102,12 @@ export type PedidoType = {
   creadorID: string;
   mapCoords: string;
   vistoPor: string[];
+  nota?: string[];
   items: ProductoType[];
   tramo: number | null;
   confirmedItems?: ProductoType[];
   isRetiro: boolean;
+  isNota?: boolean;
 };
 export type MedidaType = 'Un.' | 'Kg.' | 'Mt.';
 export type ProductoType = {
@@ -132,81 +127,25 @@ export type ProductoType = {
   categoria: string;
   packs: string[];
 };
-export type DestinatarioType = 'Cliente' | 'Consumidor Final';
-export type TipoDePagoType = 'Efectivo' | 'Mercadopago';
+export type NotaType = {
+  id: string;
+  cliente: string;
+  nota: string[];
+  createdAt: Date;
+  creadorID: string;
+  isNota: true;
+  vistoPor: string[];
+};
 export type SubNavItemType = {
   label: string;
   route: string;
   roles: readonly RolType[];
   icon?: React.ComponentType; // Opcional: si hay un icono para la subruta
 };
-
-export type RouteType = {
-  label: string;
-  route: string;
-  iconFilled: React.ComponentType;
-  iconEmpty: React.ComponentType;
-  roles: readonly RolType[];
-  subRoutes?: readonly SubNavItemType[]; // Subrutas opcionales
-};
-export type IngresoType = {
-  creadorID: string;
-  isPago: boolean;
-  items: ProductoType[];
-  tipoDePago: TipoDePagoType;
-  destinatario: DestinatarioType;
-  cliente: PedidoType | null;
-  total: number;
-  fecha: {
-    seconds: number;
-    nanoseconds: number;
-  };
-  pagoParcial: number | null;
-};
 export type MovimientosType = {
   reservas: PedidoType[];
   compras: PedidoType[];
+  notas: NotaType[];
   fecha: string;
-  id: string;
-};
-export type MontoInicialCajaType = {
-  Efectivo: number;
-  Mercadopago: number;
-};
-export type CierreDeCajaType = {
-  cierre: Timestamp;
-  apertura: Timestamp;
-  montoFinal: TotalCajaType;
-  montoInicial: MontoInicialCajaType;
-  creadorID: string;
-};
-export type CajaType = {
-  isOpen: boolean;
-  apertura: {
-    seconds: number;
-    nanoseconds: number;
-  };
-  montoInicial: MontoInicialCajaType;
-  id: string;
-};
-export type DataSectionType = {
-  movimientos: IngresoType[] | undefined;
-  total: number;
-};
-
-export type MovimientosDataType = {
-  Efectivo: DataSectionType;
-  Mercadopago: DataSectionType;
-  Total: number | undefined;
-};
-export type TotalCajaType = {
-  Ingresos: number;
-  Egresos: number;
-  Neto: number;
-  NetoEfectivo: number;
-  NetoMercadopago: number;
-};
-export type MovMetadataType = {
-  cierresDeCaja: CierreDeCajaType[];
   id: string;
 };

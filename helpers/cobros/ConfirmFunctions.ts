@@ -1,7 +1,7 @@
 import { sendMailAndTelegram } from '@/alerts/sendMailAndTelegram';
 import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
-import { ProductoType } from '@/types/types';
+import { NotaType, ProductoType } from '@/types/types';
 import { arrayUnion } from 'firebase/firestore';
 import dateTexto from '../dateTexto';
 import updateProductosLastStamp from '../updateProductosLastStamp';
@@ -40,7 +40,10 @@ export const ConfirmValidation = (
 
   return true;
 };
-export const CargarReserva = async (newMovimiento: any) => {
+export const CargarReserva = async (
+  newMovimiento: any,
+  newNotas?: NotaType[]
+) => {
   const { Inicializado } = newMovimiento?.movimientos;
   const fechaHoy = dateTexto(Inicializado.fecha.seconds).slashDate;
   const id = createID(fechaHoy);
@@ -57,9 +60,15 @@ export const CargarReserva = async (newMovimiento: any) => {
       reservas: arrayUnion(finalMov),
     });
   }
-  await setSingleDoc('movimientos', 'enCurso', {
+  const enCursoPayload: any = {
     reservas: arrayUnion(finalMov),
-  });
+  };
+
+  if (newNotas) {
+    enCursoPayload.notas = newNotas;
+  }
+
+  await setSingleDoc('movimientos', 'enCurso', enCursoPayload);
 };
 export const CargarCompra = async (newMovimiento: any) => {
   const { Inicializado } = newMovimiento?.movimientos;
@@ -85,10 +94,10 @@ export const CargarCompra = async (newMovimiento: any) => {
 export const ActualizarStock = async (
   items: ProductoType[],
   productos: ProductoType[],
-  setProductos: (newProductos: ProductoType[]) => void, 
+  setProductos: (newProductos: ProductoType[]) => void,
   isPago: boolean
 ) => {
-  if (items.length === 0) return; 
+  if (items.length === 0) return;
   const promises = items.map((i) => {
     // Eliminamos 'unidades' del objeto
     const newCantidad = isPago

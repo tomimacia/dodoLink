@@ -2,12 +2,18 @@ import CopyButton from '@/components/CopyButton';
 import DeleteModal from '@/components/DeleteModal';
 import EstadoStepsReserva from '@/components/movimientos/MovimientosID/EstadoStepsReserva';
 import NotAuthorized from '@/components/Navigation/NotAuthorized';
+import NotFoundPage from '@/components/NotFoundPage';
 import { CheckAdminRol } from '@/data/data';
 import dateTexto from '@/helpers/dateTexto';
 import { scrollIntoTheView } from '@/helpers/scrollIntoTheView';
 import usePedidosForm from '@/hooks/usePedidosForm';
-import { PedidoType, ProductoType } from '@/types/types';
+import { NotaType, PedidoType, ProductoType } from '@/types/types';
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  Divider,
   Flex,
   Heading,
   IconButton,
@@ -16,13 +22,17 @@ import {
   Tooltip,
   useColorModeValue,
 } from '@chakra-ui/react';
+import Link from 'next/link';
+import { Fragment, useState } from 'react';
 import { MdLocationPin } from 'react-icons/md';
 import MapEmbed from '../EmbedMap';
 import ConfirmarReservaModal from './ConfimarPedidoModal/ConfirmarReservaModal';
 import QRCodeLabel from './QRCodeLabel';
 import VerMovimientosModal from './VerMovimientosModal';
-import { Fragment } from 'react';
-import NotFoundPage from '@/components/NotFoundPage';
+import useGetUsers from '@/hooks/users/useGetUsers';
+import { getSingleDoc } from '@/firebase/services/getSingleDoc';
+import { setSingleDoc } from '@/firebase/services/setSingleDoc';
+import { useRouter } from 'next/router';
 
 const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
   const {
@@ -48,9 +58,18 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
     mapCoords,
     movimientos,
     tramo,
-  } = currentMov;
+    nota,
+  } = currentMov ?? {};
+  const [loadingNota, setLoadingNota] = useState(false);
   const customGrayBG = useColorModeValue('gray.50', 'gray.700');
   const customGray = useColorModeValue('gray.600', 'gray.200');
+  const alertColors = {
+    color: useColorModeValue('yellow.800', 'white'),
+    bg: useColorModeValue('yellow.50', 'yellow.800'),
+    variant: useColorModeValue('solid', 'outline'),
+  };
+  const router = useRouter();
+  const { users } = useGetUsers();
   // Check si el usuario tiene el pedido en curso para Cuadrilla
   const hasReserva = movimientos?.['En curso'].admin === user?.id;
   const isCuadrilla = !CheckAdminRol(user?.rol);
@@ -69,10 +88,32 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
   ) {
     return <NotAuthorized />;
   }
-
   const showDelete =
     user?.rol === 'Superadmin' ||
     ['En curso', 'Finalizado'].every((e) => e !== estado);
+  const lastUser = users?.find((u) => u.id === movimientos[estado].admin);
+  const handleNota = async () => {
+    setLoadingNota(true);
+    try {
+      const enCurso = (await getSingleDoc('movimientos', 'enCurso')) as any;
+      const newNotas = enCurso.notas.map((n: NotaType) => {
+        if (n.id === id) return { ...n, vistoPor: [...n.vistoPor, user?.id] };
+        return n;
+      });
+      await setSingleDoc('movimientos', 'enCurso', {
+        notas: newNotas,
+      });
+      router.push(
+        `/Reservas/Carga?id=${id}&servicio=${cliente}&nota=${JSON.stringify(
+          nota
+        )}${mapCoords && `&mapCoords=${mapCoords}`}`
+      );
+    } catch (e: any) {
+      console.error(e.message);
+    } finally {
+      setLoadingNota(false);
+    }
+  };
   return (
     <Flex gap={5} flexDir='column'>
       <Stack spacing={1}>
@@ -108,7 +149,11 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
           {dateTexto(movimientos?.Inicializado?.fecha.seconds, true).numDate} -{' '}
           {dateTexto(movimientos?.Inicializado?.fecha.seconds).hourDate} HS
         </Text>
-
+        {lastUser && (
+          <Text fontSize='sm'>
+            <b>Último movimiento:</b> {lastUser?.nombre} {lastUser?.apellido}
+          </Text>
+        )}
         {tramo !== 0 && tramo && (
           <Text fontSize='sm'>
             <b>Tramo:</b> {tramo} Mts.
@@ -123,6 +168,54 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
           pedido={currentMov}
         />
       </Flex>
+
+      {nota && nota.length > 0 && (
+        <Alert
+          status='warning'
+          variant='left-accent'
+          borderRadius='md'
+          boxShadow='lg'
+          p={5}
+          bg={alertColors.bg}
+          color={alertColors.color}
+          flexDirection='column'
+          alignItems='flex-start'
+          gap={3}
+        >
+          <Flex flexDir='column' gap={1}>
+            <Flex align='center' gap={2}>
+              <AlertIcon />
+              <AlertTitle fontSize='lg' fontWeight='bold'>
+                Nota de la reserva
+              </AlertTitle>
+            </Flex>
+            {lastUser && (
+              <Text fontStyle='italic' textDecor='underline' fontSize='sm'>
+                {lastUser?.nombre} {lastUser?.apellido}
+              </Text>
+            )}
+          </Flex>
+          <Divider />
+          <Flex flexDir='column' gap={1}>
+            {nota.map((linea, i) => (
+              <Text key={i}>{linea}</Text>
+            ))}
+          </Flex>
+
+          <Button
+            onClick={handleNota}
+            mt={3}
+            isLoading={loadingNota}
+            colorScheme='yellow'
+            variant={alertColors.variant}
+            size='sm'
+            alignSelf='flex-end'
+          >
+            Cargar nueva reserva
+          </Button>
+        </Alert>
+      )}
+
       <Flex flexDir='column' gap={2}>
         <Heading fontWeight='normal' as='h2' size='md'>
           Detalle

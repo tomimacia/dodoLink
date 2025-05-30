@@ -3,8 +3,11 @@ import { extractSrcFromIframe } from '@/helpers/extractSrcFromIframe';
 import { EstadoType, ProductoType } from '@/types/types';
 import { DeleteIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
+  ButtonGroup,
   Checkbox,
+  Collapse,
   Divider,
   Flex,
   FormControl,
@@ -50,6 +53,7 @@ const ModalBodyBottomPart = ({
   mapCoordsHandler,
   sobrantesHandler,
   productos,
+  notaHandler,
   volverAInicializado,
   loading,
   isRetiro,
@@ -59,6 +63,7 @@ const ModalBodyBottomPart = ({
   itemsHandler: ItemsHandlerType;
   clienteHandler: StringHandler;
   detalleHandler: StringHandler;
+  notaHandler: StringHandler;
   tramoHandler: NumberHandler;
   mapCoordsHandler: StringHandler;
   sobrantesHandler: [
@@ -78,6 +83,8 @@ const ModalBodyBottomPart = ({
   const [embedValue, setEmbedValue] = useState('');
   const [mapCoords, setMapCoords] = mapCoordsHandler;
   const [sobrantes, setSobrantes] = sobrantesHandler;
+  const [agregarNota, setAgregarNota] = useState(false);
+  const [nota, setNota] = notaHandler;
   const customGrayBG = useColorModeValue('gray.700', 'gray.500');
   const toast = useToast();
   const [loadingNew, setLoadingNew] = useState(false);
@@ -485,6 +492,53 @@ const ModalBodyBottomPart = ({
                 );
               })}
             </UnorderedList>
+            <Divider />
+            <Box>
+              <Flex
+                as={FormControl}
+                gap={3}
+                align='center'
+                p={3}
+                borderRadius='lg'
+                boxShadow='sm'
+                w='fit-content'
+                border='1px solid #EEEEEE'
+                transition='all 0.2s'
+                _hover={{ boxShadow: '0 0 3px' }}
+                cursor='pointer'
+                onClick={() =>
+                  setAgregarNota((prev) => {
+                    if (prev) {
+                      setNota('');
+                    }
+                    return !prev;
+                  })
+                }
+              >
+                <Text cursor='pointer' mb='0' fontWeight='medium'>
+                  ¿Deseás agregar una nota?
+                </Text>
+                <Switch
+                  isChecked={agregarNota}
+                  onChange={() => {}} // vacío porque usamos onClick en el contenedor
+                  pointerEvents='none' // evita conflicto con el click del contenedor
+                />
+              </Flex>
+
+              <Collapse in={agregarNota} animateOpacity>
+                <Box mt={3}>
+                  <FormControl>
+                    <FormLabel>Nota</FormLabel>
+                    <Textarea
+                      placeholder='Escribí una nota opcional...'
+                      value={nota}
+                      minH={150}
+                      onChange={(e) => setNota(e.target.value)}
+                    />
+                  </FormControl>
+                </Box>
+              </Collapse>
+            </Box>
           </Flex>
         ))}
     </>

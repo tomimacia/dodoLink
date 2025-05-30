@@ -11,6 +11,7 @@ import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import {
   Estados,
   MovimientosType,
+  NotaType,
   PedidoType,
   ProductoType,
 } from '@/types/types';
@@ -21,7 +22,7 @@ import { useEffect, useMemo, useState } from 'react';
 import useGetProductos from './data/useGetProductos';
 
 const usePedidosForm = (movimiento: PedidoType) => {
-  const { reservas, compras } = useOnCurso();
+  const { reservas, compras, notas } = useOnCurso();
   const { onOpen, onClose, isOpen } = useDisclosure();
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -180,6 +181,25 @@ const usePedidosForm = (movimiento: PedidoType) => {
         ),
       });
       disclosure.onClose();
+      const newNotas = [...(notas as NotaType[])];
+      const { cliente, nota, creadorID } = updatedPedido ?? {};
+      // Verificamos si hay una nueva nota para agregar
+      const hasNota =
+        updatedPedido && updatedPedido?.nota && updatedPedido?.nota?.length > 0;
+      if (hasNota) {
+        const nuevaNota: NotaType = {
+          id, // Generamos un nuevo ID único para la nota
+          cliente: cliente || '', // Tomamos el cliente de updatedPedido
+          nota: nota || [], // El contenido de la nota (array de strings)
+          createdAt: new Date(), // Fecha de creación (hora actual)
+          creadorID: creadorID || user?.id || '', // ID del creador, o "desconocido" si no está disponible
+          vistoPor: [],
+          isNota: true,
+        };
+
+        // Añadimos la nueva nota al array de notas
+        newNotas.push(nuevaNota);
+      }
       await setSingleDoc('movimientos', 'enCurso', {
         reservas:
           newEstado === 'Finalizado'
@@ -192,6 +212,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
                 sobrantes,
                 user?.id
               ),
+        ...(hasNota && { notas: newNotas }), // Solo si hay notas, agregamos al objeto de actualización
       });
       toast({
         title: 'Éxito',

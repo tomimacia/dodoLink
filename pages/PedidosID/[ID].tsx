@@ -89,9 +89,9 @@ const MovimientoID = ({ movimiento }: { movimiento: PedidoType | null }) => {
       />
     );
   if (movimiento.isPago)
-    return <MovimientoCardCompra movimiento={movimiento} />;
+    return <MovimientoCardCompra key={movimiento.id} movimiento={movimiento} />;
 
-  return <MovimientoCardReserva movimiento={movimiento} />;
+  return <MovimientoCardReserva key={movimiento.id} movimiento={movimiento} />;
 };
 
 export default MovimientoID;

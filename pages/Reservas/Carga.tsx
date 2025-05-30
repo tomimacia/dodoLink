@@ -4,7 +4,7 @@ import { FormProvider } from '@/context/useCobrarFormContext';
 const Alta = () => {
   return (
     <FormProvider>
-      <CargaReservaFormPage />;
+      <CargaReservaFormPage />
     </FormProvider>
   );
 };

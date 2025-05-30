@@ -193,7 +193,7 @@ const CargaReservaFormPage = () => {
         </Heading>
         {servicio && (
           <Text fontSize='sm' fontStyle='italic'>
-            Enmienda de reserva "{servicio}"
+            Enmienda de reserva &quot;{servicio}&quot;
           </Text>
         )}
       </Flex>

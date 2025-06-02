@@ -30,6 +30,7 @@ const ComprasDashboard = () => {
     retiros: '#2269F3',
     duracion: '#F97316',
   };
+  console.log({ promedioSegundos });
   const { minusMonth, plusMonth } = monthHandler;
   const resservasStatsData = [
     {
@@ -39,7 +40,9 @@ const ComprasDashboard = () => {
     },
     {
       label: 'Duración Promedio',
-      value: `${formatSecondsToHHMMSS(promedioSegundos)} hs`,
+      value: isNaN(promedioSegundos)
+        ? 'Sin datos'
+        : `${formatSecondsToHHMMSS(promedioSegundos)} hs`,
       color: colores.duracion,
     },
   ];

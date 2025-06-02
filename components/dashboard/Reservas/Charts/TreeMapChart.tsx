@@ -92,7 +92,7 @@ export default function TreeMapProductos({
                   ) : (
                     <div>
                       <Text fontSize='md'>
-                        <b>{item?.size} Pack/s</b>
+                        <b>{item?.size.toFixed(2) / 1} Pack/s</b>
                       </Text>
                       <Text fontSize='sm'>
                         {item?.realSize} {item?.medida}

@@ -66,7 +66,9 @@ const ReservasDashboard = () => {
     },
     {
       label: 'Duración Promedio',
-      value: `${formatSecondsToHHMMSS(promedioSegundos)} hs`,
+      value: isNaN(promedioSegundos)
+        ? 'Sin datos'
+        : `${formatSecondsToHHMMSS(promedioSegundos)} hs`,
       color: colores.duracion,
     },
   ];
@@ -84,7 +86,6 @@ const ReservasDashboard = () => {
       );
     return items;
   }, []);
-  console.log(reducedItems);
   return (
     <Flex direction='column' gap={4}>
       <Button

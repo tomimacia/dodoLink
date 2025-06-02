@@ -15,15 +15,22 @@ const ReservasPieChart = ({
   loading: boolean;
 }) => {
   return (
-    <Flex flexDir='column' maxW='300px' p={4} shadow='md' borderRadius='xl'>
+    <Flex
+      flexDir='column'
+      minW='200px'
+      maxW='300px'     
+      p={2}
+      shadow='md'
+      borderRadius='xl'
+    >
       <Text mb={3} fontWeight='bold'>
-        Proporción Reservas / Retiros
+        Reservas / Retiros
       </Text>
       <Flex my='auto'>
         {loading ? (
           <Box h={180} />
         ) : (
-          <ResponsiveContainer width='100%' height={180}>
+          <ResponsiveContainer width='100%' height={250}>
             <PieChart>
               <Pie
                 data={pieData}

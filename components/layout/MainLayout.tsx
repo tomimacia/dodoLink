@@ -67,6 +67,7 @@ const Layout = ({ children }: MainLayoutType) => {
         <link href={`${CurrentURL}favicon.ico`} rel='apple-touch-icon' />
         <link rel='icon' href='/HeaderLogo.png' />
       </Head>
+      <ScrollToTop title='Ir arriba' style={{ padding: '6px' }} smooth />
       <Flex
         flexDir='column'
         minH='100vh'
@@ -77,7 +78,6 @@ const Layout = ({ children }: MainLayoutType) => {
       >
         <Navbar setOpen={onOpen} />
         <SideNavMobile open={isOpen} onClose={onClose} />
-        <ScrollToTop title='Ir arriba' style={{ padding: '6px' }} smooth />
         {isOnline && <MainChildren>{children}</MainChildren>}
         <Footer />
       </Flex>

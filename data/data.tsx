@@ -9,6 +9,7 @@ import {
   IoStatsChart,
   IoStatsChartOutline,
 } from 'react-icons/io5';
+import { PiUsersThreeFill, PiUsersThreeLight } from 'react-icons/pi';
 import { TiClipboard } from 'react-icons/ti';
 export const Routes = [
   {
@@ -17,6 +18,14 @@ export const Routes = [
     iconFilled: IoHomeSharp,
     iconEmpty: IoHomeOutline,
     roles: ['Admin', 'Superadmin', 'Supervisor', 'Cuadrilla'],
+    subRoutes: [],
+  },
+  {
+    label: 'Clientes',
+    route: 'Clientes',
+    iconFilled: PiUsersThreeFill,
+    iconEmpty: PiUsersThreeLight,
+    roles: ['Admin', 'Superadmin', 'Supervisor'],
     subRoutes: [],
   },
   {

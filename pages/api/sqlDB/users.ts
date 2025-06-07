@@ -1,0 +1,20 @@
+// pages/api/users.js
+import db from '@/lib/db'; // Asegurate que esta ruta coincida con donde guardaste db.js
+import { NextApiRequest, NextApiResponse } from 'next';
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ message: 'Método no permitido' });
+  }
+
+  try {
+    const [users] = await db.query('SELECT * FROM tblusers');
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error al obtener clientes:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+}

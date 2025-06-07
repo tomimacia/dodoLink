@@ -9,8 +9,10 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { FiExternalLink } from 'react-icons/fi';
 import ReactLoading from 'react-loading';
 interface ClienteData {
   cliente: any;
@@ -46,7 +48,7 @@ const ClientePage = () => {
   }, [ID]);
 
   const { cliente, hostings, orders, productos } = clientData || {};
-
+  console.log(productos);
   if (loading) {
     return (
       <Flex maxW='700px' my={10} justify='center'>
@@ -73,9 +75,16 @@ const ClientePage = () => {
     <Box p={10}>
       {/* Datos del cliente */}
       <Box mb={8} p={6} borderRadius='xl' boxShadow='md'>
-        <Heading size='lg' mb={1}>
-          {cliente?.first_name} {cliente?.last_name}
-        </Heading>
+        <Flex justify='space-between'>
+          <Heading size='lg' mb={1}>
+            {cliente?.first_name} {cliente?.last_name}
+          </Heading>
+          <Link
+            href={`https://clientes.dodolink.com.ar/admin/clientssummary.php?userid=${cliente?.id}}`}
+          >
+            <FiExternalLink size={18} />
+          </Link>
+        </Flex>
         <Text fontSize='md' color='gray.500'>
           {cliente?.email}
         </Text>
@@ -109,6 +118,11 @@ const ClientePage = () => {
               >
                 <Flex justify='space-between' mb={2}>
                   <Text fontWeight='bold'>{prod?.name}</Text>
+                  <Link
+                    href={`https://clientes.dodolink.com.ar/admin/clientsservices.php?userid=${cliente?.id}&productselect=${prod?.id}`}
+                  >
+                    <FiExternalLink size={18} />
+                  </Link>
                   {/* <Badge colorScheme='blue'>{prod?.type}</Badge> */}
                 </Flex>
                 <Text fontSize='sm' mb={1}>

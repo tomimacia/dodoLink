@@ -115,7 +115,7 @@ const ClientePage = () => {
       {/* Servicios */}
       <Box>
         <Heading size='md' mb={4}>
-          Servicios activos ({productos?.length})
+          Servicios ({productos?.length})
         </Heading>
 
         {productos && productos?.length > 0 ? (

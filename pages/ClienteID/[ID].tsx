@@ -27,7 +27,12 @@ const ClientePage = () => {
   const { loadingColor } = useThemeColors();
   const [clientData, setClientData] = useState<ClienteData | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const colors = {
+    Active: '#779500',
+    Cancelled: '#888888',
+    Terminated: '#888888',
+    Pending: '#cc0000',
+  };
   useEffect(() => {
     if (!ID) return;
 
@@ -48,6 +53,16 @@ const ClientePage = () => {
   }, [ID]);
 
   const { cliente, hostings, orders, productos } = clientData || {};
+  const productosConHostings = productos?.map((producto) => {
+    const relacionados = hostings?.find(
+      (hosting) => hosting.packageid === producto.id
+    );
+
+    return {
+      ...producto,
+      hosting: relacionados,
+    };
+  });
   if (loading) {
     return (
       <Flex maxW='700px' my={10} justify='center'>
@@ -105,7 +120,7 @@ const ClientePage = () => {
 
         {productos && productos?.length > 0 ? (
           <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={6}>
-            {productos?.map((prod) => (
+            {productosConHostings?.map((prod) => (
               <GridItem
                 key={prod?.id}
                 p={4}
@@ -113,7 +128,10 @@ const ClientePage = () => {
                 boxShadow='sm'
                 border='1px solid'
                 borderLeft='5px solid'
-                borderColor={prod?.color}
+                borderColor={
+                  colors[prod?.hosting?.domainstatus as keyof typeof colors] ||
+                  'gray.300'
+                }
               >
                 <Flex align='center' justify='space-between' mb={2}>
                   <Text fontWeight='bold'>{prod?.name}</Text>
@@ -122,12 +140,14 @@ const ClientePage = () => {
                   >
                     <FiExternalLink size={18} />
                   </Link>
-                  {/* <Badge colorScheme='blue'>{prod?.type}</Badge> */}
                 </Flex>
+
                 <Text fontSize='sm' mb={1}>
                   {prod?.description}
                 </Text>
+
                 <Divider my={2} />
+
                 <Text fontSize='xs' color='gray.400'>
                   Creado:{' '}
                   {
@@ -145,6 +165,22 @@ const ClientePage = () => {
                 {prod?.slug && (
                   <Text fontSize='xs' mt={1} color='gray.400'>
                     Slug: {prod?.slug}
+                  </Text>
+                )}
+                {prod?.hosting?.domainstatus && (
+                  <Text fontSize='sm' mt={2} fontWeight='medium'>
+                    Status:{' '}
+                    <Text
+                      as='span'
+                      fontWeight='normal'
+                      color={
+                        colors[
+                          prod?.hosting?.domainstatus as keyof typeof colors
+                        ] || 'gray.400'
+                      }
+                    >
+                      {prod?.hosting?.domainstatus}
+                    </Text>
                   </Text>
                 )}
               </GridItem>

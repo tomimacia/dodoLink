@@ -80,7 +80,7 @@ const ClientePage = () => {
             {cliente?.first_name} {cliente?.last_name}
           </Heading>
           <Link
-            href={`https://clientes.dodolink.com.ar/admin/clientssummary.php?userid=${cliente?.id}}`}
+            href={`https://clientes.dodolink.com.ar/admin/clientssummary.php?userid=${cliente?.id}`}
           >
             <FiExternalLink size={18} />
           </Link>

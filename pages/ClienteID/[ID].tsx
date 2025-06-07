@@ -48,7 +48,6 @@ const ClientePage = () => {
   }, [ID]);
 
   const { cliente, hostings, orders, productos } = clientData || {};
-  console.log(productos);
   if (loading) {
     return (
       <Flex maxW='700px' my={10} justify='center'>

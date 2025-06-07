@@ -75,8 +75,8 @@ const ClientePage = () => {
     <Box p={10}>
       {/* Datos del cliente */}
       <Box mb={8} p={6} borderRadius='xl' boxShadow='md'>
-        <Flex justify='space-between'>
-          <Heading size='lg' mb={1}>
+        <Flex align='center' justify='space-between'>
+          <Heading size='lg'>
             {cliente?.first_name} {cliente?.last_name}
           </Heading>
           <Link
@@ -116,7 +116,7 @@ const ClientePage = () => {
                 borderLeft='5px solid'
                 borderColor={prod?.color}
               >
-                <Flex justify='space-between' mb={2}>
+                <Flex align='center' justify='space-between' mb={2}>
                   <Text fontWeight='bold'>{prod?.name}</Text>
                   <Link
                     href={`https://clientes.dodolink.com.ar/admin/clientsservices.php?userid=${cliente?.id}&productselect=${prod?.id}`}

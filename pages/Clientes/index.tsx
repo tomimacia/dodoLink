@@ -4,15 +4,31 @@ import PaginationControl from '@/components/reservas/PaginationControl';
 import useGetClientes from '@/hooks/data/useGetClientes';
 import usePagination from '@/hooks/data/usePagination';
 import { useThemeColors } from '@/hooks/useThemeColors';
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Text } from '@chakra-ui/react';
 import Link from 'next/link';
+import { useMemo, useState } from 'react';
 import ReactLoading from 'react-loading';
 const Listado = () => {
   const { clientes, loadingClientes, getClientes } = useGetClientes();
+  const [filterInput, setFilterInput] = useState('');
   const { loadingColor } = useThemeColors();
+  const filteredClientes = useMemo(() => {
+    if (!clientes) return [];
+    return clientes
+      .filter((p) => {
+        const { first_name, last_name, email } = p;
+        const toFind = [first_name, last_name, email].join(' ');
+        const matchesFilter =
+          filterInput.length < 3 ||
+          toFind?.toLowerCase().includes(filterInput.toLowerCase());
+
+        return matchesFilter;
+      })
+      .sort((a, b) => a.last_name.localeCompare(b.last_name));
+  }, [clientes, filterInput]);
   const itemsPerPage = 10;
   const { paginatedArr, page, totalPages, handlePageChange } = usePagination(
-    clientes || [],
+    filteredClientes,
     itemsPerPage,
     true
   );
@@ -30,6 +46,18 @@ const Listado = () => {
       >
         Actualizar
       </Button>
+      <Flex align='center' gap={2}>
+        <Text fontWeight='medium'>Buscar:</Text>
+        <Input
+          size='sm'
+          maxW='200px'
+          value={filterInput}
+          onChange={(e) => setFilterInput(e.target.value)}
+          placeholder='Ingresar nombre'
+          borderRadius='md'
+          borderColor='gray.300'
+        />
+      </Flex>
       <Text color='gray.400'>Total Clientes: {clientes?.length}</Text>
       {loadingClientes && (
         <Flex maxW='700px' my={10} justify='center'>

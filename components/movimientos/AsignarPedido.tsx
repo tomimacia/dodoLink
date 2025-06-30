@@ -41,6 +41,7 @@ const AsignarPedido = ({
         {selectedUsers?.map((user) => {
           return (
             <MenuItem
+              key={`asignacion-list-key-${user?.id}`}
               onClick={() => asignarPedido(user.id)}
               my={1}
               borderRadius='lg'

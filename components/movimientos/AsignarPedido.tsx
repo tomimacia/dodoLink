@@ -8,8 +8,10 @@ const AsignarPedido = ({
 }) => {
   const { users } = useGetUsers();
   const [loading, setLoading] = useState(false);
-  const selectedUsers = users?.filter((u) =>
-    ['Cuadrilla', 'Superadmin'].includes(u?.rol)
+  const selectedUsers = users?.filter(
+    (u) =>
+      ['Cuadrilla', 'Superadmin'].includes(u?.rol) &&
+      u?.email !== 'tomimacia@gmail.com'
   );
   const asignarPedido = async (userID: string) => {
     setLoading(true);

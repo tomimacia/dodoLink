@@ -539,6 +539,40 @@ const usePedidosForm = (movimiento: PedidoType) => {
     checkUpdates();
     onOpen();
   };
+  const asignarPedidoPendiente = async (userID: string) => {
+    if (!reservas || estado !== 'Pendiente') return;
+    const movimientoFetched = (await getSingleDoc(
+      'movimientos',
+      fecha
+    )) as MovimientosType;
+    await setSingleDoc('movimientos', fecha, {
+      reservas: getUpdatedReservas(
+        id,
+        movimientoFetched?.reservas,
+        'En curso',
+        currentMov,
+        [],
+        userID
+      ),
+    });
+    await setSingleDoc('movimientos', 'enCurso', {
+      reservas: getUpdatedReservas(
+        id,
+        reservas,
+        'En curso',
+        currentMov,
+        [],
+        userID
+      ),
+    });
+    toast({
+      title: 'Éxito',
+      description: 'Pedido aignado con éxito',
+      isClosable: true,
+      duration: 5000,
+      status: 'success',
+    });
+  };
   const disclosure = { isOpen, onClose, onOpen: handleOpen };
   return {
     loadingUpdate,
@@ -553,6 +587,7 @@ const usePedidosForm = (movimiento: PedidoType) => {
     deleteFuncCompra,
     volverAInicializado,
     deleteFunc,
+    asignarPedidoPendiente,
     disclosure,
   };
 };

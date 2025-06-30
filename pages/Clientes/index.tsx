@@ -8,6 +8,7 @@ import { Box, Button, Flex, Input, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import ReactLoading from 'react-loading';
+
 const Listado = () => {
   const { clientes, loadingClientes, getClientes } = useGetClientes();
   const [filterInput, setFilterInput] = useState('');
@@ -69,7 +70,6 @@ const Listado = () => {
           />
         </Flex>
       )}
-
       {!loadingClientes && (
         <Flex gap={3} flexDir='column'>
           <PaginationControl

@@ -4,9 +4,12 @@ import EstadoStepsReserva from '@/components/movimientos/MovimientosID/EstadoSte
 import NotAuthorized from '@/components/Navigation/NotAuthorized';
 import NotFoundPage from '@/components/NotFoundPage';
 import { CheckAdminRol } from '@/data/data';
+import { getSingleDoc } from '@/firebase/services/getSingleDoc';
+import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import dateTexto from '@/helpers/dateTexto';
 import { scrollIntoTheView } from '@/helpers/scrollIntoTheView';
 import usePedidosForm from '@/hooks/usePedidosForm';
+import useGetUsers from '@/hooks/users/useGetUsers';
 import { NotaType, PedidoType, ProductoType } from '@/types/types';
 import {
   Alert,
@@ -22,17 +25,14 @@ import {
   Tooltip,
   useColorModeValue,
 } from '@chakra-ui/react';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Fragment, useState } from 'react';
 import { MdLocationPin } from 'react-icons/md';
 import MapEmbed from '../EmbedMap';
 import ConfirmarReservaModal from './ConfimarPedidoModal/ConfirmarReservaModal';
 import QRCodeLabel from './QRCodeLabel';
 import VerMovimientosModal from './VerMovimientosModal';
-import useGetUsers from '@/hooks/users/useGetUsers';
-import { getSingleDoc } from '@/firebase/services/getSingleDoc';
-import { setSingleDoc } from '@/firebase/services/setSingleDoc';
-import { useRouter } from 'next/router';
+import AsignarPedido from '../AsignarPedido';
 
 const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
   const {
@@ -47,6 +47,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
     deleteFunc,
     disclosure,
     volverAInicializado,
+    asignarPedidoPendiente,
   } = usePedidosForm(movimiento);
   const {
     detalle,
@@ -143,7 +144,9 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
         <Heading size='lg'>
           <strong>{cliente}</strong>
         </Heading>
-
+        {!isCuadrilla && estado === "Pendiente" && (
+          <AsignarPedido asignarPedidoPendiente={asignarPedidoPendiente} />
+        )}
         <Text fontSize='sm'>
           <b>Fecha:</b>{' '}
           {dateTexto(movimientos?.Inicializado?.fecha.seconds, true).numDate} -{' '}

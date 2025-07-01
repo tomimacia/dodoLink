@@ -52,6 +52,7 @@ const ModalBodyBottomPart = ({
   tramoHandler,
   mapCoordsHandler,
   sobrantesHandler,
+  cuadrillaHandler,
   productos,
   notaHandler,
   volverAInicializado,
@@ -65,6 +66,7 @@ const ModalBodyBottomPart = ({
   detalleHandler: StringHandler;
   notaHandler: StringHandler;
   tramoHandler: NumberHandler;
+  cuadrillaHandler: NumberHandler;
   mapCoordsHandler: StringHandler;
   sobrantesHandler: [
     ProductoType[],
@@ -80,6 +82,7 @@ const ModalBodyBottomPart = ({
   const [detalle, setDetalle] = detalleHandler;
   const [checkedItems, setCheckedItems] = checkedItemsHandler;
   const [tramo, setTramo] = tramoHandler;
+  const [cuadrilla, setCuadrilla] = cuadrillaHandler;
   const [embedValue, setEmbedValue] = useState('');
   const [mapCoords, setMapCoords] = mapCoordsHandler;
   const [sobrantes, setSobrantes] = sobrantesHandler;
@@ -197,6 +200,19 @@ const ModalBodyBottomPart = ({
               />
               <Text>Mts.</Text>
             </Flex>
+          </FormControl>
+          <FormControl>
+            <FormLabel>Cuadrilla</FormLabel>
+
+            <Input
+              placeholder='Nro'
+              size='sm'
+              borderRadius={5}
+              maxW='80px'
+              value={cuadrilla || ''}
+              type='number'
+              onChange={(e) => setCuadrilla(Number(e.target.value))}
+            />
           </FormControl>
           <FormControl>
             <FormLabel>Mapa (embed iframe)</FormLabel>

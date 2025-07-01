@@ -60,6 +60,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
     movimientos,
     tramo,
     nota,
+    cuadrilla,
   } = currentMov ?? {};
   const [loadingNota, setLoadingNota] = useState(false);
   const customGrayBG = useColorModeValue('gray.50', 'gray.700');
@@ -144,7 +145,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
         <Heading size='lg'>
           <strong>{cliente}</strong>
         </Heading>
-        {!isCuadrilla && estado === "Pendiente" && (
+        {!isCuadrilla && estado === 'Pendiente' && (
           <AsignarPedido asignarPedidoPendiente={asignarPedidoPendiente} />
         )}
         <Text fontSize='sm'>
@@ -160,6 +161,11 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
         {tramo !== 0 && tramo && (
           <Text fontSize='sm'>
             <b>Tramo:</b> {tramo} Mts.
+          </Text>
+        )}
+        {cuadrilla !== 0 && cuadrilla && (
+          <Text fontSize='sm'>
+            <b>Cuadrilla:</b> {cuadrilla}
           </Text>
         )}
       </Stack>

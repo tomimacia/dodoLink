@@ -3,7 +3,10 @@ import { EditIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Heading,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,24 +14,30 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
+  Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 
 const EditUserRol = ({
-  updateRol,
+  updateRolYCuadrilla,
   user,
 }: {
-  updateRol: (id: string, rol: RolType) => Promise<void>;
+  updateRolYCuadrilla: (
+    id: string,
+    rol: RolType,
+    cuadrilla: number | null
+  ) => Promise<void>;
   user: UserType;
 }) => {
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRol, setSelectedRol] = useState<RolType>(user.rol);
+  const [cuadrilla, setCuadrilla] = useState<number | null>(user.cuadrilla);
   const handleConfirm = async () => {
     setLoading(true);
     try {
-      await updateRol(user.id, selectedRol);
+      await updateRolYCuadrilla(user.id, selectedRol, cuadrilla);
       onClose();
     } catch (e) {
       console.log(e);
@@ -68,27 +77,51 @@ const EditUserRol = ({
             bg='blackAlpha.200'
           />
           <ModalHeader>
-            <Heading fontSize='xl'>
-              Editar Rol
-            </Heading>
+            <Heading fontSize='xl'>Editar Usuario</Heading>
           </ModalHeader>
           <ModalBody>
             <Flex py={5} gap={3} flexDir='column'>
-              <Select
-                onChange={(e) => setSelectedRol(e.target.value as RolType)}
-                name='rol'
-                required
-                borderColor='gray'
-                size='sm'
-                maxW='200px'
-                borderRadius='5px'
-                value={selectedRol}
-              >
-                <option value='Superadmin'>Superadmin</option>
-                <option value='Supervisor'>Supervisor</option>
-                <option value='Admin'>Admin</option>
-                <option value='Cuadrilla'>Cuadrilla</option>
-              </Select>
+              <FormControl>
+                <FormLabel>Rol</FormLabel>
+                <Select
+                  onChange={(e) => setSelectedRol(e.target.value as RolType)}
+                  name='rol'
+                  required
+                  borderColor='gray'
+                  size='sm'
+                  maxW='200px'
+                  borderRadius='5px'
+                  value={selectedRol}
+                >
+                  <option value='Superadmin'>Superadmin</option>
+                  <option value='Supervisor'>Supervisor</option>
+                  <option value='Admin'>Admin</option>
+                  <option value='Cuadrilla'>Cuadrilla</option>
+                </Select>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Cuadrilla</FormLabel>
+                <Input
+                  value={cuadrilla || ''}
+                  onChange={(e) => setCuadrilla(Number(e.target.value))}
+                  onKeyDown={(e) => {
+                    if (
+                      ['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onWheel={(e: any) => e.target.blur()}
+                  placeholder='Nro de cuadrilla'
+                  borderColor='gray'
+                  type='email'
+                  size='sm'
+                  maxW='200px'
+                  borderRadius='5px'
+                  autoComplete='new-edit-cuadrilla'
+                />
+              </FormControl>
+
               <Button
                 w='fit-content'
                 bg='blue.700'

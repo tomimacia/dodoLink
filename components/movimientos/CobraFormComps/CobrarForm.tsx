@@ -38,12 +38,14 @@ const CobrarForm = ({
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [hasTramo, setHasTramo] = useState(true);
+  const [hasCuadrilla, setHasCuadrilla] = useState(true);
   const [isRetiro, setIsRetiro] = useState(false);
   const toast = useToast();
   const fontColor = useColorModeValue('blue.700', 'blue.400');
   const confirmButtonRef = useRef<HTMLButtonElement | null>(null);
   const [embedValue, setEmbedValue] = useState('');
   const [tramo, setTramo] = useState<number | null>(null);
+  const [cuadrilla, setCuadrilla] = useState<number | null>(null);
   const [embed, setEmbed] = useState('');
   const handleEmbedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -76,6 +78,17 @@ const CobrarForm = ({
       toast({
         title: 'Error',
         description: 'Debes indicar el tramo',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    if (hasCuadrilla && !cuadrilla) {
+      toast({
+        title: 'Error',
+        description: 'Debes indicar la cuadrilla',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -131,6 +144,7 @@ const CobrarForm = ({
         mapCoords: embed,
         vistoPor: [],
         tramo,
+        cuadrilla,
         isRetiro,
       };
 
@@ -260,6 +274,46 @@ const CobrarForm = ({
             isDisabled={!hasTramo}
             value={!hasTramo ? '' : tramo || ''}
             onChange={(e) => setTramo(Number(e.target.value))}
+            onKeyDown={(e) => {
+              if (['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
+            onWheel={(e: any) => e.target.blur()}
+            maxW='100px'
+          />
+        </FormControl>
+      )}
+      {/* Cuadrilla number */}
+      {!isPago && (
+        <FormControl
+          gap={2}
+          display='flex'
+          flexDir='row'
+          alignItems='center'
+          isRequired={hasCuadrilla}
+        >
+          <Switch
+            isChecked={hasCuadrilla}
+            onChange={() =>
+              setHasCuadrilla((prev) => {
+                if (prev) {
+                  setCuadrilla(null);
+                }
+                return !prev;
+              })
+            }
+          />
+          <FormLabel margin={0}>Asignar Cuadrilla</FormLabel>
+          <Input
+            borderColor='gray'
+            size='sm'
+            borderRadius={5}
+            placeholder='Nro de cuadrilla'
+            type='number'
+            isDisabled={!hasCuadrilla}
+            value={!hasCuadrilla ? '' : cuadrilla || ''}
+            onChange={(e) => setCuadrilla(Number(e.target.value))}
             onKeyDown={(e) => {
               if (['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)) {
                 e.preventDefault();

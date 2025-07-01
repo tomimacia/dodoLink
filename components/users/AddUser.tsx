@@ -13,18 +13,26 @@ import {
 } from '@chakra-ui/react';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useState } from 'react';
+import CopyButton from '../CopyButton';
 const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [cuadrilla, setCuadrilla] = useState<number | null>(null);
   const [rol, setRol] = useState('Admin');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const onSubmit = async (e: any) => {
     e.preventDefault();
-    const test = !nombre || !apellido || !email || !password || !rol;
+    const test =
+      !nombre ||
+      !apellido ||
+      !email ||
+      !password ||
+      !rol ||
+      (rol === 'Cuadrilla' && !cuadrilla);
     if (test) {
       toast({
         status: 'error',
@@ -46,6 +54,7 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
       const newUser = {
         email,
         nombre,
+        cuadrilla,
         apellido,
         rol,
         inventario: [],
@@ -55,11 +64,39 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
       await sendPasswordResetEmail(auth, email);
       getUsers();
       toast({
-        title: 'Usuario creado exitosamente',
-        description: `Se envió un mail a ${email} para reestablecer la contraseña`,
-        status: 'success',
-        duration: 9000,
+        render: () => (
+          <Flex
+            direction='column'
+            p={4}
+            bg='green.500'
+            color='white'
+            borderRadius='md'
+            boxShadow='lg'
+            gap={2}
+          >
+            <Text fontWeight='bold'>Usuario creado exitosamente</Text>
+            <Text>
+              Se envió un mail a {email} para reestablecer la contraseña.
+            </Text>
+            <Flex w='fit-content'>
+              <Text mr={2}>Copiar Credenciales</Text>
+              <Flex
+                px={2}
+                _hover={{ boxShadow: '0 0 5px' }}
+                bg='green.100'
+                borderRadius='lg'
+              >
+                <CopyButton
+                  content={`Usuario: ${email}\nContraseña: ${password}`}
+                  description='Usuario y contraseña copiados'
+                />
+              </Flex>
+            </Flex>
+          </Flex>
+        ),
+        duration: 10000,
         isClosable: true,
+        status: 'success',
       });
       setNombre('');
       setApellido('');
@@ -84,6 +121,7 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
     ).join('');
     setPassword(generatedPassword);
   }
+
   return (
     <Flex gap={4} flexDir='column' maxW='320px'>
       <Heading as='h3' size='lg'>
@@ -92,7 +130,7 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
       <form onSubmit={onSubmit} style={{ padding: 5 }} action='submit'>
         <Flex flexDir='column' gap={3}>
           <Flex gap={1} p={1} flexDir='column'>
-            <Text>Nombre:</Text>
+            <Text>*Nombre:</Text>
             <Input
               required
               onChange={(e) => setNombre(e.target.value)}
@@ -105,7 +143,7 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
             />
           </Flex>
           <Flex gap={1} p={1} flexDir='column'>
-            <Text>Apellido:</Text>
+            <Text>*Apellido:</Text>
             <Input
               required
               onChange={(e) => setApellido(e.target.value)}
@@ -118,7 +156,7 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
             />
           </Flex>
           <Flex gap={1} p={1} flexDir='column'>
-            <Text>Email:</Text>
+            <Text>*Email:</Text>
 
             <Input
               required
@@ -132,8 +170,9 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
               autoComplete='new-email'
             />
           </Flex>
+
           <Flex gap={1} p={1} flexDir='column'>
-            <Text>Rol:</Text>
+            <Text>*Rol:</Text>
             <Select
               onChange={(e) => setRol(e.target.value)}
               name='rol'
@@ -149,8 +188,29 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
               <option value='Cuadrilla'>Cuadrilla</option>
             </Select>
           </Flex>
+          {rol === 'Cuadrilla' && (
+            <Flex gap={1} p={1} flexDir='column'>
+              <Text>*Nro Cuadrilla:</Text>
+              <Input
+                value={cuadrilla || ''}
+                onChange={(e) => setCuadrilla(Number(e.target.value))}
+                onKeyDown={(e) => {
+                  if (['ArrowUp', 'ArrowDown', 'e', '+', '-'].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onWheel={(e: any) => e.target.blur()}
+                placeholder='Nro de cuadrilla'
+                borderColor='gray'
+                type='email'
+                size='sm'
+                borderRadius='5px'
+                autoComplete='new-cuadrilla'
+              />
+            </Flex>
+          )}
           <Flex gap={1} p={1} flexDir='column'>
-            <Text>Contraseña:</Text>
+            <Text>*Contraseña:</Text>
 
             <Input
               required

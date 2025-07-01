@@ -12,9 +12,12 @@ export const getCambiosResumen = (
   if (prev.cliente !== updated.cliente)
     cambios.push(`cliente: ${prev.cliente} → ${updated.cliente}`);
   if (JSON.stringify(prev.detalle) !== JSON.stringify(updated.detalle))
-    cambios.push(`detalle: ${updated.detalle.join("\n")}`);
+    cambios.push(`detalle: ${updated.detalle.join('\n')}`);
   if (prev.tramo !== updated.tramo)
     cambios.push(`tramo: ${prev?.tramo || 0} → ${updated.tramo}`);
+
+  if (prev.cuadrilla !== updated.cuadrilla)
+    cambios.push(`cuadrilla: ${prev?.cuadrilla || 0} → ${updated.cuadrilla}`);
 
   if (!isEqual(prev.mapCoords, updated.mapCoords))
     cambios.push(`ubicación actualizada`);

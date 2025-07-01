@@ -29,9 +29,12 @@ const EntradasTiempoReal = () => {
           </Flex>
         )}
         <EntradasSection title='Reservas' grupo={reservas || []} />
-        {CheckAdminRol(user?.rol) && <Divider borderColor='gray' />}
+
         {CheckAdminRol(user?.rol) && (
-          <EntradasSection title='Compras' grupo={compras || []} />
+          <>
+            <Divider borderColor='gray' />
+            <EntradasSection title='Compras' grupo={compras || []} />
+          </>
         )}
       </Flex>
     </Flex>

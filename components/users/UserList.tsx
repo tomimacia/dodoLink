@@ -33,19 +33,24 @@ const UserList = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-  const updateRol = async (id: string, rol: RolType) => {
+  const updateRolYCuadrilla = async (
+    id: string,
+    rol: RolType,
+    cuadrilla: number | null
+  ) => {
     try {
       await setSingleDoc('users', id, {
         rol,
+        cuadrilla,
       });
       const newUsers = users.map((u) => {
-        if (u.id === id) return { ...u, rol };
+        if (u.id === id) return { ...u, rol, cuadrilla };
         return u;
       });
       setUsers(newUsers);
       toast({
         title: 'Éxito',
-        description: 'Rol actualizado correctamente',
+        description: 'Usuario actualizado correctamente',
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -111,7 +116,7 @@ const UserList = ({
                               DeleteProp={() => deleteUserAndDB(u.id)}
                               isIcon
                             />
-                            <EditUserRol updateRol={updateRol} user={u} />
+                            <EditUserRol updateRolYCuadrilla={updateRolYCuadrilla} user={u} />
                           </Flex>
                         </Flex>
                       </Td>

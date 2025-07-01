@@ -19,7 +19,9 @@ const EntradasSection = ({
     const hasReserva = r.movimientos?.['En curso'].admin === user?.id;
     return (
       CheckAdminRol(user?.rol) ||
-      (estado === 'Pendiente' && !r.isRetiro) ||
+      (estado === 'Pendiente' &&
+        !r.isRetiro &&
+        user?.cuadrilla === r.cuadrilla) ||
       hasReserva
     );
   });

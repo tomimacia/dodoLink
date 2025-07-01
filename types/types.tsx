@@ -19,6 +19,7 @@ export type UserType = {
   usuario: string;
   inventario: ProductoType[];
   rol: RolType;
+  cuadrilla: number | null;
 };
 
 export interface CreatedAt {
@@ -105,6 +106,7 @@ export type PedidoType = {
   nota?: string[];
   items: ProductoType[];
   tramo: number | null;
+  cuadrilla: number | null;
   confirmedItems?: ProductoType[];
   isRetiro: boolean;
   isNota?: boolean;

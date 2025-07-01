@@ -11,8 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure,
-  useToast,
+  useToast
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import ModalBodyBottomPart from './ModalBodyBottomPart';
@@ -47,6 +46,7 @@ const ConfirmarReservaModal = ({
   const [cliente, setCliente] = useState(pedido.cliente);
   const [detalle, setDetalle] = useState(pedido.detalle.join('\n'));
   const [tramo, setTramo] = useState(pedido.tramo);
+  const [cuadrilla, setCuadrilla] = useState(pedido.cuadrilla);
   const [mapCoords, setMapCoords] = useState(pedido.mapCoords);
 
   const [checkedItems, setCheckedItems] = useState(
@@ -94,6 +94,7 @@ const ConfirmarReservaModal = ({
       detalle: detalle.split('\n'),
       tramo,
       items,
+      cuadrilla,
       mapCoords,
       nota: nota ? nota.split('\n') : [],
     };
@@ -166,6 +167,7 @@ const ConfirmarReservaModal = ({
               clienteHandler={[cliente, setCliente]}
               detalleHandler={[detalle, setDetalle]}
               tramoHandler={[tramo, setTramo]}
+              cuadrillaHandler={[cuadrilla, setCuadrilla]}
               mapCoordsHandler={[mapCoords, setMapCoords]}
               sobrantesHandler={[sobrantes, setSobrantes]}
               notaHandler={[nota, setNota]}

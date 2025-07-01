@@ -32,7 +32,12 @@ const WelcomeComp = () => {
               {user?.nombre} {user?.apellido}
             </strong>
           </Text>
-          <Text>{user?.rol}</Text>
+          <Text>
+            {user?.rol}{' '}
+            {user?.cuadrilla &&
+              user?.rol === 'Cuadrilla' &&
+              `(${user?.cuadrilla})`}
+          </Text>
         </Flex>
         <Flex gap={3}>
           <CargarModal size='sm' />

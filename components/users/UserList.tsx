@@ -1,7 +1,9 @@
+import { deleteSingleDoc } from '@/firebase/services/deleteSingleDoc';
+import { deleteUser } from '@/firebase/services/deleteUser';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { RolType, UserType } from '@/types/types';
 import {
-  Button,
   Flex,
   Table,
   TableContainer,
@@ -10,17 +12,13 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
-import ReactLoading from 'react-loading';
-import EditUserRol from './EditUserRol';
-import DeleteModal from '../DeleteModal';
-import { MdDelete } from 'react-icons/md';
 import { useState } from 'react';
-import { deleteUser } from '@/firebase/services/deleteUser';
-import { deleteSingleDoc } from '@/firebase/services/deleteSingleDoc';
-import { useThemeColors } from '@/hooks/useThemeColors';
+import { MdDelete } from 'react-icons/md';
+import ReactLoading from 'react-loading';
+import DeleteModal from '../DeleteModal';
+import EditUserRol from './EditUserRol';
 
 const UserList = ({
   users,
@@ -73,6 +71,7 @@ const UserList = ({
     }
   };
   const { loadingColor } = useThemeColors();
+
   return (
     <>
       {users.length > 0 && !loadingUserList && (
@@ -105,7 +104,10 @@ const UserList = ({
                       </Td>
                       <Td>
                         <Flex align='center' gap={1} justify='space-between'>
-                          {u.rol}
+                          {u.rol}{' '}
+                          {u?.cuadrilla &&
+                            u?.rol === 'Cuadrilla' &&
+                            `(${u?.cuadrilla})`}
                           <Flex gap={1}>
                             <DeleteModal
                               textContent={<MdDelete />}
@@ -116,7 +118,10 @@ const UserList = ({
                               DeleteProp={() => deleteUserAndDB(u.id)}
                               isIcon
                             />
-                            <EditUserRol updateRolYCuadrilla={updateRolYCuadrilla} user={u} />
+                            <EditUserRol
+                              updateRolYCuadrilla={updateRolYCuadrilla}
+                              user={u}
+                            />
                           </Flex>
                         </Flex>
                       </Td>

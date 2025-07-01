@@ -167,7 +167,7 @@ const AsignadosComp = () => {
           <ReactLoading type='bars' color='#3182ce' height={40} width={40} />
         </Flex>
       ) : (
-        <Flex maxW='450px' direction='column' gap={4}>
+        <Flex w='fit-content' direction='column' gap={4}>
           {usersForMapping?.map((u) => (
             <Box
               key={u.id}
@@ -186,11 +186,21 @@ const AsignadosComp = () => {
                 {u.rol}
               </Text>
               <Divider my={2} />
-              <Flex mb={2} direction='column' gap={1}>
+              <Flex mb={8} direction='column' gap={1}>
                 {u.inventario.map((p, idx) => (
-                  <Text key={`${u.id}-${idx}`} fontSize='sm'>
-                    {p.nombre} — {p.cantidad} {p.medida}
-                  </Text>
+                  <Flex
+                    gap={4}
+                    justify='space-between'
+                    fontSize='sm'
+                    key={`${u.id}-${idx}`}
+                    pb='2px'
+                    borderBottom='1px solid #DCE4EB'
+                  >
+                    <Text>{p.nombre}</Text>
+                    <Text textAlign='right' minW='50px'>
+                      {p.cantidad} {p.medida}
+                    </Text>
+                  </Flex>
                 ))}
                 {u.inventario.length === 0 && (
                   <Text color='gray.500'>Sin productos asignados</Text>

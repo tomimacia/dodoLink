@@ -1,32 +1,31 @@
+import PopoverInfoIcon from '@/components/inicio/PopoverInfoIcon';
+import TitleSearch from '@/components/movimientos/TitleSearch';
+import { ProductoType, UserType } from '@/types/types';
+import {
+  DeleteIcon,
+  EditIcon,
+  MinusIcon,
+  PlusSquareIcon,
+} from '@chakra-ui/icons';
 import {
   Button,
   Flex,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  useDisclosure,
-  Text,
-  VStack,
-  HStack,
-  Input,
-  IconButton,
-  Switch,
   FormControl,
   FormLabel,
+  IconButton,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  Switch,
+  Text,
+  useDisclosure,
+  VStack
 } from '@chakra-ui/react';
-import {
-  EditIcon,
-  DeleteIcon,
-  PlusSquareIcon,
-  MinusIcon,
-} from '@chakra-ui/icons';
-import React, { useState } from 'react';
-import { ProductoType, UserType } from '@/types/types';
-import TitleSearch from '@/components/movimientos/TitleSearch';
-import PopoverInfoIcon from '@/components/inicio/PopoverInfoIcon';
+import { useState } from 'react';
 
 const EditarInventarioModal = ({
   user,

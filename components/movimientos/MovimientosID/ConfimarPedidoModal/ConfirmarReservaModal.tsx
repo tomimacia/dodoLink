@@ -11,7 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useToast
+  useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import ModalBodyBottomPart from './ModalBodyBottomPart';
@@ -94,11 +94,11 @@ const ConfirmarReservaModal = ({
       detalle: detalle.split('\n'),
       tramo,
       items,
-      cuadrilla,
+      cuadrilla: cuadrilla || null,
       mapCoords,
       nota: nota ? nota.split('\n') : [],
     };
-
+    console.log(newPedido);
     await update(newPedido, items, sobrantes);
   };
   const toast = useToast();

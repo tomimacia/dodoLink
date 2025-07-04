@@ -63,6 +63,7 @@ const ClientePage = () => {
       hosting: relacionados,
     };
   });
+  console.log(productos);
   if (loading) {
     return (
       <Flex maxW='700px' my={10} justify='center'>
@@ -132,6 +133,9 @@ const ClientePage = () => {
                   colors[prod?.hosting?.domainstatus as keyof typeof colors] ||
                   'gray.300'
                 }
+                cursor='pointer'
+                onClick={() => router.push(`/ServicioID/${prod.id}`)}
+                _hover={{ boxShadow: '0 0 5px' }}
               >
                 <Flex align='center' justify='space-between' mb={2}>
                   <Text fontWeight='bold'>{prod?.name}</Text>

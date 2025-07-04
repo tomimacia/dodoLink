@@ -1,5 +1,5 @@
 import { generateLowStockEmail } from '@/alerts/nodemailer/generateEmails';
-import { mailOptions, transporter } from '@/alerts/nodemailer/nodemailer';
+import { mailOptions, transporter } from '@/pages/api/lib/nodemailer';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

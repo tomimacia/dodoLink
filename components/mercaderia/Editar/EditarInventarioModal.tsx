@@ -23,7 +23,8 @@ import {
   Switch,
   Text,
   useDisclosure,
-  VStack
+  useToast,
+  VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
@@ -65,11 +66,27 @@ const EditarInventarioModal = ({
     if (inventario.some((p) => p.id === producto.id)) return;
     setInventario((prev) => [...prev, { ...producto, cantidad: 1 }]);
   };
-
+  const toast = useToast();
   const handleSave = async () => {
+    const cantUpdate = inventario.some((it) => {
+      const itemDB = allProductos?.find((p) => p.id === it.id);
+      if (!itemDB) return false;
+      return it.cantidad > itemDB.cantidad;
+    });
+    if (cantUpdate) {
+      toast({
+        title: 'Error',
+        description: 'Ingresa cantidades válidas',
+        isClosable: true,
+        status: 'warning',
+        duration: 4000,
+      });
+      return;
+    }
     await updateInventario(user, inventario, devolverStock);
     onClose();
   };
+  console.log(inventario);
   const handleClose = () => {
     setInventario(user.inventario);
     setDevolverStock(false);

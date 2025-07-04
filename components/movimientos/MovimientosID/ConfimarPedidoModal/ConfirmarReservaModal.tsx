@@ -94,7 +94,7 @@ const ConfirmarReservaModal = ({
       detalle: detalle.split('\n'),
       tramo,
       items,
-      cuadrilla: cuadrilla || null,
+      cuadrilla: cuadrilla !== undefined ? cuadrilla : null,
       mapCoords,
       nota: nota ? nota.split('\n') : [],
     };

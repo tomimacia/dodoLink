@@ -1,7 +1,7 @@
 import { mailsForNotification } from '@/data/data';
 import nodemailer from 'nodemailer';
-const user = process.env.NEXT_PUBLIC_NODEMAILER_USER || 'dodoLink25@gmail.com';
-const pass = process.env.NEXT_PUBLIC_NODEMAILER_PASSWORD;
+const user = process.env.NODEMAILER_USER || 'dodoLink25@gmail.com';
+const pass = process.env.NODEMAILER_PASSWORD;
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {

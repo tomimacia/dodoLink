@@ -1,5 +1,5 @@
 // pages/api/users.js
-import db from '@/lib/db'; // Asegurate que esta ruta coincida con donde guardaste db.js
+import db from '@/pages/api/lib/db'; // Asegurate que esta ruta coincida con donde guardaste db.js
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(

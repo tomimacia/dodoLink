@@ -18,6 +18,7 @@ import { ProductoType, UserType } from '@/types/types';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import { useUser } from '@/context/userContext';
+import { sendMailAndTelegram } from '@/alerts/sendMailAndTelegram';
 
 const AsignadosComp = () => {
   const { user } = useUser();
@@ -72,6 +73,7 @@ const AsignadosComp = () => {
               const diff = oldP.cantidad - newCant;
               if (diff > 0) {
                 const DBItem = productos?.find((pDB) => pDB.id === oldP.id);
+
                 if (!DBItem) return null;
                 return setSingleDoc('productos', oldP.id, {
                   cantidad: DBItem.cantidad + diff,
@@ -112,8 +114,20 @@ const AsignadosComp = () => {
 
       if (promisesFinal.length > 0) updateProductosLastStamp();
 
-      if (productosActualizados) setProductos(productosActualizados);
+      if (productosActualizados) {
+        setProductos(productosActualizados);
 
+        const productosBajoStock = productosActualizados.filter((p) => {
+          return (
+            p.target > 0 &&
+            p.cantidad <= p.target &&
+            newInventario.some((invItem) => invItem.id === p.id)
+          );
+        });
+        if (productosBajoStock.length > 0) {
+          sendMailAndTelegram(productosBajoStock);
+        }
+      }
       await getUsers();
     } catch (e: any) {
       console.error(e.message);

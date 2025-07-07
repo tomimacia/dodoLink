@@ -2,6 +2,7 @@ import NotFoundPage from '@/components/NotFoundPage';
 import { statusColors } from '@/data/data';
 import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
+import { getDateRangeFromLapso } from '@/helpers/getDateFrangeFromLapso';
 import {
   Badge,
   Box,
@@ -12,6 +13,7 @@ import {
   Heading,
   Image,
   Input,
+  Select,
   SimpleGrid,
   Stack,
   Text,
@@ -23,8 +25,8 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 type ServerSideProps = {
   params: {
     ID: string;
@@ -64,7 +66,6 @@ export const getServerSideProps = async ({ params }: ServerSideProps) => {
           `${process.env.NEXT_PUBLIC_CURRENT_URL}api/zabbix/graph`,
           { graphid: graphId }
         );
-        console.log(graphRes);
         graphImage = graphRes.data.imageBase64 || null;
       } catch (err: any) {
         console.error('Error al traer gráfico de Zabbix:', err.message);
@@ -105,6 +106,7 @@ const ServicioID = ({
   const [currentProductoFirebase, setCurrentProductoFirebase] =
     useState(productoFirebase);
   const customGray = useColorModeValue('gray.700', 'gray.300');
+  const [lapso, setLapso] = useState('1h');
 
   const [inputGraphId, setInputGraphId] = useState('');
   const [graphImageState, setGraphImageState] = useState(graphImage);
@@ -136,6 +138,25 @@ const ServicioID = ({
   const isCancelled = status === 'Cancelled' || status === 'Terminated';
   const color = statusColors[status as keyof typeof statusColors] || 'gray';
 
+  const actualizarGraphImage = async (newLapso: string) => {
+    setLoadingGraph(true);
+    try {
+      const { from, to } = getDateRangeFromLapso(newLapso);
+      // Llamada a la API para obtener el gráfico
+      const res = await axios.post('/api/zabbix/graph', {
+        graphid: currentProductoFirebase.graphId,
+        from,
+        to,
+      });
+
+      // Actualizar el estado del gráfico con la nueva imagen
+      setGraphImageState(res.data.imageBase64);
+    } catch (err) {
+      console.error('Error al actualizar gráfico:', err);
+    } finally {
+      setLoadingGraph(false);
+    }
+  };
   const asignarGraphId = async () => {
     if (!inputGraphId) {
       toast({
@@ -160,8 +181,11 @@ const ServicioID = ({
     setLoadingGraph(true);
     try {
       // Obtener imagen desde la API
+      const { from, to } = getDateRangeFromLapso(lapso);
       const res = await axios.post('/api/zabbix/graph', {
         graphid: inputGraphId,
+        from,
+        to,
       });
       // Guardar en Firebase
       await setSingleDoc('servicios', currentProductoFirebase.id, {
@@ -335,19 +359,51 @@ const ServicioID = ({
             Gráfico de monitoreo (Zabbix)
           </Heading>
           {currentProductoFirebase?.graphId && (
-            <Text fontSize='sm' fontStyle='italic'>
+            <Text my={1} fontSize='sm' fontStyle='italic'>
               Graph ID: <b>#{currentProductoFirebase.graphId}</b>
             </Text>
           )}
           {graphImageState ? (
             <Flex flexDir='column' gap={4}>
-              <Image
-                w='100%'
-                src={graphImageState}
-                alt='Gráfico de Zabbix'
-                borderRadius='md'
-                boxShadow='md'
-              />
+              <Select
+                my={1}
+                cursor='pointer'
+                size='sm'
+                maxW='200px'
+                value={lapso}
+                onChange={(e) => {
+                  setLapso(e.target.value);
+                  actualizarGraphImage(e.target.value);
+                }}
+              >
+                <option value='1h'>Última hora</option>
+                <option value='4h'>Últimas 4 horas</option>
+                <option value='12h'>Últimas 12 horas</option>
+                <option value='1d'>Último día</option>
+                <option value='2d'>Últimos 2 días</option>
+                <option value='4d'>Últimos 4 días</option>
+                <option value='7d'>Últimos 7 días</option>
+              </Select>
+              <motion.div
+                key={graphImageState} // fuerza la animación cuando cambia la imagen
+                initial={{ boxShadow: '0 0 0px rgba(0, 122, 255, 0)' }}
+                animate={{
+                  boxShadow: [
+                    `0 0 0px ${color}`,
+                    `0 0 20px ${color}`,
+                    `0 0 0px ${color}`,
+                  ],
+                }}
+                transition={{ duration: 1.5 }}
+              >
+                <Image
+                  w='100%'
+                  src={graphImageState}
+                  alt='Gráfico de Zabbix'
+                  borderRadius='md'
+                  boxShadow='md'
+                />
+              </motion.div>
               <Flex direction='column' gap={2}>
                 <Button
                   size='sm'

@@ -159,17 +159,17 @@ const ServicioID = ({
     }
     setLoadingGraph(true);
     try {
+      // Obtener imagen desde la API
+      const res = await axios.post('/api/zabbix/graph', {
+        graphid: inputGraphId,
+      });
+      setGraphImageState(res.data.imageBase64);
       // Guardar en Firebase
       await setSingleDoc('servicios', currentProductoFirebase.id, {
         ...currentProductoFirebase,
         graphId: inputGraphId,
       });
 
-      // Obtener imagen desde la API
-      const res = await axios.post('/api/zabbix/graph', {
-        graphid: inputGraphId,
-      });
-      setGraphImageState(res.data.imageBase64);
       setCurrentProductoFirebase((prev) => ({
         ...prev,
         graphId: inputGraphId,
@@ -186,7 +186,7 @@ const ServicioID = ({
       console.error('Error al asignar gráfico:', err);
       toast({
         title: 'Error al asignar gráfico',
-        description: 'Verificá el ID ingresado o probá nuevamente.',
+        description: 'Ocurrió un error con el ID ingresado, probá nuevamente.',
         status: 'error',
         duration: 5000,
         isClosable: true,

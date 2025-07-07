@@ -163,13 +163,12 @@ const ServicioID = ({
       const res = await axios.post('/api/zabbix/graph', {
         graphid: inputGraphId,
       });
-      setGraphImageState(res.data.imageBase64);
       // Guardar en Firebase
       await setSingleDoc('servicios', currentProductoFirebase.id, {
         ...currentProductoFirebase,
         graphId: inputGraphId,
       });
-
+      setGraphImageState(res.data.imageBase64);
       setCurrentProductoFirebase((prev) => ({
         ...prev,
         graphId: inputGraphId,

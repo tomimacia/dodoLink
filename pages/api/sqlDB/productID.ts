@@ -30,7 +30,6 @@ export default async function handler(
       'SELECT * FROM tblhosting WHERE packageid = ?',
       [id]
     );
-
     // 3. Órdenes relacionadas a esos hostings
     let orders: any[] = [];
     if (hostings.length > 0) {

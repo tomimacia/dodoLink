@@ -167,3 +167,9 @@ export const mailsForNotification = [
   'arian.f@dodolink.com.ar',
   'acarvalho@dodolink.com.ar',
 ];
+export const statusColors = {
+  Active: '#779500',
+  Cancelled: '#888888',
+  Terminated: '#888888',
+  Pending: '#cc0000',
+};

@@ -1,6 +1,7 @@
 import { RolType } from '@/types/types';
 import { CiBoxes } from 'react-icons/ci';
 import { FaBoxes, FaClipboardList, FaRegUser, FaUser } from 'react-icons/fa';
+import { HiOutlineServer } from 'react-icons/hi';
 import {
   IoCart,
   IoCartOutline,
@@ -10,6 +11,7 @@ import {
   IoStatsChartOutline,
 } from 'react-icons/io5';
 import { PiUsersThreeFill, PiUsersThreeLight } from 'react-icons/pi';
+import { RiServerFill } from 'react-icons/ri';
 import { TiClipboard } from 'react-icons/ti';
 export const Routes = [
   {
@@ -27,6 +29,20 @@ export const Routes = [
     iconEmpty: PiUsersThreeLight,
     roles: ['Admin', 'Superadmin', 'Supervisor'],
     subRoutes: [],
+  },
+  {
+    label: 'Nodos',
+    route: 'Nodos',
+    iconFilled: RiServerFill,
+    iconEmpty: HiOutlineServer,
+    roles: ['Admin', 'Superadmin', 'Supervisor'],
+    subRoutes: [
+      {
+        label: 'Carga',
+        route: 'Nodos/Carga',
+        roles: ['Superadmin', 'Supervisor'],
+      },
+    ],
   },
   {
     label: 'Inventario',

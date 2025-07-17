@@ -1,8 +1,8 @@
 import ClientIDCard from '@/components/clientes/ClientIDCard';
 import dateTexto from '@/helpers/dateTexto';
-import { Box, Flex, Grid, Heading, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, Heading, Link, Text } from '@chakra-ui/react';
 import { GetServerSideProps } from 'next';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { FiExternalLink } from 'react-icons/fi';
 
 interface ClienteData {
@@ -47,6 +47,8 @@ const ClientePage = ({ clientData }: Props) => {
             {cliente.first_name} {cliente.last_name}
           </Heading>
           <Link
+            as={NextLink}
+            _hover={{ opacity: 0.5 }}
             href={`https://clientes.dodolink.com.ar/admin/clientssummary.php?userid=${cliente.id}`}
           >
             <FiExternalLink size={18} />

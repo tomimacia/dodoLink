@@ -1,8 +1,8 @@
 import { statusColors } from '@/data/data';
 import dateTexto from '@/helpers/dateTexto';
-import { Divider, Flex, Text } from '@chakra-ui/react';
+import { Divider, Flex, Link, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { FiExternalLink } from 'react-icons/fi';
 const ClientIDCard = ({ prod, clientID }: { prod: any; clientID: string }) => {
@@ -28,6 +28,8 @@ const ClientIDCard = ({ prod, clientID }: { prod: any; clientID: string }) => {
       <Flex align='center' justify='space-between' mb={2}>
         <Text fontWeight='bold'>{prod.name}</Text>
         <Link
+          as={NextLink}
+          _hover={{ opacity: 0.5 }}
           onClick={(e) => e.stopPropagation()}
           href={`https://clientes.dodolink.com.ar/admin/clientsservices.php?userid=${clientID}&productselect=${prod.id}`}
         >

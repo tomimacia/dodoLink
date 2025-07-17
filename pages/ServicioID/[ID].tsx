@@ -17,6 +17,7 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  Textarea,
   useColorModeValue,
   useDisclosure,
   useToast,
@@ -25,7 +26,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 type ServerSideProps = {
   params: {
@@ -36,6 +37,7 @@ type ServerSideProps = {
 type ProductoFirebaseType = {
   id: string;
   graphId: string | null;
+  description?: string[];
 };
 
 export const getServerSideProps = async ({ params }: ServerSideProps) => {
@@ -103,14 +105,21 @@ const ServicioID = ({
   const router = useRouter();
   const toast = useToast();
   const { isOpen, onToggle } = useDisclosure();
+  const { isOpen: isOpenDescription, onToggle: onToggleDescription } =
+    useDisclosure();
   const [currentProductoFirebase, setCurrentProductoFirebase] =
     useState(productoFirebase);
   const customGray = useColorModeValue('gray.700', 'gray.300');
   const [lapso, setLapso] = useState('1h');
-
+  const inputDescriptionRef = useRef<HTMLTextAreaElement | null>(null);
+  const inputGraphIdRef = useRef<HTMLInputElement | null>(null);
   const [inputGraphId, setInputGraphId] = useState('');
+  const [inputDescription, setInputDescription] = useState<string | null>(
+    currentProductoFirebase?.description?.join('\n') || ''
+  );
   const [graphImageState, setGraphImageState] = useState(graphImage);
   const [loadingGraph, setLoadingGraph] = useState(false);
+  const [loadingDescription, setLoadingDescription] = useState(false);
 
   if (!producto)
     return (
@@ -216,6 +225,62 @@ const ServicioID = ({
       });
     } finally {
       setLoadingGraph(false);
+      onToggle();
+    }
+  };
+  const asignarDescription = async () => {
+    if (!inputDescription) {
+      toast({
+        title: 'Descripción requerida',
+        description: 'Por favor, ingresá una descripción.',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (inputDescription === currentProductoFirebase.description?.join('\n')) {
+      toast({
+        title: 'Descripción ya asignada',
+        description:
+          'La descripción ingresada es igual a a la anterior, modificala.',
+        status: 'info',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    setLoadingDescription(true);
+    try {
+      // Guardar en Firebase
+      const newDescription = inputDescription.split('\n');
+      await setSingleDoc('servicios', currentProductoFirebase.id, {
+        description: newDescription,
+      });
+      setCurrentProductoFirebase((prev) => ({
+        ...prev,
+        description: newDescription,
+      }));
+
+      toast({
+        title: 'Éxito',
+        description: 'Descripción asignada correctamente.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (err) {
+      console.error('Error al asignar descripción:', err);
+      toast({
+        title: 'Error al asignar descripción',
+        description: 'Ocurrió un error con el proceso, probá nuevamente.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setLoadingDescription(false);
+      onToggleDescription();
     }
   };
   const eliminarGraphId = async () => {
@@ -352,7 +417,88 @@ const ServicioID = ({
             <Text>{new Date(updated_at).toLocaleDateString()}</Text>
           </Stack>
         </SimpleGrid>
+        <Stack borderRadius='md' boxShadow='md' p={2} my={6} spacing={1}>
+          <Text fontWeight='medium' color={customGray}>
+            Descripción:
+          </Text>
+          <Flex fontSize='sm' flexDir='column'>
+            {currentProductoFirebase?.description ? (
+              currentProductoFirebase?.description?.map((l) => {
+                return (
+                  <Fragment key={`${l}-description-${producto?.id}}`}>
+                    {l ? <span>{l}</span> : <br />}
+                  </Fragment>
+                );
+              })
+            ) : (
+              <Text fontStyle='italic'>No hay descripción</Text>
+            )}
+          </Flex>
+          <Flex mt={2} direction='column' gap={2}>
+            <Button
+              size='sm'
+              onClick={() => {
+                onToggleDescription();
+                setTimeout(() => {
+                  inputDescriptionRef.current?.focus();
+                }, 150);
+              }}
+              variant='outline'
+              colorScheme='blue'
+              alignSelf='flex-start'
+            >
+              {isOpenDescription ? 'Cerrar edición' : 'Editar descripción'}
+            </Button>
 
+            <Collapse in={isOpenDescription} animateOpacity>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  asignarDescription();
+                }}
+              >
+                <Flex
+                  mt={2}
+                  gap={3}
+                  align='center'
+                  flexWrap='wrap'
+                  p={3}
+                  border='1px solid'
+                  borderColor='gray.200'
+                  borderRadius='md'
+                  background='gray.50'
+                >
+                  <Textarea
+                    ref={inputDescriptionRef}
+                    placeholder='Ingresar una descripción'
+                    size='sm'
+                    h={100}
+                    borderRadius='md'
+                    value={inputDescription || ''}
+                    onChange={(e) => setInputDescription(e.target.value)}
+                  />
+                  <Button
+                    size='sm'
+                    colorScheme='blue'
+                    isLoading={loadingDescription}
+                    loadingText='Actualizando'
+                    type='submit'
+                  >
+                    Confirmar
+                  </Button>
+                  <Button
+                    size='sm'
+                    colorScheme='red'
+                    variant='outline'
+                    onClick={onToggleDescription}
+                  >
+                    Cancelar
+                  </Button>
+                </Flex>
+              </form>
+            </Collapse>
+          </Flex>
+        </Stack>
         {/* Gráfico de monitoreo */}
         <Box mt={10}>
           <Heading size='sm' my={2}>
@@ -414,6 +560,7 @@ const ServicioID = ({
                         top: document.body.scrollHeight,
                         behavior: 'smooth',
                       });
+                      inputGraphIdRef.current?.focus();
                     }, 150); // Espera a que el colapsable se abra
                   }}
                   variant='outline'
@@ -445,7 +592,9 @@ const ServicioID = ({
                         placeholder='Nuevo graph ID'
                         size='sm'
                         maxW='200px'
+                        borderRadius='md'
                         type='number'
+                        ref={inputGraphIdRef}
                         onKeyDown={(e) => {
                           if (
                             [

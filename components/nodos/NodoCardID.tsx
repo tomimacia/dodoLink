@@ -582,9 +582,10 @@ const NodoCardID = ({ initialNodo }: { initialNodo: NodoType }) => {
             Equipos del nodo
           </Text>
           <Flex mb={4} wrap='wrap' gap={4}>
-            {nodes.map((n) => {
+            {nodes.map((n, idx) => {
               return (
                 <EquipoCard
+                  key={`listed-equipos-key-${n?.id}-${idx}`}
                   editEquipo={editEquipo}
                   n={n}
                   eliminarEquipo={removeEquipo}

@@ -115,7 +115,7 @@ const ConsultarServicio = () => {
     { bg: 'gray.200', color: 'black' }
   );
   const customBG = useColorModeValue('white', 'gray.800');
-  const customGray = useColorModeValue('gray.700', 'gray.300')
+  const customGray = useColorModeValue('gray.700', 'gray.300');
   const router = useRouter();
   return (
     <AnimatePresence mode='wait'>
@@ -165,8 +165,9 @@ const ConsultarServicio = () => {
                 Borrar consulta
               </Button>
             </Flex>
-            {registryServicios.map((regProd) => (
+            {registryServicios.map((regProd, idx) => (
               <Box
+                id={`products-listed-key-${regProd.id}-${idx}`}
                 cursor='pointer'
                 onClick={() => router.push(`/ServicioID/${regProd.id}`)}
                 key={regProd.id + 'regprod-id-list' + regProd?.name}
@@ -195,11 +196,7 @@ const ConsultarServicio = () => {
                   <Flex flexDir='column'>
                     {regProd?.description &&
                     typeof regProd?.description === 'string' ? (
-                      <Text
-                        fontSize='sm'
-                        noOfLines={3}
-                        color={customGray}
-                      >
+                      <Text fontSize='sm' noOfLines={3} color={customGray}>
                         <HighlightedText
                           query={consulta}
                           text={regProd?.description}
@@ -207,11 +204,7 @@ const ConsultarServicio = () => {
                       </Text>
                     ) : (
                       regProd?.description?.map((l: string) => (
-                        <Text
-                          fontSize='sm'
-                          noOfLines={3}
-                          color={customGray}
-                        >
+                        <Text fontSize='sm' noOfLines={3} color={customGray}>
                           <HighlightedText query={consulta} text={l} />
                         </Text>
                       ))

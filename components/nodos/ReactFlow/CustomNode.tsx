@@ -18,7 +18,6 @@ export default memo(({ data }: EquipoNodeProps) => {
   const iconBg = useColorModeValue('white', 'gray.900');
   const textColor = useColorModeValue('gray.800', 'gray.100');
   const handleColor = useColorModeValue('#3182ce', '#90cdf4');
-  console.log(data.nombre, data?.selectedType);
   return (
     <Box
       p={2}

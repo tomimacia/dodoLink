@@ -110,12 +110,12 @@ const ConsultarServicio = () => {
   };
 
   const onKeyDown = useEnter(valueRef, onSubmit);
-
   const borrarColor = useColorModeValue(
     { bg: 'gray.700', color: 'white' },
     { bg: 'gray.200', color: 'black' }
   );
   const customBG = useColorModeValue('white', 'gray.800');
+  const customGray = useColorModeValue('gray.700', 'gray.300')
   const router = useRouter();
   return (
     <AnimatePresence mode='wait'>
@@ -198,7 +198,7 @@ const ConsultarServicio = () => {
                       <Text
                         fontSize='sm'
                         noOfLines={3}
-                        color={useColorModeValue('gray.700', 'gray.300')}
+                        color={customGray}
                       >
                         <HighlightedText
                           query={consulta}
@@ -210,7 +210,7 @@ const ConsultarServicio = () => {
                         <Text
                           fontSize='sm'
                           noOfLines={3}
-                          color={useColorModeValue('gray.700', 'gray.300')}
+                          color={customGray}
                         >
                           <HighlightedText query={consulta} text={l} />
                         </Text>

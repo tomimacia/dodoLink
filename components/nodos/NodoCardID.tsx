@@ -41,8 +41,6 @@ import ReactFlowPathPanel from './ReactFlow/ReactFlowPathPanel';
 import ReactFlowVlanPanel from './ReactFlow/ReactFlowVlanPanel';
 const nodeTypes = {
   equipo: CustomNode,
-  equipoSource: CustomNode,
-  equipoTarget: CustomNode,
 };
 type VlanPath = {
   source: string;
@@ -395,7 +393,7 @@ const NodoCardID = ({ initialNodo }: { initialNodo: NodoType }) => {
       if (vlanPath?.target === n.id) {
         selectedType = 'equipoTarget';
       }
-      return { ...n, type: selectedType, data: { ...n.data, selectedType } };
+      return { ...n, data: { ...n.data, selectedType } };
     });
   }, [nodes, vlanPath]);
   return (

@@ -6,7 +6,7 @@ import { IconMap } from './SVGs/IconMap';
 
 type EquipoNodeProps = NodeProps<EquipoType>;
 
-export default memo(({ data }: EquipoNodeProps) => {
+const CustomNode = ({ data }: EquipoNodeProps) => {
   const iconSize = '48px';
 
   // 🎨 Gradientes y colores según modo
@@ -18,6 +18,7 @@ export default memo(({ data }: EquipoNodeProps) => {
   const iconBg = useColorModeValue('white', 'gray.900');
   const textColor = useColorModeValue('gray.800', 'gray.100');
   const handleColor = useColorModeValue('#3182ce', '#90cdf4');
+
   return (
     <Box
       p={2}
@@ -72,7 +73,6 @@ export default memo(({ data }: EquipoNodeProps) => {
           Target
         </Text>
       )}
-      {/* HANDLES */}
       <Handle
         id={`source-handle-${data?.id}`}
         type='source'
@@ -93,8 +93,6 @@ export default memo(({ data }: EquipoNodeProps) => {
           background: handleColor,
         }}
       />
-
-      {/* ICONO */}
       <Flex
         w={iconSize}
         h={iconSize}
@@ -108,8 +106,6 @@ export default memo(({ data }: EquipoNodeProps) => {
       >
         <Image src={IconMap[data.tipo].src} alt={data.tipo} maxH='60%' />
       </Flex>
-
-      {/* TEXTO */}
       <Text
         fontSize='xs'
         fontWeight='medium'
@@ -121,4 +117,9 @@ export default memo(({ data }: EquipoNodeProps) => {
       </Text>
     </Box>
   );
-});
+};
+
+// 👇 Esto evita el warning
+CustomNode.displayName = 'CustomNode';
+
+export default memo(CustomNode);

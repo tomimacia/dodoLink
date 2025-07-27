@@ -204,7 +204,12 @@ const ConsultarServicio = () => {
                       </Text>
                     ) : (
                       regProd?.description?.map((l: string) => (
-                        <Text fontSize='sm' noOfLines={3} color={customGray}>
+                        <Text
+                          key={`reg-description-key-${l}-${regProd.id}`}
+                          fontSize='sm'
+                          noOfLines={3}
+                          color={customGray}
+                        >
                           <HighlightedText query={consulta} text={l} />
                         </Text>
                       ))

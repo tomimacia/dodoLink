@@ -2,13 +2,13 @@ import { TimeData } from '@/data/data';
 import { getEstado } from '@/helpers/cobros/getEstado';
 import { formatSecondsToHHMMSS } from '@/helpers/formatSecondsToHHMMSS';
 import useGetMovMonthData from '@/hooks/data/useGetMovMonthData';
-import { Button, Flex, Heading, Text } from '@chakra-ui/react';
+import { ProductoType } from '@/types/types';
+import { Button, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import DuracionesChart from '../DuracionesChart';
 import StatsData from '../StatsData';
 import TitleWithArrowsHandler from '../TitleWithArrowsHandler';
 import ReservasPieChart from './Charts/ReservasPieChart';
-import { ProductoType } from '@/types/types';
 import TreeMapProductos from './Charts/TreeMapChart';
 
 const ReservasDashboard = () => {

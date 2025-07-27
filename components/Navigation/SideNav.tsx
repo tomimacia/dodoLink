@@ -1,7 +1,7 @@
 import { useUser } from '@/context/userContext';
 import { Routes } from '@/data/data';
 import { Flex, Icon, Text } from '@chakra-ui/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 

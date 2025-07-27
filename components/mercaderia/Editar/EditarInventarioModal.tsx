@@ -70,8 +70,15 @@ const EditarInventarioModal = ({
   const handleSave = async () => {
     const cantUpdate = inventario.some((it) => {
       const itemDB = allProductos?.find((p) => p.id === it.id);
+      const itPrev = user.inventario?.find((p) => p.id === it.id);
       if (!itemDB) return false;
-      return it.cantidad > itemDB.cantidad;
+
+      const cantidadDisponible = itemDB.cantidad + (itPrev?.cantidad ?? 0);
+      if (it.cantidad > cantidadDisponible) {
+        console.log('ERROR:', it?.nombre);
+      }
+
+      return it.cantidad > cantidadDisponible;
     });
     if (cantUpdate) {
       toast({
@@ -86,7 +93,6 @@ const EditarInventarioModal = ({
     await updateInventario(user, inventario, devolverStock);
     onClose();
   };
-  console.log(inventario);
   const handleClose = () => {
     setInventario(user.inventario);
     setDevolverStock(false);
@@ -227,7 +233,7 @@ const EditarInventarioModal = ({
                 />
               </Flex>
               <Flex justify='flex-end' mt={4} gap={3}>
-                <Button size='sm' onClick={onClose} variant='ghost'>
+                <Button size='sm' onClick={handleClose} variant='ghost'>
                   Cancelar
                 </Button>
                 <Button

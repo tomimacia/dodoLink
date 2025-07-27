@@ -5,7 +5,6 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
-  ButtonGroup,
   Checkbox,
   Collapse,
   Divider,

@@ -25,7 +25,7 @@ const UserBody = ({ user }: { user: UserType | null }) => {
       {/* Detalles de contacto y botón */}
       <Flex
         w='100%'
-        maxW='500px'
+        maxW='800px'
         fontSize='lg'
         p={3}
         flexDir='column'
@@ -51,7 +51,7 @@ const UserBody = ({ user }: { user: UserType | null }) => {
       {inventario && inventario.length > 0 && (
         <Box
           w='100%'
-          maxW='500px'
+          maxW='800px'
           p={4}
           borderRadius='md'
           bg='gray.50'

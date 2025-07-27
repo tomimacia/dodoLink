@@ -12,20 +12,23 @@ const StatCard = ({
   helper,
   color,
   props,
+  p,
 }: {
   label: string;
   value: string | number;
   helper?: string;
   color: string;
   props?: any;
+  p?: number;
 }) => {
   const bg = useColorModeValue('white', 'gray.800');
   return (
     <Stat
-      p={4}
+      p={p || 4}
       borderRadius='xl'
       shadow='md'
       bg={bg}
+      borderBottom='2px solid'
       borderLeft='5px solid'
       borderColor={color}
       {...props}

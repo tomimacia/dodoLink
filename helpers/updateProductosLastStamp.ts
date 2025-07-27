@@ -4,10 +4,10 @@ import { Timestamp } from 'firebase/firestore';
 const updateProductosLastStamp = async () => {
   const today = Timestamp.now();
   window.localStorage.setItem(
-    'PRODUCTOS_LASTUPDATE_SECONDS_SESSION_STORAGE',
+    'SERVICIOS_DB_LASTUPDATE_SECONDS_SESSION_STORAGE',
     JSON.stringify(today.seconds)
   );
-  await setSingleDoc('productos', 'metadata', { lastUpdate: today });
+  await setSingleDoc('servicios', 'metadata', { lastUpdate: today });
 };
 
 export default updateProductosLastStamp;

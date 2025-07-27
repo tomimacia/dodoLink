@@ -1,10 +1,10 @@
 'use client';
 
 import PaginationControl from '@/components/reservas/PaginationControl';
-import dateTexto from '@/helpers/dateTexto';
 import useGetNodos from '@/hooks/data/useGetNodos';
 import usePagination from '@/hooks/data/usePagination';
 import { useThemeColors } from '@/hooks/useThemeColors';
+import { NodoType } from '@/types/types';
 import { Button, Flex, Icon, Input, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -12,6 +12,7 @@ import { useMemo, useState } from 'react';
 import { FaListUl, FaThLarge, FaThList } from 'react-icons/fa';
 import { FaTableCellsLarge } from 'react-icons/fa6';
 import ReactLoading from 'react-loading';
+
 const NodosIndexPage = () => {
   const { nodos, loadingNodos, getNodos } = useGetNodos();
   const [isList, setIsList] = useState(false);
@@ -109,7 +110,7 @@ const NodosIndexPage = () => {
             show={nodos && nodos?.length > itemsPerPage ? true : false}
           />
           <motion.div
-            key={`clientes-content-${page}-${isList ? 'list' : 'grid'}`}
+            key={`nodos-content-${page}-${isList ? 'list' : 'grid'}`}
             style={{
               display: 'flex',
               flexDirection: isList ? 'column' : undefined,
@@ -122,13 +123,13 @@ const NodosIndexPage = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: goingUp ? -15 : 15 }}
           >
-            {paginatedArr?.map((cliente: any, index: number) => {
+            {paginatedArr?.map((nodo: NodoType, index: number) => {
               return (
                 <Flex
                   flexDir='column'
                   as={Link}
-                  href={`/ClienteID/${cliente?.id}`}
-                  key={cliente.id + '' + index}
+                  href={`/NodosID/${nodo?.id}`}
+                  key={nodo?.id + '' + index}
                   p={{ base: 1, md: 2, lg: 3 }}
                   w={!isList ? wrappedWidth : '100%'}
                   borderWidth='1px'
@@ -138,21 +139,17 @@ const NodosIndexPage = () => {
                   justifyContent='space-between'
                   _hover={{ boxShadow: 'lg' }}
                 >
-                  {!!cliente?.updated_at && (
-                    <Text fontSize='xs' color='gray.400'>
-                      Actualizado:{' '}
-                      {
-                        dateTexto(new Date(cliente.updated_at).getTime() / 1000)
-                          .numDate
-                      }
+                  <Flex flexDir='column' gap={1}>
+                    <Text fontWeight='bold' fontSize='lg'>
+                      {nodo?.nombre}
                     </Text>
-                  )}
-                  <Text noOfLines={1} fontSize='lg' fontWeight='bold'>
-                    {cliente.first_name} {cliente.last_name}
-                  </Text>
-                  <Text noOfLines={1} color='gray.400' fontSize='sm'>
-                    {cliente.email}
-                  </Text>
+                    <Text fontSize='sm' color='gray.500'>
+                      Equipos: {nodo?.equipos?.length ?? 0}
+                    </Text>
+                    <Text fontSize='sm' color='gray.500'>
+                      VLANs: {nodo?.vlans?.length ?? 0}
+                    </Text>
+                  </Flex>
                 </Flex>
               );
             })}

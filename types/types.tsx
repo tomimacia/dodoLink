@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Edge } from 'reactflow';
 
 export type MainLayoutType = {
   children: ReactNode;
@@ -10,7 +11,13 @@ export type TextAndInputType = {
   type: string;
   yaRegistrado?: boolean;
 };
-export type RolType = 'Superadmin' | 'Admin' | 'Supervisor' | 'Cuadrilla';
+export type RolType =
+  | 'Superadmin'
+  | 'Admin'
+  | 'Supervisor'
+  | 'Cuadrilla'
+  | 'NOC Support';
+
 export type UserType = {
   id: string;
   nombre: string;
@@ -21,7 +28,11 @@ export type UserType = {
   rol: RolType;
   cuadrilla: number | null;
 };
-
+export type OpenModalType = {
+  title: string;
+  description: string;
+  func: (data?: any) => void;
+};
 export interface CreatedAt {
   seconds: number;
   nanoseconds: number;
@@ -150,4 +161,40 @@ export type MovimientosType = {
   notas: NotaType[];
   fecha: string;
   id: string;
+};
+export type VLANType = {
+  id: string;
+  nombre: string;
+  description?: string[];
+};
+export type HighlightType = null | 'path' | 'vlan';
+export type TipoEquipo =
+  | 'Switch'
+  | 'Router'
+  | 'Core'
+  | 'Túnel'
+  | 'VXLAN'
+  | 'Otro';
+export type CoordenadasType = { x: number; y: number };
+export type EquipoType = {
+  id: string;
+  nombre: string;
+  tipo: TipoEquipo;
+  coordenadas: CoordenadasType;
+  selectedType?: string;
+};
+
+export type NodoType = {
+  id?: string;
+  nombre: string;
+  description?: string[];
+  equipos: EquipoType[];
+  vlans: VLANType[];
+  edges?: Edge[];
+};
+export type EdgeLineType = 'straight' | 'step' | 'smoothstep' | 'default';
+export type ServicioFirebaseType = {
+  id: string;
+  description: string[] | null;
+  graphId: string | null;
 };

@@ -1,7 +1,5 @@
-import { Box, Flex, SimpleGrid, Spinner, Text } from '@chakra-ui/react';
+import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import StatCard from './StatCard';
 

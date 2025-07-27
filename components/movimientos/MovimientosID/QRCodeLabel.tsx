@@ -1,20 +1,12 @@
-import React, { Fragment, useRef } from 'react';
+import { CurrentURL } from '@/data/data';
+import { getEstado } from '@/helpers/cobros/getEstado';
 import dateTexto from '@/helpers/dateTexto';
 import { PedidoType } from '@/types/types';
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Text, useToast } from '@chakra-ui/react';
+import { Fragment, useRef } from 'react';
+import { IoMdPrint } from 'react-icons/io';
 import QRCode from 'react-qr-code';
 import { useReactToPrint } from 'react-to-print';
-import { IoMdPrint } from 'react-icons/io';
-import { getEstado } from '@/helpers/cobros/getEstado';
-import { CurrentURL } from '@/data/data';
 const QRCodeLabel = ({ pedido }: { pedido: PedidoType }) => {
   const { id, cliente, detalle, items, movimientos } = pedido;
   const estado = getEstado(movimientos);

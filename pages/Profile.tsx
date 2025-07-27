@@ -1,3 +1,4 @@
+import SuperAdminRoutes from '@/components/users/SuperAdminRoutes';
 import UserBody from '@/components/users/UserBody';
 import { useUser } from '@/context/userContext';
 import { Flex, Heading } from '@chakra-ui/react';
@@ -14,6 +15,7 @@ const Profile = () => {
     <Flex w='100%' flexDir='column'>
       <Heading textAlign='center'>Mi Perfil</Heading>
       <UserBody user={user} />
+      {user?.rol === 'Superadmin' && <SuperAdminRoutes />}
     </Flex>
   );
 };

@@ -1,12 +1,11 @@
 import {
-  Flex,
   Popover,
   PopoverArrow,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
 } from '@chakra-ui/react';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { BsInfoCircle } from 'react-icons/bs';
 
 const PopoverInfoIcon = ({

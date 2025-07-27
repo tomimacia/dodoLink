@@ -15,6 +15,7 @@
     "@fontsource/montserrat": "^5.0.16",
     "@fontsource/raleway": "^5.0.16",
     "@fontsource/roboto-mono": "^5.1.1",
+    "@xyflow/react": "^12.8.2",
     "@yudiel/react-qr-scanner": "^2.3.0",
     "axios": "^1.9.0",
     "d3-scale": "^4.0.2",
@@ -35,6 +36,7 @@
     "react-qr-code": "^2.0.15",
     "react-scroll-to-top": "^3.0.0",
     "react-to-print": "^3.1.0",
+    "reactflow": "^11.11.4",
     "recharts": "^2.11.0"
   },
   "devDependencies": {

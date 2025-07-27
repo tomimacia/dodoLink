@@ -1,5 +1,6 @@
 import { useUser } from '@/context/userContext';
 import { deleteSingleDoc } from '@/firebase/services/deleteSingleDoc';
+import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import useGetProductos from '@/hooks/data/useGetProductos';
 import usePagination from '@/hooks/data/usePagination';
@@ -26,6 +27,7 @@ import ReactLoading from 'react-loading';
 import DeleteModal from '../DeleteModal';
 import PaginationControl from '../reservas/PaginationControl';
 import ProductoModal from './Editar/ProductoModal';
+import EditarPackModal from './EditarPackModal';
 const ListadoProductos = () => {
   const {
     productos,
@@ -97,7 +99,36 @@ const ListadoProductos = () => {
     totalPages,
     handlePageChange,
   } = usePagination(filteredProductos, itemsPerPage, true);
+  const editPack = async (newPack: string) => {
+    if (!pack) {
+      return;
+    }
 
+    const proms = filteredProductos.map((p) => {
+      const newPacks = p.packs.map((sPack) =>
+        sPack === pack ? newPack : sPack
+      );
+      return setSingleDoc('productos', p.id, {
+        packs: newPacks,
+      });
+    });
+    const newProductos = productos?.map((p) => {
+      if (p.packs.includes(pack)) {
+        return {
+          ...p,
+          packs: p.packs.map((sPack) => (sPack === pack ? newPack : sPack)),
+        };
+      }
+      return p;
+    });
+
+    if (newProductos) {
+      setProductos(newProductos); // 👈 asumimos que tenés este setter
+    }
+    await Promise.all(proms);
+    if (proms.length > 0) updateProductosLastStamp();
+    setPack(newPack);
+  };
   return (
     <Flex flexDir='column' gap={3} mt={3}>
       <Flex
@@ -118,7 +149,6 @@ const ListadoProductos = () => {
               value={empresa}
               cursor='pointer'
               w='fit-content'
-              borderColor='gray.300'
             >
               <option value='dodoLink'>dodoLink</option>
               <option value='Grupo IN'>Grupo IN</option>
@@ -137,7 +167,6 @@ const ListadoProductos = () => {
             value={pack}
             cursor='pointer'
             w='fit-content'
-            borderColor='gray.300'
           >
             {allPacks?.map((g) => (
               <option key={g} value={g}>
@@ -145,6 +174,11 @@ const ListadoProductos = () => {
               </option>
             ))}
           </Select>
+          <EditarPackModal
+            key={`modal-pack-key-${pack}`}
+            editPack={editPack}
+            initialPack={pack}
+          />
         </Flex>
         <Flex align='center' gap={2}>
           <Text fontWeight='medium'>Categoría:</Text>
@@ -152,6 +186,7 @@ const ListadoProductos = () => {
           <Select
             placeholder='Todas'
             value={categoria}
+            borderRadius='md'
             onChange={(e) => setCategoria(e.target.value)}
             size='sm'
             w='auto'
@@ -170,15 +205,12 @@ const ListadoProductos = () => {
             onChange={(e) => setFilterInput(e.target.value)}
             placeholder='Ingresar nombre'
             borderRadius='md'
-            borderColor='gray.300'
           />
         </Flex>
-
-        <Text fontSize='sm' alignSelf='center'>
-          Resultados: <b>{filteredProductos.length}</b>
-        </Text>
       </Flex>
-
+      <Text fontSize='sm'>
+        Resultados: <b>{filteredProductos.length}</b>
+      </Text>
       <PaginationControl
         page={page}
         totalPages={totalPages}

@@ -62,9 +62,9 @@ const PedidoBody = ({ pedido }: { pedido: PedidoType }) => {
         py={1}
         fontSize='md'
       >
-        {detalle?.map((l) => {
+        {detalle?.map((l, idx) => {
           return (
-            <Fragment key={`${l}-detalle-${pedido.id}}`}>
+            <Fragment key={`${l}-detalle-${pedido.id}-${idx}`}>
               <span>{l}</span>
               <br />
             </Fragment>

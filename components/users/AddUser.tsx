@@ -14,6 +14,7 @@ import {
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useState } from 'react';
 import CopyButton from '../CopyButton';
+import { allRoles } from '@/data/data';
 const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
@@ -182,10 +183,13 @@ const AddUser = ({ getUsers }: { getUsers: () => Promise<void> }) => {
               borderRadius='5px'
               value={rol}
             >
-              <option value='Superadmin'>Superadmin</option>
-              <option value='Supervisor'>Supervisor</option>
-              <option value='Admin'>Admin</option>
-              <option value='Cuadrilla'>Cuadrilla</option>
+              {allRoles.map((r) => {
+                return (
+                  <option value={r} key={`rol-listed-${r}`}>
+                    {r}
+                  </option>
+                );
+              })}
             </Select>
           </Flex>
           {rol === 'Cuadrilla' && (

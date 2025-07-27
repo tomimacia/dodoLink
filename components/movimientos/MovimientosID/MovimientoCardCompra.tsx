@@ -129,9 +129,9 @@ const MovimientoCardCompra = ({ movimiento }: { movimiento: PedidoType }) => {
               py={1}
               fontSize='md'
             >
-              {detalle.map((l) => {
+              {detalle.map((l, idx) => {
                 return (
-                  <Fragment key={`${l}-detalle-${id}}`}>
+                  <Fragment key={`${l}-detalle-${id}--${idx}`}>
                     <span>{l}</span>
                     <br />
                   </Fragment>

@@ -7,7 +7,6 @@ import { getEstado } from '@/helpers/cobros/getEstado';
 import { getUpdatedCompras } from '@/helpers/cobros/getUpdatedCompras';
 import { getUpdatedReservas } from '@/helpers/cobros/getUpdatedReservas';
 import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
-import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import {
   Estados,
   MovimientosType,
@@ -20,6 +19,7 @@ import { Timestamp } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import useGetProductos from './data/useGetProductos';
+import { updateProductosLastStamp } from '@/helpers/updateStamps';
 
 const usePedidosForm = (movimiento: PedidoType) => {
   const { reservas, compras, notas } = useOnCurso();

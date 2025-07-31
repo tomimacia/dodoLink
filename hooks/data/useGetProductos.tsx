@@ -1,13 +1,15 @@
 import { getCollection } from '@/firebase/services/getCollection';
 import useOnSnapshot from '@/firebase/services/useOnSnapshot';
-import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import { ProductoType } from '@/types/types';
 import { Timestamp } from 'firebase/firestore';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalStorage } from '../storageHooks/useLocalStorage';
+import {
+  lastUpdateProductosKEY,
+  updateProductosLastStamp,
+} from '@/helpers/updateStamps';
 
 const productosKEY = 'PRODUCTOS_SESSION_STORAGE';
-const lastUpdateProductosKEY = 'PRODUCTOS_LASTUPDATE_SECONDS_SESSION_STORAGE';
 
 const useGetProductos = (shouldUpdate: boolean = false) => {
   const [productos, setProductos] = useLocalStorage<ProductoType[] | null>(

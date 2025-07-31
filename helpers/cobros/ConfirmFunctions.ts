@@ -4,7 +4,7 @@ import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { NotaType, ProductoType } from '@/types/types';
 import { arrayUnion } from 'firebase/firestore';
 import dateTexto from '../dateTexto';
-import updateProductosLastStamp from '../updateProductosLastStamp';
+import { updateProductosLastStamp } from '../updateStamps';
 
 function createID(fechaHoy: string) {
   const randomNumber = Math.floor(10000000 + Math.random() * 90000000);

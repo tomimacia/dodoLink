@@ -2,7 +2,6 @@ import { useUser } from '@/context/userContext';
 import { getMultipleDocs } from '@/firebase/services/getMultipleDocs';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { generateFirestoreId } from '@/helpers/generateFirestoreID';
-import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import useGetProductos from '@/hooks/data/useGetProductos';
 import useScanDetection from '@/hooks/useScanDetection';
 import { ProductoType } from '@/types/types';
@@ -28,6 +27,7 @@ import {
 import { Timestamp } from 'firebase/firestore';
 import { useState } from 'react';
 import PopoverInfoIcon from '../inicio/PopoverInfoIcon';
+import { updateProductosLastStamp } from '@/helpers/updateStamps';
 
 const AddProducto = () => {
   const initialForm = {

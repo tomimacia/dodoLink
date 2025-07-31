@@ -1,15 +1,15 @@
 import { getCollection } from '@/firebase/services/getCollection';
 import useOnSnapshot from '@/firebase/services/useOnSnapshot';
-import updateServiciosLastStamp from '@/helpers/updateServiciosLastStamp';
+import {
+  lastUpdateServiciosKEY,
+  updateServiciosLastStamp,
+} from '@/helpers/updateStamps';
 import { ServicioFirebaseType } from '@/types/types';
 import { Timestamp } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
 import { useLocalStorage } from '../storageHooks/useLocalStorage';
 
 const serviciosKEY = 'SERVICIOS_DB_SESSION_STORAGE';
-const lastUpdateServiciosKEY =
-  'SERVICIOS_DB_LASTUPDATE_SECONDS_SESSION_STORAGE';
-
 const useGetServicios = (shouldUpdate: boolean = false) => {
   const [servicios, setServicios] = useLocalStorage<
     ServicioFirebaseType[] | null

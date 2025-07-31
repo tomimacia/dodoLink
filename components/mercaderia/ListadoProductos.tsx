@@ -1,7 +1,6 @@
 import { useUser } from '@/context/userContext';
 import { deleteSingleDoc } from '@/firebase/services/deleteSingleDoc';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
-import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import useGetProductos from '@/hooks/data/useGetProductos';
 import usePagination from '@/hooks/data/usePagination';
 import { useThemeColors } from '@/hooks/useThemeColors';
@@ -28,6 +27,7 @@ import DeleteModal from '../DeleteModal';
 import PaginationControl from '../reservas/PaginationControl';
 import ProductoModal from './Editar/ProductoModal';
 import EditarPackModal from './EditarPackModal';
+import { updateProductosLastStamp } from '@/helpers/updateStamps';
 const ListadoProductos = () => {
   const {
     productos,

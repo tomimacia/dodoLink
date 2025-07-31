@@ -16,9 +16,9 @@ import EditarInventarioModal from './Editar/EditarInventarioModal';
 import useGetProductos from '@/hooks/data/useGetProductos';
 import { ProductoType, UserType } from '@/types/types';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
-import updateProductosLastStamp from '@/helpers/updateProductosLastStamp';
 import { useUser } from '@/context/userContext';
 import { sendMailAndTelegram } from '@/alerts/sendMailAndTelegram';
+import { updateProductosLastStamp } from '@/helpers/updateStamps';
 
 const AsignadosComp = () => {
   const { user } = useUser();

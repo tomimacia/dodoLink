@@ -109,6 +109,7 @@ const useGetProductos = (shouldUpdate: boolean = false) => {
   };
   useEffect(() => {
     if (!loading && metadata?.lastUpdate && shouldUpdate) {
+      console.log('Cheking updates');
       checkUpdates();
     }
   }, [metadata]);

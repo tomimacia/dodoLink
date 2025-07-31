@@ -1,50 +1,52 @@
 import ServicioIDPage from '@/components/servicios/ServicioIDPage';
 import { getSingleDoc } from '@/firebase/services/getSingleDoc';
 import { setSingleDoc } from '@/firebase/services/setSingleDoc';
+import { ServicioFirebaseType } from '@/types/types';
 import axios from 'axios';
+
 type ServerSideProps = {
   params: {
     ID: string;
   };
 };
 
-type ProductoFirebaseType = {
-  id: string;
-  graphId: string | null;
-  description?: string[];
-};
-
 export const getServerSideProps = async ({ params }: ServerSideProps) => {
   const { ID } = params;
+
   try {
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_CURRENT_URL}api/sqlDB/productID?id=${ID}`
     );
     const producto = res.data || null;
 
-    let graphImage = null;
-    let graphId = null;
+    let graphImage: string[] = [];
+    let graphId: string[] = [];
 
     const findProductoFirebase = (await getSingleDoc('servicios', ID)) as
-      | ProductoFirebaseType
+      | ServicioFirebaseType
       | undefined;
 
     if (findProductoFirebase) {
-      graphId = findProductoFirebase.graphId;
+      graphId = findProductoFirebase.graphId || [];
     } else {
-      const newProducto = { id: ID, graphId: null };
+      const newProducto = { id: ID, graphId: [] };
       await setSingleDoc('servicios', ID, newProducto);
     }
 
-    if (graphId) {
+    if (graphId.length > 0) {
       try {
-        const graphRes = await axios.post(
-          `${process.env.NEXT_PUBLIC_CURRENT_URL}api/zabbix/graph`,
-          { graphid: graphId }
+        const graphResponses = await Promise.all(
+          graphId.map((g) =>
+            axios.post(
+              `${process.env.NEXT_PUBLIC_CURRENT_URL}api/zabbix/graph`,
+              { graphid: g }
+            )
+          )
         );
-        graphImage = graphRes.data.imageBase64 || null;
+
+        graphImage = graphResponses.map((res) => res.data.imageBase64 || '');
       } catch (err: any) {
-        console.error('Error al traer gráfico de Zabbix:', err.message);
+        console.error('Error al traer gráficos de Zabbix:', err.message);
       }
     }
 
@@ -52,7 +54,7 @@ export const getServerSideProps = async ({ params }: ServerSideProps) => {
       props: {
         producto,
         graphImage,
-        productoFirebase: findProductoFirebase || { id: ID, graphId: null },
+        productoFirebase: findProductoFirebase || { id: ID, graphId: [] },
       },
     };
   } catch (error) {
@@ -60,8 +62,8 @@ export const getServerSideProps = async ({ params }: ServerSideProps) => {
     return {
       props: {
         producto: null,
-        graphImage: null,
-        productoFirebase: null,
+        graphImage: [],
+        productoFirebase: { id: params.ID, graphId: [] },
       },
     };
   }
@@ -73,8 +75,8 @@ const ServicioID = ({
   productoFirebase,
 }: {
   producto: any;
-  graphImage: string | null;
-  productoFirebase: ProductoFirebaseType;
+  graphImage: string[];
+  productoFirebase: ServicioFirebaseType;
 }) => {
   return (
     <ServicioIDPage

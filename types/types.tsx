@@ -196,5 +196,5 @@ export type EdgeLineType = 'straight' | 'step' | 'smoothstep' | 'default';
 export type ServicioFirebaseType = {
   id: string;
   description: string[] | null;
-  graphId: string | null;
+  graphId: string[];
 };

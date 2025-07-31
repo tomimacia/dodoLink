@@ -63,7 +63,8 @@ const AgregarGraphId = ({
       setGraphImageState((prev) => [...prev, res.data.imageBase64]);
 
       toast({
-        title: 'Gráfico agregado',
+        title: 'Agregado',
+        description: 'Gráfico agregado correctamente',
         status: 'success',
         duration: 3000,
         isClosable: true,

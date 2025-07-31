@@ -76,13 +76,6 @@ const ServicioIDPage = ({
       (_, idx) => currentProductoFirebase.graphId[idx] !== graphToRemove
     );
     setGraphImageState(newGraphImages);
-
-    toast({
-      title: 'Gráfico eliminado',
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-    });
   };
   return (
     <Flex mt={4} flexDir='column' gap={4} flex={1}>

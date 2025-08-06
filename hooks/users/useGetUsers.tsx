@@ -5,7 +5,7 @@ import { useSessionStorage } from '../storageHooks/useSessionStorage';
 
 const useGetUsers = () => {
   const [users, setUsers] = useSessionStorage<UserType[] | null>(
-    'USERS_SESSION_STORAGE',
+    'USERS_SESSION_STORAGE_DODO',
     null
   );
   const [loadingUserList, setLoadingUsers] = useState(false);

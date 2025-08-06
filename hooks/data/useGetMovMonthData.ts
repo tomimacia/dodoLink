@@ -14,7 +14,7 @@ import { useToast } from '@chakra-ui/react';
 
 const useGetMovMonthData = (month: number, year: number) => {
   const [monthData, setMonthData] = useSessionStorage<any | null>(
-    `INGRESOS_DATA_SESSION_STORAGE_${month}_${year}`,
+    `INGRESOS_DATA_SESSION_STORAGE_${month}_${year}_DODO`,
     null
   );
   const [loadingMonthData, setLoadingMonthData] = useState(false);

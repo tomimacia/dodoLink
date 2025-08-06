@@ -1,8 +1,9 @@
 import ClientIDCard from '@/components/clientes/ClientIDCard';
 import dateTexto from '@/helpers/dateTexto';
-import { Box, Flex, Grid, Heading, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, Heading, Link, Text } from '@chakra-ui/react';
 import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { FiExternalLink } from 'react-icons/fi';
 
 interface ClienteData {
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const ClientePage = ({ clientData }: Props) => {
+  const router = useRouter();
   if (!clientData?.cliente) {
     return (
       <Box p={10}>
@@ -25,7 +27,6 @@ const ClientePage = ({ clientData }: Props) => {
       </Box>
     );
   }
-
   const { cliente, hostings, productos } = clientData;
   const productosConHostings = productos.map((producto) => {
     const relacionados = hostings.find(
@@ -37,15 +38,36 @@ const ClientePage = ({ clientData }: Props) => {
       hosting: relacionados,
     };
   });
-
   return (
     <Box p={10}>
+      {/* Botón Volver */}
+      <Flex align='center' justify='space-between' px={2} gap={2}>
+        <Heading size='lg'>
+          {cliente.firstname} {cliente.lastname}
+        </Heading>
+        <Button
+          onClick={() => router.back()}
+          size='sm'
+          variant='link'
+          colorScheme='gray'
+          leftIcon={<FiExternalLink size={14} />}
+        >
+          Volver
+        </Button>
+      </Flex>
+
       {/* Datos del cliente */}
       <Box mb={8} p={6} borderRadius='xl' boxShadow='md'>
         <Flex align='center' justify='space-between'>
-          <Heading size='lg'>
-            {cliente.first_name} {cliente.last_name}
-          </Heading>
+          {cliente?.companyname ? (
+            <Text fontSize='md' color='gray.600' mt={1}>
+              {cliente.companyname}
+            </Text>
+          ) : (
+            <Text fontSize='md' color='gray.600' mt={1}>
+              {cliente.email}
+            </Text>
+          )}
           <Link
             as={NextLink}
             _hover={{ opacity: 0.5 }}
@@ -54,9 +76,14 @@ const ClientePage = ({ clientData }: Props) => {
             <FiExternalLink size={18} />
           </Link>
         </Flex>
-        <Text fontSize='md' color='gray.500'>
-          {cliente.email}
-        </Text>
+
+        {/* Mostrar companyname solo si existe */}
+
+        {cliente.companyname && (
+          <Text fontSize='md' color='gray.500'>
+            {cliente.email}
+          </Text>
+        )}
         <Text fontSize='sm' color='gray.400' mt={2}>
           Alta de usuario:{' '}
           {dateTexto(new Date(cliente.created_at).getTime() / 1000).numDate}

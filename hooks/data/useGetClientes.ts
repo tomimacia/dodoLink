@@ -3,7 +3,7 @@ import { useSessionStorage } from '../storageHooks/useSessionStorage';
 
 const useGetClientes = () => {
   const [clientes, setClientes] = useSessionStorage<any[] | null>(
-    'CLIENTES_SESSION_STORAGE',
+    'CLIENTES_SESSION_STORAGE_DODO',
     null
   );
   const [loadingClientes, setLoadingClientes] = useState(false);

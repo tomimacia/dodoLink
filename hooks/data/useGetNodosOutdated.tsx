@@ -7,8 +7,8 @@ import { useLocalStorage } from '../storageHooks/useLocalStorage';
 
 type NodoType = any;
 
-const NodoKEY = 'NODOS_SESSION_STORAGE';
-const lastUpdateNodosKEY = 'NODOS_LASTUPDATE_SECONDS_SESSION_STORAGE';
+const NodoKEY = 'NODOS_SESSION_STORAGE_DODO';
+const lastUpdateNodosKEY = 'NODOS_LASTUPDATE_SECONDS_SESSION_STORAGE_DODO';
 
 const useGetNodosOutdated = (shouldUpdate: boolean = false) => {
   const [nodos, setNodos] = useLocalStorage<NodoType[] | null>(NodoKEY, null);

@@ -5,36 +5,73 @@ import dateTexto from '@/helpers/dateTexto';
 import useGetClientes from '@/hooks/data/useGetClientes';
 import usePagination from '@/hooks/data/usePagination';
 import { useThemeColors } from '@/hooks/useThemeColors';
-import { Button, Flex, Icon, Input, Text } from '@chakra-ui/react';
+import { Button, chakra, Flex, Icon, Input, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
 import { FaListUl, FaThLarge, FaThList } from 'react-icons/fa';
 import { FaTableCellsLarge } from 'react-icons/fa6';
 import ReactLoading from 'react-loading';
+import { HighlightedText } from '../HighlightedText';
+const MotionLink = chakra(motion(Link)) as any;
 const ClientesIndexPage = () => {
   const { clientes, loadingClientes, getClientes } = useGetClientes();
   const [isList, setIsList] = useState(false);
   const [filterInput, setFilterInput] = useState('');
   const { loadingColor } = useThemeColors();
+  const router = useRouter();
   const filteredClientes = useMemo(() => {
     if (!clientes) return [];
     return clientes
       .filter((p) => {
-        const { first_name, last_name, email } = p;
-        const toFind = [first_name, last_name, email].join(' ');
+        const { firstname, lastname, email, companyname } = p;
+        const toFind = [firstname, lastname, companyname, email]
+          .filter(Boolean)
+          .join(' ');
         const matchesFilter =
           filterInput.length < 3 ||
-          toFind?.toLowerCase().includes(filterInput.toLowerCase());
+          toFind.toLowerCase().includes(filterInput.toLowerCase());
 
         return matchesFilter;
       })
-      .sort((a, b) => a.last_name.localeCompare(b.last_name));
+      .sort((a, b) => a.lastname.localeCompare(b.lastname));
   }, [clientes, filterInput]);
-  const itemsPerPage = 12;
-  const { paginatedArr, page, totalPages, goingUp, handlePageChange } =
-    usePagination(filteredClientes, itemsPerPage, true);
+  const itemsPerPage = 28;
+  const {
+    paginatedArr,
+    page,
+    totalPages,
+    goingUp,
+    handlePageChange: setPage,
+  } = usePagination(filteredClientes, itemsPerPage, true);
+
+  useEffect(() => {
+    if (router.query.page) {
+      const pageNumber = Number(router.query.page) - 1;
+
+      if (totalPages > pageNumber) {
+        setPage(pageNumber);
+      }
+    }
+  }, []);
+
+  // Actualizar query cuando cambia página
+  const handlePageChange = (newPage: number) => {
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, page: newPage + 1 },
+      },
+      undefined,
+      { shallow: true }
+    );
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const wrappedWidth = ['100%', '100%', '48%', '32%', '24%'];
+
   return (
     <Flex flexDir='column' gap={4}>
       <Flex
@@ -83,7 +120,7 @@ const ClientesIndexPage = () => {
             maxW='200px'
             value={filterInput}
             onChange={(e) => setFilterInput(e.target.value)}
-            placeholder='Fitrar clientes'
+            placeholder='Filtrar clientes'
             borderRadius='md'
             borderColor='gray.300'
           />
@@ -106,7 +143,7 @@ const ClientesIndexPage = () => {
             page={page}
             totalPages={totalPages}
             handlePageChange={handlePageChange}
-            show={clientes && clientes?.length > itemsPerPage ? true : false}
+            show={!!clientes && clientes?.length > itemsPerPage}
           />
           <motion.div
             key={`clientes-content-${page}-${isList ? 'list' : 'grid'}`}
@@ -124,11 +161,14 @@ const ClientesIndexPage = () => {
           >
             {paginatedArr?.map((cliente: any, index: number) => {
               return (
-                <Flex
-                  flexDir='column'
-                  as={Link}
+                <MotionLink
                   href={`/ClienteID/${cliente?.id}`}
                   key={cliente.id + '' + index}
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.2, type: 'tween' }}
+                  flexDir='column'
+                  display='flex'
                   p={{ base: 1, md: 2, lg: 3 }}
                   w={!isList ? wrappedWidth : '100%'}
                   borderWidth='1px'
@@ -137,6 +177,7 @@ const ClientesIndexPage = () => {
                   gap={0.5}
                   justifyContent='space-between'
                   _hover={{ boxShadow: 'lg' }}
+                  cursor='pointer'
                 >
                   {!!cliente?.updated_at && (
                     <Text fontSize='xs' color='gray.400'>
@@ -147,13 +188,34 @@ const ClientesIndexPage = () => {
                       }
                     </Text>
                   )}
-                  <Text noOfLines={1} fontSize='lg' fontWeight='bold'>
-                    {cliente.first_name} {cliente.last_name}
-                  </Text>
+
+                  {/* Company + Nombre (altura fija) */}
+                  <Flex direction='column' minH='40px'>
+                    <Text noOfLines={1} fontSize='lg' fontWeight='bold'>
+                      <HighlightedText
+                        text={
+                          cliente.companyname ||
+                          `${cliente.firstname} ${cliente.lastname}`
+                        }
+                        query={filterInput.length > 2 ? filterInput : ''}
+                      />
+                    </Text>
+                    <Text noOfLines={1} color='gray.500' fontSize='sm'>
+                      <HighlightedText
+                        text={`${cliente.firstname} ${cliente.lastname}`}
+                        query={filterInput.length > 2 ? filterInput : ''}
+                      />
+                    </Text>
+                  </Flex>
+
+                  {/* Email */}
                   <Text noOfLines={1} color='gray.400' fontSize='sm'>
-                    {cliente.email}
+                    <HighlightedText
+                      text={cliente.email}
+                      query={filterInput.length > 2 ? filterInput : ''}
+                    />
                   </Text>
-                </Flex>
+                </MotionLink>
               );
             })}
           </motion.div>

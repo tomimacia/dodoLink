@@ -3,7 +3,7 @@ import { useSessionStorage } from '../storageHooks/useSessionStorage';
 
 const useGetOrders = () => {
   const [orders, setOrders] = useSessionStorage<any[] | null>(
-    'ORDERS_SESSION_STORAGE',
+    'ORDERS_SESSION_STORAGE_DODO',
     null
   );
   const [loadingOrders, setLoadingOrders] = useState(false);

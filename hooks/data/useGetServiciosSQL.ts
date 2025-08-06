@@ -3,7 +3,7 @@ import { useSessionStorage } from '../storageHooks/useSessionStorage';
 
 const useGetServiciosSQL = () => {
   const [serviciosSQL, setServiciosSQL] = useSessionStorage<any[] | null>(
-    'SERVICIOS_SESSION_STORAGE',
+    'SERVICIOS_SESSION_STORAGE_DODO',
     null
   );
   const [loadingServicios, setLoadingServicios] = useState(false);

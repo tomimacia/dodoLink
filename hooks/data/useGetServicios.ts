@@ -9,7 +9,7 @@ import { Timestamp } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
 import { useLocalStorage } from '../storageHooks/useLocalStorage';
 
-const serviciosKEY = 'SERVICIOS_DB_SESSION_STORAGE';
+const serviciosKEY = 'SERVICIOS_DB_SESSION_STORAGE_DODO';
 const useGetServicios = (shouldUpdate: boolean = false) => {
   const [servicios, setServicios] = useLocalStorage<
     ServicioFirebaseType[] | null

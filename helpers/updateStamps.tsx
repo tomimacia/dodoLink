@@ -2,9 +2,9 @@ import { setSingleDoc } from '@/firebase/services/setSingleDoc';
 import { Timestamp } from 'firebase/firestore';
 
 export const lastUpdateServiciosKEY =
-  'SERVICIOS_DB_LASTUPDATE_SECONDS_SESSION_STORAGE';
+  'SERVICIOS_DB_LASTUPDATE_SECONDS_SESSION_STORAGE_DODO';
 export const lastUpdateProductosKEY =
-  'PRODUCTOS_LASTUPDATE_SECONDS_SESSION_STORAGE';
+  'PRODUCTOS_LASTUPDATE_SECONDS_SESSION_STORAGE_DODO';
 
 export const updateServiciosLastStamp = async () => {
   const today = Timestamp.now();

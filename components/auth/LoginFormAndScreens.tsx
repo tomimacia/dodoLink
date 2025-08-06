@@ -21,11 +21,11 @@ const LoginFormAndScreens = ({
   refreshUser: () => Promise<void>;
 }) => {
   const [recuerdameUser, setRecuerdameUser] = useLocalStorage(
-    'RECUERDAME_USER_STORAGE',
+    'RECUERDAME_USER_STORAGE_DODO',
     ''
   );
   const [recuerdameUserPwd, setRecuerdamePwd] = useLocalStorage(
-    'RECUERDAME_PASSWORD_STORAGE',
+    'RECUERDAME_PASSWORD_STORAGE_DODO',
     ''
   );
   const [loginForm, setLoginForm] = useState({

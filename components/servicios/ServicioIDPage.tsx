@@ -21,6 +21,7 @@ import AgregarGraphId from './AgregarGraphId';
 import GraphIdComp from './GraphIdComp';
 import MainServiceData from './MainServiceData';
 import ServicioDescripcion from './ServicioDescripcion';
+import { FiExternalLink } from 'react-icons/fi';
 
 const ServicioIDPage = ({
   producto,
@@ -84,10 +85,11 @@ const ServicioIDPage = ({
           {name}
         </Heading>
         <Button
-          _active={{ bg: 'transparent' }}
-          variant='link'
           onClick={() => router.back()}
           size='sm'
+          variant='link'
+          colorScheme='gray'
+          leftIcon={<FiExternalLink size={14} />}
         >
           Volver
         </Button>

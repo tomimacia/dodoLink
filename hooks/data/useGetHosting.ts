@@ -3,7 +3,7 @@ import { useSessionStorage } from '../storageHooks/useSessionStorage';
 
 const useGetHosting = () => {
   const [hosting, setHosting] = useSessionStorage<any[] | null>(
-    'HOSTING_SESSION_STORAGE',
+    'HOSTING_SESSION_STORAGE_DODO',
     null
   );
   const [loadingHosting, setLoadingHosting] = useState(false);

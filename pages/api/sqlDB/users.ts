@@ -11,7 +11,7 @@ export default async function handler(
   }
 
   try {
-    const [users] = await db.query('SELECT * FROM tblusers');
+    const [users] = await db.query('SELECT * FROM tblclients');
     res.status(200).json(users);
   } catch (error) {
     console.error('Error al obtener clientes:', error);

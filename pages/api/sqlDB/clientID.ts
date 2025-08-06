@@ -9,7 +9,6 @@ export default async function handler(
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Método no permitido' });
   }
-
   if (typeof id !== 'string') {
     return res.status(400).json({ message: 'ID inválido' });
   }
@@ -17,7 +16,7 @@ export default async function handler(
   try {
     // 1. Cliente
     const [ClientesFound]: [any[], any] = await db.query(
-      'SELECT * FROM tblusers WHERE id = ?',
+      'SELECT * FROM tblclients WHERE id = ?',
       [id]
     );
     if (ClientesFound.length === 0) {

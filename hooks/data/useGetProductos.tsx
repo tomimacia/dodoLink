@@ -9,7 +9,7 @@ import {
   updateProductosLastStamp,
 } from '@/helpers/updateStamps';
 
-const productosKEY = 'PRODUCTOS_SESSION_STORAGE';
+const productosKEY = 'PRODUCTOS_SESSION_STORAGE_DODO';
 
 const useGetProductos = (shouldUpdate: boolean = false) => {
   const [productos, setProductos] = useLocalStorage<ProductoType[] | null>(

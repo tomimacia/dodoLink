@@ -1,29 +1,29 @@
 import { statusColors } from '@/data/data';
 import dateTexto from '@/helpers/dateTexto';
-import { Divider, Flex, Link, Text } from '@chakra-ui/react';
+import { chakra, Divider, Flex, Link, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
 import { FiExternalLink } from 'react-icons/fi';
+const MotionLink = chakra(motion(Link)) as any;
 const ClientIDCard = ({ prod, clientID }: { prod: any; clientID: string }) => {
-  const router = useRouter();
   const color =
     statusColors[prod.hosting?.domainstatus as keyof typeof statusColors] ||
     'gray';
   return (
-    <motion.div
+    <MotionLink
       key={prod.id}
-      style={{
-        padding: 16,
-        borderRadius: '15px',
-        border: '1px solid',
-        borderLeft: '5px solid',
-        borderColor: color,
-        cursor: 'pointer',
-      }}
-      whileHover={{ scale: 1.02, boxShadow: `0px 0 1px ${color}` }}
+      href={`/ServicioID/${prod.id}`}
+      whileHover={{ scale: 1.015, boxShadow: `0px 0 1px ${color}` }}
+      whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.2, type: 'tween' }}
-      onClick={() => router.push(`/ServicioID/${prod.id}`)}
+      display='block'
+      p='16px'
+      borderRadius='15px'
+      border='1px solid'
+      borderLeft='5px solid'
+      borderColor={color}
+      cursor='pointer'
+      _hover={{ textDecoration: 'none' }}
     >
       <Flex align='center' justify='space-between' mb={2}>
         <Text fontWeight='bold'>{prod.name}</Text>
@@ -71,7 +71,7 @@ const ClientIDCard = ({ prod, clientID }: { prod: any; clientID: string }) => {
           </Text>
         </Text>
       )}
-    </motion.div>
+    </MotionLink>
   );
 };
 

@@ -19,6 +19,8 @@ import {
 import { useEffect, useState } from 'react';
 import ReactLoading from 'react-loading';
 import EditarProductoModal from './Editar/EditarProductoModal';
+import EditarInventarioModal from './Editar/EditarInventarioModal';
+import AgregarProductoAsignado from './Editar/AgregarProductoAsignado';
 
 const AsignadosComp = () => {
   const { user } = useUser();
@@ -36,7 +38,7 @@ const AsignadosComp = () => {
       return show;
     })
     .sort((a, b) => b.inventario.length - a.inventario.length);
-  // const updateInventario = async (
+  // const updateInventarioOld = async (
   //   user: UserType,
   //   newInventario: ProductoType[],
   //   ajustarStock: boolean
@@ -135,6 +137,62 @@ const AsignadosComp = () => {
   //     setLoading(false);
   //   }
   // };
+
+  const agregarProductos = async (
+    user: UserType,
+    newInventario: ProductoType[]
+  ) => {
+    setLoading(true);
+    try {
+      const finalInventario = [...user.inventario, ...newInventario];
+      await setSingleDoc('users', user.id, { inventario: finalInventario });
+
+      // RESTAR stock por aumento o producto nuevo
+      const addPromises = newInventario
+        .map((p) => {
+          const DBItem = productos?.find((db) => db.id === p.id);
+          if (!DBItem) return false;
+          if (p.cantidad > 0) {
+            return setSingleDoc('productos', p.id, {
+              cantidad: DBItem.cantidad - p.cantidad,
+            });
+          }
+          return false;
+        })
+        .filter(Boolean);
+      // Actualización local
+      const productosActualizados = newInventario?.map((p) => {
+        const oldItem = productos?.find((oldP) => oldP.id === p.id);
+        if (!oldItem) return p;
+        return { ...p, cantidad: oldItem?.cantidad - p.cantidad };
+      });
+
+      await Promise.all(addPromises);
+
+      if (addPromises.length > 0) updateProductosLastStamp();
+
+      if (productosActualizados) {
+        setProductos(productosActualizados);
+
+        const productosBajoStock = productosActualizados.filter((p) => {
+          return (
+            p.target > 0 &&
+            p.cantidad <= p.target &&
+            // Esto creo que no va VV
+            newInventario.some((invItem) => invItem.id === p.id)
+          );
+        });
+        if (productosBajoStock.length > 0) {
+          sendMailAndTelegram(productosBajoStock);
+        }
+      }
+      await getUsers();
+    } catch (e: any) {
+      console.error(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateInventarioProducto = async (
     user: UserType,
@@ -345,6 +403,15 @@ const AsignadosComp = () => {
                   <Text color='gray.500'>Sin productos asignados</Text>
                 )}
               </Flex>
+              {(user?.rol === 'Superadmin' || user?.rol === 'Supervisor') && (
+                <AgregarProductoAsignado
+                  allProductos={productos || []}
+                  user={u}
+                  updateInventario={agregarProductos}
+                  loading={loading}
+                  checkUpdates={checkUpdates}
+                />
+              )}
               {/* {(user?.rol === 'Superadmin' || user?.rol === 'Supervisor') && (
                 <EditarInventarioModal
                   allProductos={productos || []}

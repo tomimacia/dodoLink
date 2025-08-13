@@ -266,7 +266,7 @@ export default function EditarProductoModal({
                             : undefined,
                       }}
                       placeholder='Cantidad nueva'
-                      value={cantidadNueva || ''}
+                      value={cantidadNueva}
                       onChange={(e) =>
                         setCantidadNueva(parseInt(e.target.value) || 0)
                       }
@@ -291,6 +291,9 @@ export default function EditarProductoModal({
                         stockTotal < cantidadNueva ? 'semibold' : 'normal'
                       }
                       mt={1}
+                      cursor='pointer'
+                      _hover={{ textDecor: 'underline' }}
+                      onClick={() => setCantidadNueva(stockTotal)}
                     >
                       Stock total (usuario + depósito): {stockTotal}
                     </Text>
@@ -334,7 +337,7 @@ export default function EditarProductoModal({
                             : undefined,
                       }}
                       placeholder='Cantidad a devolver'
-                      value={cantidadDevuelta || ''}
+                      value={cantidadDevuelta}
                       onChange={(e) =>
                         setCantidadDevuelta(parseInt(e.target.value) || 0)
                       }
@@ -363,6 +366,9 @@ export default function EditarProductoModal({
                           : 'normal'
                       }
                       mt={1}
+                      cursor='pointer'
+                      _hover={{ textDecor: 'underline' }}
+                      onClick={() => setCantidadDevuelta(producto.cantidad)}
                     >
                       Stock actual del usuario: {producto.cantidad}
                     </Text>

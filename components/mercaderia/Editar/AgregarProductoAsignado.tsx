@@ -27,8 +27,9 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { BsPlusCircle } from 'react-icons/bs';
 
-const EditarInventarioModal = ({
+const AgregarProductoAsignado = ({
   user,
   allProductos,
   updateInventario,
@@ -39,17 +40,13 @@ const EditarInventarioModal = ({
   allProductos: ProductoType[];
   updateInventario: (
     user: UserType,
-    newInventario: ProductoType[],
-    ajustarStock: boolean
+    newInventario: ProductoType[]
   ) => Promise<void>;
   loading: boolean;
   checkUpdates: () => Promise<void>;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [inventario, setInventario] = useState<ProductoType[]>(
-    user.inventario || []
-  );
-  const [devolverStock, setDevolverStock] = useState(false);
+  const [inventario, setInventario] = useState<ProductoType[]>([]);
 
   const handleCantidadChange = (id: string, cantidad: number) => {
     if (cantidad < 0) return;
@@ -63,7 +60,13 @@ const EditarInventarioModal = ({
   };
 
   const addProducto = (producto: ProductoType) => {
-    if (inventario.some((p) => p.id === producto.id)) return;
+    if (user.inventario.some((p) => p.id === producto.id)) {
+      toast({
+        title: 'Ya asignado',
+        description: `El usuario ya tiene el producto ${producto.nombre} asignado`,
+      });
+      return;
+    }
     setInventario((prev) => [...prev, { ...producto, cantidad: 1 }]);
   };
   const toast = useToast();
@@ -80,6 +83,27 @@ const EditarInventarioModal = ({
 
       return it.cantidad > cantidadDisponible;
     });
+    const allZero = inventario.every((it) => it.cantidad === 0);
+    if (!inventario || inventario.length === 0) {
+      toast({
+        title: 'Error',
+        description: 'Debes ingresar algún producto',
+        isClosable: true,
+        status: 'warning',
+        duration: 4000,
+      });
+      return;
+    }
+    if (allZero) {
+      toast({
+        title: 'Error',
+        description: 'Debes ingresar cantidades mayores a 0 (cero)',
+        isClosable: true,
+        status: 'warning',
+        duration: 4000,
+      });
+      return;
+    }
     if (cantUpdate) {
       toast({
         title: 'Error',
@@ -90,12 +114,11 @@ const EditarInventarioModal = ({
       });
       return;
     }
-    await updateInventario(user, inventario, devolverStock);
-    onClose();
+    await updateInventario(user, inventario);
+    handleClose();
   };
   const handleClose = () => {
-    setInventario(user.inventario);
-    setDevolverStock(false);
+    setInventario([]);
     onClose();
   };
   const handleSumar = (item: ProductoType) => {
@@ -118,37 +141,20 @@ const EditarInventarioModal = ({
         onClick={handleOpen}
         size='sm'
         colorScheme='blue'
-        leftIcon={<EditIcon />}
+        leftIcon={<BsPlusCircle />}
       >
-        Editar Inventario
+        Agregar Productos
       </Button>
 
       <Modal isOpen={isOpen} onClose={handleClose} isCentered size='3xl'>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Agregar Producots</ModalHeader>
+          <ModalHeader>Agregar Productos</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>
-              User: {user.nombre} {user.apellido}
+            <Text mb={4}>
+              <b>Usuario</b>: {user.nombre} {user.apellido}
             </Text>
-            <FormControl gap={3} mb={2} display='flex' alignItems='center'>
-              <FormLabel htmlFor='devolver-stock' mb='0'>
-                Ajustar stock
-              </FormLabel>
-              <Switch
-                id='devolver-stock'
-                isChecked={devolverStock}
-                onChange={() => setDevolverStock((prev) => !prev)}
-                colorScheme='blue'
-              />
-              <PopoverInfoIcon>
-                <Text>
-                  Indicar si el stock se devuelve al inventario (y se suma) o si
-                  fue utilizado
-                </Text>
-              </PopoverInfoIcon>
-            </FormControl>
             <VStack align='stretch' spacing={4}>
               {inventario.map((item) => {
                 const itemDB = allProductos?.find((p) => p.id === item.id);
@@ -254,4 +260,4 @@ const EditarInventarioModal = ({
   );
 };
 
-export default EditarInventarioModal;
+export default AgregarProductoAsignado;

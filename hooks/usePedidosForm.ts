@@ -9,6 +9,7 @@ import { getUpdatedReservas } from '@/helpers/cobros/getUpdatedReservas';
 import { formatearFecha } from '@/helpers/movimientos/formatearFecha';
 import {
   Estados,
+  ImagenType,
   MovimientosType,
   NotaType,
   PedidoType,
@@ -20,6 +21,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import useGetProductos from './data/useGetProductos';
 import { updateProductosLastStamp } from '@/helpers/updateStamps';
+import loadFileDB from '@/firebase/services/SQL/loadFileDB';
+import deleteFileDB from '@/firebase/services/SQL/deleteFileDB';
 
 const usePedidosForm = (movimiento: PedidoType) => {
   const { reservas, compras, notas } = useOnCurso();
@@ -567,12 +570,91 @@ const usePedidosForm = (movimiento: PedidoType) => {
     });
     toast({
       title: 'Éxito',
-      description: 'Pedido aignado con éxito',
+      description: 'Pedido asignado con éxito',
       isClosable: true,
       duration: 5000,
       status: 'success',
     });
   };
+  const getNewImagenes = async (imagenes: ImagenType[]) => {
+    if (imagenes.length === 0) return;
+    const imagenesFiltered = imagenes.filter((i) => !!i.file);
+    const newImagenesPromises = imagenesFiltered.map((i: any) => loadFileDB(i));
+    const newImagenes = await Promise.all(newImagenesPromises);
+    return newImagenes;
+  };
+  const cargarImagenes = async (newImagenes: ImagenType[]) => {
+    if (estado !== 'En curso' && estado !== 'Finalizado') return;
+    const newImagenesFirebase = (await getNewImagenes(newImagenes)) || [];
+    const movimientoFetched = (await getSingleDoc(
+      'movimientos',
+      fecha
+    )) as MovimientosType;
+    const newMov = {
+      ...currentMov,
+      imagenes: [...(currentMov.imagenes || []), ...newImagenesFirebase],
+    };
+    await setSingleDoc('movimientos', fecha, {
+      reservas: getUpdatedReservas(
+        id,
+        movimientoFetched?.reservas,
+        'En curso',
+        newMov,
+        [],
+        user?.id
+      ),
+    });
+    if (!!reservas && estado === 'En curso') {
+      await setSingleDoc('movimientos', 'enCurso', {
+        reservas: getUpdatedReservas(
+          id,
+          reservas,
+          'En curso',
+          newMov,
+          [],
+          user?.id
+        ),
+      });
+    }
+  };
+  const deleteImage = async (imageID: string) => {
+    if (estado !== 'En curso' && estado !== 'Finalizado') return;
+    await deleteFileDB(imageID);
+    const newImagenes = (currentMov?.imagenes || []).filter(
+      (i) => i.id !== imageID
+    );
+    const movimientoFetched = (await getSingleDoc(
+      'movimientos',
+      fecha
+    )) as MovimientosType;
+    const newMov = {
+      ...currentMov,
+      imagenes: newImagenes,
+    };
+    await setSingleDoc('movimientos', fecha, {
+      reservas: getUpdatedReservas(
+        id,
+        movimientoFetched?.reservas,
+        'En curso',
+        newMov,
+        [],
+        user?.id
+      ),
+    });
+    if (!!reservas && estado === 'En curso') {
+      await setSingleDoc('movimientos', 'enCurso', {
+        reservas: getUpdatedReservas(
+          id,
+          reservas,
+          'En curso',
+          newMov,
+          [],
+          user?.id
+        ),
+      });
+    }
+  };
+
   const disclosure = { isOpen, onClose, onOpen: handleOpen };
   return {
     loadingUpdate,
@@ -585,9 +667,11 @@ const usePedidosForm = (movimiento: PedidoType) => {
     updatePedido,
     updateCompra,
     deleteFuncCompra,
+    deleteImage,
     volverAInicializado,
     deleteFunc,
     asignarPedidoPendiente,
+    cargarImagenes,
     disclosure,
   };
 };

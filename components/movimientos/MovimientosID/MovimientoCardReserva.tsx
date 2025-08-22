@@ -28,11 +28,12 @@ import {
 import { useRouter } from 'next/router';
 import { Fragment, useState } from 'react';
 import { MdLocationPin } from 'react-icons/md';
+import AsignarPedido from '../AsignarPedido';
 import MapEmbed from '../EmbedMap';
 import ConfirmarReservaModal from './ConfimarPedidoModal/ConfirmarReservaModal';
+import ImagenesManager from './ConfimarPedidoModal/ImagenesManager';
 import QRCodeLabel from './QRCodeLabel';
 import VerMovimientosModal from './VerMovimientosModal';
-import AsignarPedido from '../AsignarPedido';
 
 const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
   const {
@@ -45,9 +46,11 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
     updatePedido,
     showDeleted,
     deleteFunc,
+    cargarImagenes,
     disclosure,
     volverAInicializado,
     asignarPedidoPendiente,
+    deleteImage,
   } = usePedidosForm(movimiento);
   const {
     detalle,
@@ -61,6 +64,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
     tramo,
     nota,
     cuadrilla,
+    imagenes,
   } = currentMov ?? {};
   const [loadingNota, setLoadingNota] = useState(false);
   const customGrayBG = useColorModeValue('gray.50', 'gray.700');
@@ -287,6 +291,7 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
           ))}
         </Flex>
       </Flex>
+
       {/* Código QR + Mapa */}
 
       <Flex
@@ -295,22 +300,29 @@ const MovimientoCardReserva = ({ movimiento }: { movimiento: PedidoType }) => {
         flexDir={{ base: 'column-reverse', md: 'row' }}
         alignItems='flex-start'
       >
-        <Flex
-          p={4}
-          border='1px solid #e2e8f0'
-          borderRadius='md'
-          alignItems='center'
-          justifyContent='center'
-          bg='white'
-          color='black'
-        >
-          <QRCodeLabel pedido={currentMov} />
-        </Flex>
-
+        {estado !== 'Finalizado' && (
+          <Flex
+            p={4}
+            border='1px solid #e2e8f0'
+            borderRadius='md'
+            alignItems='center'
+            justifyContent='center'
+            bg='white'
+            color='black'
+          >
+            <QRCodeLabel pedido={currentMov} />
+          </Flex>
+        )}
         <Flex h='100%' id='embed-location' w='100%'>
           <MapEmbed initialShow hideButtons src={mapCoords} />
         </Flex>
       </Flex>
+
+      <ImagenesManager
+        dbImages={imagenes || []}
+        cargarImagenes={cargarImagenes}
+        onDelete={deleteImage}
+      />
 
       <Flex justifyContent='center' my={10} gap={4}>
         <ConfirmarReservaModal

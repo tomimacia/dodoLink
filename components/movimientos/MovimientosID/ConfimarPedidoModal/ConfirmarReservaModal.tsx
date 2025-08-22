@@ -54,6 +54,7 @@ const ConfirmarReservaModal = ({
       return { ...p, checked: false };
     })
   );
+
   const handleUpdate = async () => {
     if (estado === 'Preparación') {
       const unChecked = checkedItems.filter((i: any) => !i.checked);
@@ -88,6 +89,7 @@ const ConfirmarReservaModal = ({
         return;
       }
     }
+
     const newPedido: PedidoType = {
       ...pedido,
       cliente,
@@ -98,7 +100,6 @@ const ConfirmarReservaModal = ({
       mapCoords,
       nota: nota ? nota.split('\n') : [],
     };
-    console.log(newPedido);
     await update(newPedido, items, sobrantes);
   };
   const toast = useToast();

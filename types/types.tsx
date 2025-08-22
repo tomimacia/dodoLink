@@ -103,7 +103,14 @@ export type PedidoFechaType = {
   'En curso': PedidoFechaParcial;
   Finalizado: PedidoFechaParcial;
 };
-
+export type ImagenType = {
+  id: string;
+  file: File | string | null;
+};
+export type ImagenDBType = {
+  id: string;
+  url: string;
+};
 // Tipo completo del pedido
 export type PedidoType = {
   cliente: string;
@@ -121,6 +128,7 @@ export type PedidoType = {
   confirmedItems?: ProductoType[];
   isRetiro: boolean;
   isNota?: boolean;
+  imagenes?: ImagenDBType[];
 };
 export type MedidaType = 'Un.' | 'Kg.' | 'Mt.';
 export type ProductoType = {

@@ -2,6 +2,7 @@
 
 import { allRoles, Routes } from '@/data/data'; // ajustá la ruta a tu archivo real
 import { RolType } from '@/types/types';
+import { CloseIcon } from '@chakra-ui/icons';
 import {
   Box,
   Icon,
@@ -20,7 +21,7 @@ const hasAccess = (roles: RolType[], rol: RolType) => roles.includes(rol);
 
 const SuperAdminRoutes = () => {
   return (
-    <Box p={6} overflowX='auto' maxW='800px'>
+    <Box my={6} overflowX='auto' maxW='800px'>
       <Text fontSize='2xl' fontWeight='bold' mb={4}>
         Accesos por Rol
       </Text>
@@ -42,8 +43,10 @@ const SuperAdminRoutes = () => {
                 <Td fontWeight='semibold'>{route.label}</Td>
                 {allRoles.map((rol) => (
                   <Td key={rol} textAlign='center'>
-                    {hasAccess(route.roles as any, rol as RolType) && (
+                    {hasAccess(route.roles as any, rol as RolType) ? (
                       <Icon as={FaCheck} color='green.500' />
+                    ) : (
+                      <Icon as={CloseIcon} color='red.500' />
                     )}
                   </Td>
                 ))}
@@ -53,8 +56,10 @@ const SuperAdminRoutes = () => {
                   <Td pl={6}>↳ {subRoute.label}</Td>
                   {allRoles.map((rol) => (
                     <Td key={rol} textAlign='center'>
-                      {hasAccess(subRoute.roles as any, rol as RolType) && (
+                      {hasAccess(subRoute.roles as any, rol as RolType) ? (
                         <Icon as={FaCheck} color='green.500' />
+                      ) : (
+                        <Icon as={CloseIcon} color='red.500' />
                       )}
                     </Td>
                   ))}

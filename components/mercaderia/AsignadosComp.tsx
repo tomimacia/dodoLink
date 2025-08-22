@@ -172,7 +172,11 @@ const AsignadosComp = () => {
       if (addPromises.length > 0) updateProductosLastStamp();
 
       if (productosActualizados) {
-        setProductos(productosActualizados);
+        const newProductos = productos?.map((p) => {
+          const newP = productosActualizados.find((np) => np.id === p.id);
+          return newP || p;
+        });
+        if (newProductos) setProductos(newProductos);
 
         const productosBajoStock = productosActualizados.filter((p) => {
           return (

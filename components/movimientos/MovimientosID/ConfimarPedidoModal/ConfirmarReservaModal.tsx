@@ -175,6 +175,7 @@ const ConfirmarReservaModal = ({
               volverAInicializado={volverAInicializadoFInal}
               loading={loading}
               isRetiro={pedido?.isRetiro}
+              imagenes={pedido?.imagenes || []}
             />
           </ModalBody>
           <ModalFooter>

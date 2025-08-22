@@ -1,4 +1,5 @@
 import { ProductoType } from '@/types/types';
+import { WarningIcon } from '@chakra-ui/icons';
 import {
   Box,
   Collapse,
@@ -14,7 +15,6 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useState } from 'react';
-import ImagenesManager from './ImagenesManager';
 type StringHandler = [string, Dispatch<SetStateAction<string>>];
 type ItemsHandlerType = [
   ProductoType[],
@@ -22,11 +22,13 @@ type ItemsHandlerType = [
 ];
 const ConfirmarEnCurso = ({
   isRetiro,
+  imagenes,
   items,
   notaHandler,
   sobrantesHandler,
 }: {
   isRetiro: boolean;
+  imagenes: any[];
   items: ProductoType[];
   notaHandler: StringHandler;
   sobrantesHandler: ItemsHandlerType;
@@ -174,6 +176,15 @@ const ConfirmarEnCurso = ({
           </Box>
         </Collapse>
       </Box>
+      {!imagenes ||
+        (imagenes.length === 0 && (
+          <Flex gap={1} align='center'>
+            <WarningIcon color='red' />
+            <Text color='red.600' fontWeight='bold'>
+              No cargaste imágenes
+            </Text>
+          </Flex>
+        ))}
     </Flex>
   );
 };

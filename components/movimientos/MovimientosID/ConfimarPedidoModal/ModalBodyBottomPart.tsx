@@ -50,7 +50,7 @@ const ModalBodyBottomPart = ({
   mapCoordsHandler,
   sobrantesHandler,
   cuadrillaHandler,
-
+  imagenes,
   productos,
   notaHandler,
   volverAInicializado,
@@ -65,6 +65,7 @@ const ModalBodyBottomPart = ({
   detalleHandler: StringHandler;
   notaHandler: StringHandler;
   tramoHandler: NumberHandler;
+  imagenes: any[];
   cuadrillaHandler: NumberHandler;
   mapCoordsHandler: StringHandler;
   sobrantesHandler: [
@@ -408,6 +409,7 @@ const ModalBodyBottomPart = ({
       )}
       {estado === 'En curso' && (
         <ConfirmarEnCurso
+          imagenes={imagenes}
           isRetiro={isRetiro}
           items={items}
           notaHandler={notaHandler}
